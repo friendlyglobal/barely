@@ -18,6 +18,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -44,6 +45,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -68,8 +70,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -87,6 +87,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -104,8 +105,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import kotlinx.coroutines.delay
-import java.text.Normalizer
-import java.util.Locale
 
 @Composable
 fun LauncherScreen(
@@ -208,6 +207,10 @@ fun LauncherScreen(
                     onRequestHomeRole = onRequestHomeRole,
                     onLaunchApp = onLaunchApp,
                     onLongPress = { selectedApp = it },
+                    onSearch = {
+                        onGestureCoachSeen()
+                        searchVisible = true
+                    },
                 )
             }
         }
@@ -407,6 +410,7 @@ private fun AppsPage(
     onRequestHomeRole: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    onSearch: () -> Unit,
 ) {
     PageSurface(isLoading = isLoading) {
         PageHeader(
@@ -421,11 +425,23 @@ private fun AppsPage(
             )
         }
 
-        AppGrid(
-            apps = apps,
-            onLaunchApp = onLaunchApp,
-            onLongPress = onLongPress,
-        )
+        Box(Modifier.weight(1f)) {
+            AppGrid(
+                apps = apps,
+                onLaunchApp = onLaunchApp,
+                onLongPress = onLongPress,
+                contentPadding = PaddingValues(
+                    start = 12.dp,
+                    top = 8.dp,
+                    end = 12.dp,
+                    bottom = 82.dp,
+                ),
+            )
+            SearchLauncherBar(
+                onClick = onSearch,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 
@@ -544,16 +560,53 @@ private fun AppGrid(
     apps: List<LauncherApp>,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+        contentPadding = contentPadding,
     ) {
         items(apps, key = { it.key }) { app ->
             AppTile(
                 app = app,
                 onClick = { onLaunchApp(app) },
                 onLongPress = { onLongPress(app) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchLauncherBar(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .combinedClickable(onClick = onClick),
+        shape = RoundedCornerShape(22.dp),
+        color = Color.Black.copy(alpha = 0.74f),
+        contentColor = Color.White,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.14f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = null,
+                modifier = Modifier.size(21.dp),
+                tint = Color.White.copy(alpha = 0.78f),
+            )
+            Spacer(Modifier.width(13.dp))
+            Text(
+                stringResource(R.string.apps_and_shortcuts),
+                color = Color.White.copy(alpha = 0.72f),
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
@@ -627,18 +680,46 @@ private fun SearchPage(
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
-    val normalizedQuery = remember(query) { query.normalized() }
-    val matchingApps = remember(apps, normalizedQuery) {
-        if (normalizedQuery.isBlank()) emptyList() else apps.filter {
-            it.label.normalized().contains(normalizedQuery) ||
-                it.packageName.normalized().contains(normalizedQuery)
+    val normalizedQuery = remember(query) { query.normalizedForSearch() }
+    val rankedResults = remember(apps, shortcuts, normalizedQuery) {
+        if (normalizedQuery.isBlank()) {
+            emptyList()
+        } else {
+            buildList {
+                apps.forEach { app ->
+                    relevanceScore(
+                        query = normalizedQuery,
+                        terms = listOf(
+                            SearchTerm(app.label),
+                            SearchTerm(app.packageName, PACKAGE_MATCH_PENALTY),
+                        ),
+                    )?.let { score -> add(AppSearchResult(app, score)) }
+                }
+                shortcuts.forEach { shortcut ->
+                    relevanceScore(
+                        query = normalizedQuery,
+                        terms = listOf(
+                            SearchTerm(shortcut.label),
+                            SearchTerm(shortcut.description.orEmpty(), DESCRIPTION_MATCH_PENALTY),
+                            SearchTerm(shortcut.info.id, SHORTCUT_ID_MATCH_PENALTY),
+                        ),
+                    )?.let { score -> add(ShortcutSearchResult(shortcut, score)) }
+                }
+            }.sortedWith(
+                compareBy<LauncherSearchResult> { it.score }
+                    .thenBy { it.typePriority }
+                    .thenBy { it.publisherRank }
+                    .thenBy { it.label },
+            ).take(MAX_SEARCH_RESULTS)
         }
     }
-    val matchingShortcuts = remember(shortcuts, normalizedQuery) {
-        if (normalizedQuery.isBlank()) emptyList() else shortcuts.filter {
-            it.label.normalized().contains(normalizedQuery) ||
-                it.description.orEmpty().normalized().contains(normalizedQuery) ||
-                it.owner.label.normalized().contains(normalizedQuery)
+
+    fun launchBestResult() {
+        keyboard?.hide()
+        when (val result = rankedResults.firstOrNull()) {
+            is AppSearchResult -> onLaunchApp(result.app)
+            is ShortcutSearchResult -> onLaunchShortcut(result.shortcut)
+            null -> Unit
         }
     }
 
@@ -654,156 +735,144 @@ private fun SearchPage(
             .background(Color.Black.copy(alpha = 0.58f)),
     ) {
         CompositionLocalProvider(LocalContentColor provides Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .imePadding(),
-        ) {
-            Row(
-                modifier = Modifier.padding(start = 12.dp, end = 20.dp, top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .imePadding(),
             ) {
-                IconButton(onClick = onClose) {
+                IconButton(
+                    onClick = onClose,
+                    modifier = Modifier.padding(start = 8.dp, top = 8.dp),
+                ) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = stringResource(R.string.close_search),
                     )
                 }
-                Text(
-                    stringResource(R.string.search),
+
+                SearchResults(
                     modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White,
+                    query = query,
+                    results = rankedResults,
+                    canSearchShortcuts = canSearchShortcuts,
+                    onLaunchApp = onLaunchApp,
+                    onLongPress = onLongPress,
+                    onLaunchShortcut = onLaunchShortcut,
+                )
+
+                SearchInput(
+                    query = query,
+                    onQueryChange = { query = it },
+                    onSearch = ::launchBestResult,
+                    onClear = { query = "" },
+                    modifier = Modifier.focusRequester(focusRequester),
                 )
             }
+        }
+    }
+}
 
-            OutlinedTextField(
+@Composable
+private fun SearchInput(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        shape = RoundedCornerShape(22.dp),
+        color = Color.Black.copy(alpha = 0.78f),
+        contentColor = Color.White,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.16f)),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .padding(start = 18.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = null,
+                modifier = Modifier.size(21.dp),
+                tint = Color.White.copy(alpha = 0.78f),
+            )
+            Spacer(Modifier.width(13.dp))
+            BasicTextField(
                 value = query,
-                onValueChange = { query = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .focusRequester(focusRequester),
+                onValueChange = onQueryChange,
+                modifier = modifier.weight(1f),
                 singleLine = true,
-                shape = RoundedCornerShape(30.dp),
-                placeholder = { Text(stringResource(R.string.apps_and_shortcuts)) },
-                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { query = "" }) {
-                            Icon(
-                                Icons.Outlined.Close,
-                                contentDescription = stringResource(R.string.clear_search),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
+                cursorBrush = SolidColor(Color.White),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+                decorationBox = { innerTextField ->
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (query.isBlank()) {
+                            Text(
+                                stringResource(R.string.apps_and_shortcuts),
+                                color = Color.White.copy(alpha = 0.58f),
+                                style = MaterialTheme.typography.bodyLarge,
                             )
                         }
+                        innerTextField()
                     }
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.46f),
-                    cursorColor = Color.White,
-                    focusedLeadingIconColor = Color.White,
-                    unfocusedLeadingIconColor = Color.White.copy(alpha = 0.72f),
-                    focusedTrailingIconColor = Color.White,
-                    unfocusedTrailingIconColor = Color.White,
-                    focusedPlaceholderColor = Color.White.copy(alpha = 0.62f),
-                    unfocusedPlaceholderColor = Color.White.copy(alpha = 0.62f),
-                ),
             )
-
-            SearchResults(
-                query = query,
-                apps = matchingApps,
-                shortcuts = matchingShortcuts,
-                canSearchShortcuts = canSearchShortcuts,
-                onLaunchApp = onLaunchApp,
-                onLongPress = onLongPress,
-                onLaunchShortcut = onLaunchShortcut,
-            )
-        }
+            if (query.isNotEmpty()) {
+                IconButton(onClick = onClear) {
+                    Icon(
+                        Icons.Outlined.Close,
+                        contentDescription = stringResource(R.string.clear_search),
+                    )
+                }
+            } else {
+                Spacer(Modifier.width(8.dp))
+            }
         }
     }
 }
 
 @Composable
 private fun SearchResults(
+    modifier: Modifier,
     query: String,
-    apps: List<LauncherApp>,
-    shortcuts: List<LauncherShortcut>,
+    results: List<LauncherSearchResult>,
     canSearchShortcuts: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 24.dp),
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
     ) {
-        if (apps.isNotEmpty()) {
-            item { ResultHeader(stringResource(R.string.apps)) }
-            items(apps, key = { it.key }) { app ->
-                ListItem(
-                    onClick = { onLaunchApp(app) },
-                    onLongClick = { onLongPress(app) },
-                    colors = minimalListItemColors(),
-                    supportingContent = {
-                        Text(
-                            app.packageName,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    leadingContent = { AppIcon(app, Modifier.size(46.dp)) },
-                ) { Text(app.label) }
-            }
-        }
-        if (shortcuts.isNotEmpty()) {
-            item { ResultHeader(stringResource(R.string.shortcuts)) }
-            items(shortcuts, key = { "${it.owner.key}:${it.info.id}" }) { shortcut ->
-                ListItem(
-                    onClick = { onLaunchShortcut(shortcut) },
-                    onLongClick = { onLongPress(shortcut.owner) },
-                    enabled = shortcut.info.isEnabled,
-                    colors = minimalListItemColors(),
-                    supportingContent = { Text(shortcut.owner.label) },
-                    leadingContent = {
-                        Box {
-                            AppIcon(shortcut.owner, Modifier.size(46.dp))
-                            Icon(
-                                Icons.Outlined.Bolt,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .size(20.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Black)
-                                    .padding(2.dp),
-                                tint = Color.White,
-                            )
-                        }
-                    },
-                ) { Text(shortcut.label) }
-            }
-        }
-        if (query.isBlank()) {
-            item {
-                SearchHint(
-                    icon = Icons.Outlined.Search,
-                    title = stringResource(R.string.find_anything),
-                    description = stringResource(R.string.search_hint),
+        items(results, key = { it.key }) { result ->
+            when (result) {
+                is AppSearchResult -> AppSearchRow(
+                    app = result.app,
+                    onLaunchApp = onLaunchApp,
+                    onLongPress = onLongPress,
+                )
+
+                is ShortcutSearchResult -> ShortcutSearchRow(
+                    shortcut = result.shortcut,
+                    onLaunchShortcut = onLaunchShortcut,
+                    onLongPress = onLongPress,
                 )
             }
-        } else if (apps.isEmpty() && shortcuts.isEmpty()) {
+        }
+        if (query.isNotBlank() && results.isEmpty()) {
             item {
                 SearchHint(
-                    icon = Icons.Outlined.Bolt,
                     title = stringResource(R.string.nothing_found),
                     description = if (canSearchShortcuts) {
                         stringResource(R.string.try_another_name)
@@ -817,39 +886,67 @@ private fun SearchResults(
 }
 
 @Composable
-private fun SearchHint(icon: ImageVector, title: String, description: String) {
+private fun AppSearchRow(
+    app: LauncherApp,
+    onLongPress: (LauncherApp) -> Unit,
+    onLaunchApp: (LauncherApp) -> Unit,
+) {
+    ListItem(
+        onClick = { onLaunchApp(app) },
+        onLongClick = { onLongPress(app) },
+        colors = minimalListItemColors(),
+        leadingContent = { AppIcon(app, Modifier.size(42.dp)) },
+    ) { Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+}
+
+@Composable
+private fun ShortcutSearchRow(
+    shortcut: LauncherShortcut,
+    onLongPress: (LauncherApp) -> Unit,
+    onLaunchShortcut: (LauncherShortcut) -> Unit,
+) {
+    ListItem(
+        onClick = { onLaunchShortcut(shortcut) },
+        onLongClick = { onLongPress(shortcut.owner) },
+        enabled = shortcut.info.isEnabled,
+        colors = minimalListItemColors(),
+        supportingContent = { Text(shortcut.owner.label) },
+        leadingContent = {
+            Box {
+                AppIcon(shortcut.owner, Modifier.size(42.dp))
+                Icon(
+                    Icons.Outlined.Bolt,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(18.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black)
+                        .padding(2.dp),
+                    tint = Color.White,
+                )
+            }
+        },
+    ) { Text(shortcut.label, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+}
+
+@Composable
+private fun SearchHint(title: String, description: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp, vertical = 48.dp),
+            .padding(horizontal = 32.dp, vertical = 36.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp),
-            tint = Color.White.copy(alpha = 0.78f),
-        )
-        Spacer(Modifier.height(18.dp))
-        Text(title, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
+        Text(title, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
         Spacer(Modifier.height(7.dp))
         Text(
             description,
             color = Color.White.copy(alpha = 0.68f),
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
-}
-
-@Composable
-private fun ResultHeader(title: String) {
-    Text(
-        title,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-        color = Color.White.copy(alpha = 0.68f),
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = FontWeight.Bold,
-    )
 }
 
 @Composable
@@ -960,11 +1057,6 @@ private fun ActionItem(
     ) { Text(label, color = color) }
 }
 
-private fun String.normalized(): String = Normalizer
-    .normalize(this, Normalizer.Form.NFD)
-    .replace("\\p{Mn}+".toRegex(), "")
-    .lowercase(Locale.getDefault())
-
 private fun supportsDarkText(colors: WallpaperColors?): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
         colors?.colorHints?.and(WallpaperColors.HINT_SUPPORTS_DARK_TEXT) != 0
@@ -973,3 +1065,35 @@ private const val FAVORITES_PAGE = 0
 private const val HOME_PAGE = 1
 private const val APPS_PAGE = 2
 private const val PAGE_COUNT = 3
+private const val DESCRIPTION_MATCH_PENALTY = 8
+private const val PACKAGE_MATCH_PENALTY = 70
+private const val SHORTCUT_ID_MATCH_PENALTY = 90
+private const val MAX_SEARCH_RESULTS = 50
+
+private sealed interface LauncherSearchResult {
+    val score: Int
+    val key: String
+    val label: String
+    val typePriority: Int
+    val publisherRank: Int
+}
+
+private data class AppSearchResult(
+    val app: LauncherApp,
+    override val score: Int,
+) : LauncherSearchResult {
+    override val key: String = "app:${app.key}"
+    override val label: String = app.label
+    override val typePriority: Int = 1
+    override val publisherRank: Int = 0
+}
+
+private data class ShortcutSearchResult(
+    val shortcut: LauncherShortcut,
+    override val score: Int,
+) : LauncherSearchResult {
+    override val key: String = "shortcut:${shortcut.owner.key}:${shortcut.info.id}"
+    override val label: String = shortcut.label
+    override val typePriority: Int = 0
+    override val publisherRank: Int = shortcut.info.rank
+}
