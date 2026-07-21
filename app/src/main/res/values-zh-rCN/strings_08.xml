@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">打开 Codex</string>
+    <string name="command_open_codex_summary">在 ChatGPT 应用中继续编程</string>
+    <string name="settings_ai_assistant">AI 助手</string>
+    <string name="settings_ai_assistant_summary">仅在本地搜索没有结果时使用。你的问题会交给已安装的应用。</string>
+    <string name="onboarding_ai_assistant_summary">选择本地搜索无结果时接收问题的已安装应用。</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">每次询问</string>
+    <string name="assistant_not_installed">未安装</string>
+    <string name="settings_portability">备份</string>
+    <string name="settings_export">导出设置</string>
+    <string name="settings_export_summary">保存可移植的外观、手势、搜索和可选模块偏好。</string>
+    <string name="settings_import">导入设置</string>
+    <string name="settings_import_summary">恢复 Barely 设置文件。不包含小组件、权限、个人资料和本地历史。</string>
+    <string name="settings_export_complete">设置已导出</string>
+    <string name="settings_export_failed">无法导出设置</string>
+    <string name="settings_import_complete">设置已导入</string>
+    <string name="settings_import_failed">无法导入此设置文件</string>
+    <string name="settings_double_tap">双击</string>
+    <string name="settings_double_tap_action_summary">选择双击主屏幕空白区域时的操作。</string>
+    <string name="settings_swipe_down">向下滑动</string>
+    <string name="settings_swipe_down_action_summary">选择在主屏幕向下滑动时的操作。</string>
+    <string name="gesture_action_none">无操作</string>
+    <string name="gesture_action_lock">锁定屏幕</string>
+    <string name="gesture_action_notifications">通知</string>
+    <string name="gesture_action_search">搜索</string>
+    <string name="gesture_action_apps">所有应用</string>
+</resources>

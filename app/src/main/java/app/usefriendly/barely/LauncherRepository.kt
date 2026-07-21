@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import java.text.Collator
 import java.util.Locale
 import kotlin.math.ln
+import org.json.JSONObject
 
 class LauncherRepository(
     context: Context,
@@ -207,6 +208,15 @@ class LauncherRepository(
         return favorites
     }
 
+    fun toggleFavorite(shortcut: LauncherShortcut): Set<String> {
+        val favorites = favoriteKeys().toMutableSet()
+        if (!favorites.add(shortcut.searchTargetKey)) {
+            favorites.remove(shortcut.searchTargetKey)
+        }
+        preferences.edit { putStringSet(FAVORITES_KEY, favorites) }
+        return favorites
+    }
+
     fun isGestureCoachSeen(): Boolean = preferences.getBoolean(GESTURE_COACH_KEY, false)
 
     fun markGestureCoachSeen() {
@@ -254,13 +264,28 @@ class LauncherRepository(
             TERMINAL_AESTHETIC_KEY,
             BarelyDefaults.TERMINAL_AESTHETIC,
         ),
-        doubleTapToLock = preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true),
-        swipeDownForNotifications = preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true),
+        doubleTapAction = preferences.getString(DOUBLE_TAP_ACTION_KEY, null)
+            ?.let { value -> runCatching { LauncherGestureAction.valueOf(value) }.getOrNull() }
+            ?: if (preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true)) {
+                LauncherGestureAction.LOCK_SCREEN
+            } else {
+                LauncherGestureAction.NONE
+            },
+        swipeDownAction = preferences.getString(SWIPE_DOWN_ACTION_KEY, null)
+            ?.let { value -> runCatching { LauncherGestureAction.valueOf(value) }.getOrNull() }
+            ?: if (preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true)) {
+                LauncherGestureAction.NOTIFICATIONS
+            } else {
+                LauncherGestureAction.NONE
+            },
         frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
         notificationDots = preferences.getBoolean(NOTIFICATION_DOTS_KEY, false),
         mediaControls = preferences.getBoolean(MEDIA_CONTROLS_KEY, false),
         localSuggestions = preferences.getBoolean(LOCAL_SUGGESTIONS_KEY, true),
         showSearchHint = preferences.getBoolean(SHOW_SEARCH_HINT_KEY, true),
+        preferredAssistant = preferences.getString(PREFERRED_ASSISTANT_KEY, null)
+            ?.let { value -> runCatching { AssistantPreference.valueOf(value) }.getOrNull() }
+            ?: AssistantPreference.CHATGPT,
     )
 
     fun setLauncherSettings(settings: LauncherSettings) {
@@ -280,14 +305,90 @@ class LauncherRepository(
                 ),
             )
             putBoolean(TERMINAL_AESTHETIC_KEY, settings.terminalAesthetic)
-            putBoolean(DOUBLE_TAP_LOCK_KEY, settings.doubleTapToLock)
-            putBoolean(SWIPE_NOTIFICATIONS_KEY, settings.swipeDownForNotifications)
+            putString(DOUBLE_TAP_ACTION_KEY, settings.doubleTapAction.name)
+            putString(SWIPE_DOWN_ACTION_KEY, settings.swipeDownAction.name)
+            putBoolean(
+                DOUBLE_TAP_LOCK_KEY,
+                settings.doubleTapAction == LauncherGestureAction.LOCK_SCREEN,
+            )
+            putBoolean(
+                SWIPE_NOTIFICATIONS_KEY,
+                settings.swipeDownAction == LauncherGestureAction.NOTIFICATIONS,
+            )
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
             putBoolean(NOTIFICATION_DOTS_KEY, settings.notificationDots)
             putBoolean(MEDIA_CONTROLS_KEY, settings.mediaControls)
             putBoolean(LOCAL_SUGGESTIONS_KEY, settings.localSuggestions)
             putBoolean(SHOW_SEARCH_HINT_KEY, settings.showSearchHint)
+            putString(PREFERRED_ASSISTANT_KEY, settings.preferredAssistant.name)
         }
+    }
+
+    fun exportPortableSettings(): String {
+        val settings = launcherSettings()
+        return JSONObject().apply {
+            put("schema", PORTABLE_SETTINGS_SCHEMA)
+            put("homeMode", settings.homeMode.name)
+            put("terminalBackgroundColor", settings.terminalBackgroundColor)
+            put("terminalBackgroundOpacity", settings.terminalBackgroundOpacity.toDouble())
+            put("terminalTopActionBackdrop", settings.terminalTopActionBackdrop)
+            put("terminalCornerRadius", settings.terminalCornerRadius)
+            put("terminalAesthetic", settings.terminalAesthetic)
+            put("doubleTapAction", settings.doubleTapAction.name)
+            put("swipeDownAction", settings.swipeDownAction.name)
+            put("frostedWallpaper", settings.frostedWallpaper)
+            put("notificationDots", settings.notificationDots)
+            put("mediaControls", settings.mediaControls)
+            put("localSuggestions", settings.localSuggestions)
+            put("showSearchHint", settings.showSearchHint)
+            put("preferredAssistant", settings.preferredAssistant.name)
+        }.toString(2)
+    }
+
+    fun importPortableSettings(encoded: String): LauncherSettings {
+        val json = JSONObject(encoded)
+        require(json.optInt("schema", -1) == PORTABLE_SETTINGS_SCHEMA) {
+            "Unsupported Barely settings schema"
+        }
+        val current = launcherSettings()
+        val imported = current.copy(
+            homeMode = json.optString("homeMode")
+                .let { runCatching { LauncherHomeMode.valueOf(it) }.getOrNull() }
+                ?: current.homeMode,
+            terminalBackgroundColor = json.optInt(
+                "terminalBackgroundColor",
+                current.terminalBackgroundColor,
+            ),
+            terminalBackgroundOpacity = json.optDouble(
+                "terminalBackgroundOpacity",
+                current.terminalBackgroundOpacity.toDouble(),
+            ).toFloat().coerceIn(0f, 1f),
+            terminalTopActionBackdrop = json.optBoolean(
+                "terminalTopActionBackdrop",
+                current.terminalTopActionBackdrop,
+            ),
+            terminalCornerRadius = json.optInt(
+                "terminalCornerRadius",
+                current.terminalCornerRadius,
+            ).coerceIn(MIN_TERMINAL_CORNER_RADIUS, MAX_TERMINAL_CORNER_RADIUS),
+            terminalAesthetic = json.optBoolean("terminalAesthetic", current.terminalAesthetic),
+            doubleTapAction = json.optString("doubleTapAction")
+                .let { runCatching { LauncherGestureAction.valueOf(it) }.getOrNull() }
+                ?: current.doubleTapAction,
+            swipeDownAction = json.optString("swipeDownAction")
+                .let { runCatching { LauncherGestureAction.valueOf(it) }.getOrNull() }
+                ?: current.swipeDownAction,
+            frostedWallpaper = json.optBoolean("frostedWallpaper", current.frostedWallpaper),
+            notificationDots = json.optBoolean("notificationDots", current.notificationDots),
+            mediaControls = json.optBoolean("mediaControls", current.mediaControls),
+            localSuggestions = json.optBoolean("localSuggestions", current.localSuggestions),
+            showSearchHint = json.optBoolean("showSearchHint", current.showSearchHint),
+            preferredAssistant = json.optString("preferredAssistant")
+                .let { runCatching { AssistantPreference.valueOf(it) }.getOrNull() }
+                ?: current.preferredAssistant,
+        )
+        setLauncherSettings(imported)
+        return imported
     }
 
     fun recommendedAppKeys(limit: Int = 5): List<String> {
@@ -480,11 +581,14 @@ class LauncherRepository(
         const val PRIVATE_SPACE_EXPANDED_KEY = "private_space_expanded"
         const val DOUBLE_TAP_LOCK_KEY = "double_tap_lock_enabled"
         const val SWIPE_NOTIFICATIONS_KEY = "swipe_notifications_enabled"
+        const val DOUBLE_TAP_ACTION_KEY = "double_tap_action"
+        const val SWIPE_DOWN_ACTION_KEY = "swipe_down_action"
         const val FROSTED_WALLPAPER_KEY = "frosted_wallpaper_enabled"
         const val NOTIFICATION_DOTS_KEY = "notification_dots_enabled"
         const val MEDIA_CONTROLS_KEY = "media_controls_enabled"
         const val LOCAL_SUGGESTIONS_KEY = "local_suggestions_enabled"
         const val SHOW_SEARCH_HINT_KEY = "show_search_hint"
+        const val PREFERRED_ASSISTANT_KEY = "preferred_assistant"
         const val USAGE_COUNT_PREFIX = "usage_count:"
         const val USAGE_LAST_PREFIX = "usage_last:"
         const val RECENT_APP_SEARCHES_KEY = "recent_app_searches"
@@ -499,5 +603,6 @@ class LauncherRepository(
         const val MIN_TERMINAL_CORNER_RADIUS = 0
         const val MAX_TERMINAL_CORNER_RADIUS = 32
         const val ICON_SIZE_PX = 144
+        const val PORTABLE_SETTINGS_SCHEMA = 1
     }
 }

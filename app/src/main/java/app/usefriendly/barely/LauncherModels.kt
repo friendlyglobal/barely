@@ -16,6 +16,23 @@ enum class LauncherHomeMode {
     TERMINAL,
 }
 
+enum class LauncherGestureAction {
+    NONE,
+    LOCK_SCREEN,
+    NOTIFICATIONS,
+    SEARCH,
+    APPS,
+}
+
+enum class AssistantPreference(
+    val packageName: String?,
+) {
+    CHATGPT("com.openai.chatgpt"),
+    GEMINI("com.google.android.apps.bard"),
+    CLAUDE("com.anthropic.claude"),
+    ASK_EVERY_TIME(null),
+}
+
 internal object BarelyDefaults {
     const val TERMINAL_BACKGROUND_COLOR: Int = -0x1000000
     const val TERMINAL_BACKGROUND_OPACITY: Float = 0.42f
@@ -31,13 +48,14 @@ data class LauncherSettings(
     val terminalTopActionBackdrop: Boolean = BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
     val terminalCornerRadius: Int = BarelyDefaults.TERMINAL_CORNER_RADIUS,
     val terminalAesthetic: Boolean = BarelyDefaults.TERMINAL_AESTHETIC,
-    val doubleTapToLock: Boolean = true,
-    val swipeDownForNotifications: Boolean = true,
+    val doubleTapAction: LauncherGestureAction = LauncherGestureAction.LOCK_SCREEN,
+    val swipeDownAction: LauncherGestureAction = LauncherGestureAction.NOTIFICATIONS,
     val frostedWallpaper: Boolean = true,
     val notificationDots: Boolean = false,
     val mediaControls: Boolean = false,
     val localSuggestions: Boolean = true,
     val showSearchHint: Boolean = true,
+    val preferredAssistant: AssistantPreference = AssistantPreference.CHATGPT,
 )
 
 data class LauncherSearchLearning(

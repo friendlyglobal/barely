@@ -2,6 +2,7 @@ package app.usefriendly.barely
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CommandPaletteTest {
@@ -24,5 +25,36 @@ class CommandPaletteTest {
     fun rejectsConversionsAcrossDimensions() {
         assertNull(convert("10 kg to km"))
         assertNull(convert("10 km to km"))
+    }
+
+    @Test
+    fun choosesOnlyTheInstalledPreferredAssistant() {
+        val installed = setOf("com.openai.chatgpt", "com.anthropic.claude")
+
+        assertEquals(
+            listOf("com.anthropic.claude"),
+            selectAssistantPackages(installed, AssistantPreference.CLAUDE),
+        )
+        assertEquals(
+            listOf("com.openai.chatgpt", "com.anthropic.claude"),
+            selectAssistantPackages(installed, AssistantPreference.ASK_EVERY_TIME),
+        )
+    }
+
+    @Test
+    fun fallsBackSafelyWhenTheSavedAssistantWasRemoved() {
+        val installed = setOf("com.google.android.apps.bard")
+
+        assertEquals(
+            listOf("com.google.android.apps.bard"),
+            selectAssistantPackages(installed, AssistantPreference.CHATGPT),
+        )
+        assertTrue(
+            selectAssistantPackages(
+                installed,
+                AssistantPreference.ASK_EVERY_TIME,
+                targetPackage = "com.anthropic.claude",
+            ).isEmpty(),
+        )
     }
 }

@@ -98,10 +98,10 @@ Goal: use public Android capabilities well instead of depending on Samsung-only 
 - Expand quick settings through public Android settings panels and intents.
 - Add a compact permission dashboard showing exactly which optional modules are active.
 - Improve notification dots and media controls without indexing or persisting notification content.
-- Allow published App Shortcuts to be pinned as favorites.
+- [x] Allow published App Shortcuts to be pinned as favorites.
 - Add optional one-level favorite stacks; no nested folder hierarchy.
 - Let users map a small set of Home gestures to search, notifications, Apps, Favorites, lock, or no action.
-- Export and import portable settings through Android's Storage Access Framework, excluding widget IDs and sensitive profile/module state.
+- [x] Export and import portable settings through Android's Storage Access Framework, excluding widget IDs and sensitive profile/module state.
 
 ## 0.9 — Everywhere and Trust
 

@@ -2,6 +2,26 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.8.0 — 2026-07-21
+
+### Added
+
+- Local-first AI fallback: an installed assistant appears only when apps, shortcuts, contacts, calculations, and local commands produce no result.
+- ChatGPT, Gemini, and Claude detection plus a preferred-assistant choice in onboarding and Settings.
+- A local `codex` command that opens the installed ChatGPT app without adding an API key or network permission to Barely.
+- Published App Shortcuts can be pinned directly to Favorites from the app actions sheet.
+- Configurable double-tap and swipe-down Home actions with None, Lock/Notifications, Search, and All apps choices where they apply.
+- Portable JSON settings export and import through Android's document picker; widgets, grants, profiles, favorites, and local history are deliberately excluded.
+
+### Changed
+
+- Shortened the Brazilian Portuguese Command Home label to `Comando` so the Home-style card stays on one line.
+- AI handoff uses the selected installed app and remains an explicit tap/Enter action; Barely still cannot read the response.
+
+### Privacy
+
+- Barely still declares no Internet permission, stores no assistant prompt history, and contains no API key or relay server.
+
 ## 0.7.2 — 2026-07-21
 
 ### Fixed

@@ -51,6 +51,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var widgetPicker: ActivityResultLauncher<Intent>
     private lateinit var widgetConfigurator: ActivityResultLauncher<Intent>
     private lateinit var contactsPermissionRequest: ActivityResultLauncher<String>
+    private lateinit var exportSettingsDocument: ActivityResultLauncher<String>
+    private lateinit var importSettingsDocument: ActivityResultLauncher<Array<String>>
     private var refreshJob: Job? = null
     private var windowLayoutJob: Job? = null
 
@@ -73,6 +75,9 @@ class MainActivity : ComponentActivity() {
     private var hasContactsPermission by androidx.compose.runtime.mutableStateOf(false)
     private var hasNotificationAccess by androidx.compose.runtime.mutableStateOf(false)
     private var launcherSettings by androidx.compose.runtime.mutableStateOf(LauncherSettings())
+    private var availableAssistants by androidx.compose.runtime.mutableStateOf(
+        emptyList<AssistantPreference>(),
+    )
     private var hasGestureAccess by androidx.compose.runtime.mutableStateOf(false)
     private var notificationState by androidx.compose.runtime.mutableStateOf(LauncherNotificationState())
     private var pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -106,6 +111,29 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, R.string.contacts_permission_denied, Toast.LENGTH_LONG).show()
             }
         }
+        exportSettingsDocument = registerForActivityResult(
+            ActivityResultContracts.CreateDocument("application/json"),
+        ) { uri ->
+            if (uri == null) return@registerForActivityResult
+            perform(getString(R.string.settings_export_failed)) {
+                contentResolver.openOutputStream(uri, "wt")?.use { output ->
+                    output.write(repository.exportPortableSettings().toByteArray())
+                } ?: error("Unable to open settings destination")
+                Toast.makeText(this, R.string.settings_export_complete, Toast.LENGTH_SHORT).show()
+            }
+        }
+        importSettingsDocument = registerForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            if (uri == null) return@registerForActivityResult
+            perform(getString(R.string.settings_import_failed)) {
+                val encoded = contentResolver.openInputStream(uri)?.bufferedReader()?.use {
+                    it.readText()
+                } ?: error("Unable to read settings document")
+                launcherSettings = repository.importPortableSettings(encoded)
+                Toast.makeText(this, R.string.settings_import_complete, Toast.LENGTH_SHORT).show()
+            }
+        }
         widgetPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val widgetId = result.data?.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -137,6 +165,7 @@ class MainActivity : ComponentActivity() {
         refreshLocalSuggestions()
         privateSpaceExpanded = repository.isPrivateSpaceExpanded()
         launcherSettings = repository.launcherSettings()
+        availableAssistants = installedAssistantPreferences()
         showOnboarding = !repository.isOnboardingComplete()
         hasGestureAccess = isGestureAccessGranted()
         hasNotificationAccess = isNotificationAccessGranted()
@@ -151,8 +180,15 @@ class MainActivity : ComponentActivity() {
                 if (showOnboarding) {
                     BarelyOnboarding(
                         initialMode = launcherSettings.homeMode,
-                        onComplete = { homeMode ->
-                            updateLauncherSettings(launcherSettings.copy(homeMode = homeMode))
+                        initialAssistant = launcherSettings.preferredAssistant,
+                        availableAssistants = availableAssistants,
+                        onComplete = { homeMode, assistant ->
+                            updateLauncherSettings(
+                                launcherSettings.copy(
+                                    homeMode = homeMode,
+                                    preferredAssistant = assistant,
+                                ),
+                            )
                             repository.markOnboardingComplete()
                             if (homeMode == LauncherHomeMode.TERMINAL) {
                                 repository.markGestureCoachSeen()
@@ -176,6 +212,7 @@ class MainActivity : ComponentActivity() {
                     backdropBlurEnabled = crossWindowBlurEnabled &&
                         launcherSettings.frostedWallpaper,
                     launcherSettings = launcherSettings,
+                    availableAssistants = availableAssistants,
                     privateSpaceExpanded = privateSpaceExpanded,
                     contacts = contacts,
                     hasContactsPermission = hasContactsPermission,
@@ -212,6 +249,9 @@ class MainActivity : ComponentActivity() {
                     } },
                     onToggleFavorite = { app ->
                         favoriteKeys = repository.toggleFavorite(app)
+                    },
+                    onToggleShortcutFavorite = { shortcut ->
+                        favoriteKeys = repository.toggleFavorite(shortcut)
                     },
                     onAppInfo = { app -> perform(getString(R.string.error_open_app_info)) {
                         repository.showAppInfo(app)
@@ -276,6 +316,8 @@ class MainActivity : ComponentActivity() {
                     onOpenAccessibilitySettings = ::openAccessibilitySettings,
                     onOpenNotificationAccess = ::openNotificationAccess,
                     onConfigureContacts = ::configureContacts,
+                    onExportSettings = ::exportSettings,
+                    onImportSettings = ::importSettings,
                     onBackdropChanged = ::applyBackdrop,
                 )
             }
@@ -301,6 +343,7 @@ class MainActivity : ComponentActivity() {
             refreshContacts()
             hasGestureAccess = isGestureAccessGranted()
             hasNotificationAccess = isNotificationAccessGranted()
+            availableAssistants = installedAssistantPreferences()
             widgetProviders = widgetController.availableProviders()
         }
     }
@@ -337,6 +380,12 @@ class MainActivity : ComponentActivity() {
             roleManager.isRoleHeld(RoleManager.ROLE_HOME)
     }
 
+    private fun installedAssistantPreferences(): List<AssistantPreference> =
+        AssistantPreference.entries.filter { preference ->
+            val packageName = preference.packageName ?: return@filter false
+            packageManager.getLaunchIntentForPackage(packageName) != null
+        }
+
     private fun requestHomeRole() {
         val roleManager = getSystemService(RoleManager::class.java)
         if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME) &&
@@ -344,6 +393,14 @@ class MainActivity : ComponentActivity() {
         ) {
             roleRequest.launch(roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME))
         }
+    }
+
+    private fun exportSettings() {
+        exportSettingsDocument.launch("barely-settings.json")
+    }
+
+    private fun importSettings() {
+        importSettingsDocument.launch(arrayOf("application/json", "text/plain"))
     }
 
     private fun requestUninstall(app: LauncherApp) {
@@ -444,6 +501,12 @@ class MainActivity : ComponentActivity() {
                         putExtra(Intent.EXTRA_TEXT, action.prompt)
                     },
                 )
+            }
+
+            is LauncherCommandAction.OpenAssistant -> perform(getString(R.string.error_command)) {
+                val launchIntent = packageManager.getLaunchIntentForPackage(action.packageName)
+                checkNotNull(launchIntent) { "Assistant app is unavailable" }
+                startActivity(launchIntent)
             }
 
             LauncherCommandAction.RequestContactsPermission -> {

@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Continuar</string>
     <string name="home_mode_classic">Clássico</string>
     <string name="home_mode_classic_summary">Home com wallpaper, Favoritos e Apps a um gesto de distância.</string>
-    <string name="home_mode_terminal">Modo Comando</string>
+    <string name="home_mode_terminal">Comando</string>
     <string name="home_mode_terminal_summary">Abra apps de propósito digitando o nome ou um comando.</string>
     <string name="terminal_prompt_hint">digite um app ou comando</string>
     <string name="terminal_app_result">App</string>

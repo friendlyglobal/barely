@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Abrir Codex</string>
+    <string name="command_open_codex_summary">Continúa programando en la app de ChatGPT</string>
+    <string name="settings_ai_assistant">Asistente de IA</string>
+    <string name="settings_ai_assistant_summary">Solo se usa cuando la búsqueda local no encuentra resultados. Tu pregunta se envía a la app instalada.</string>
+    <string name="onboarding_ai_assistant_summary">Elige qué app instalada recibe una pregunta cuando la búsqueda local no encuentra nada.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Preguntar siempre</string>
+    <string name="assistant_not_installed">No instalada</string>
+    <string name="settings_portability">Copia de seguridad</string>
+    <string name="settings_export">Exportar ajustes</string>
+    <string name="settings_export_summary">Guarda preferencias portátiles de apariencia, gestos, búsqueda y módulos opcionales.</string>
+    <string name="settings_import">Importar ajustes</string>
+    <string name="settings_import_summary">Restaura un archivo de Barely. No incluye widgets, permisos, perfiles ni historial privado.</string>
+    <string name="settings_export_complete">Ajustes exportados</string>
+    <string name="settings_export_failed">No se pudieron exportar los ajustes</string>
+    <string name="settings_import_complete">Ajustes importados</string>
+    <string name="settings_import_failed">No se pudo importar este archivo</string>
+    <string name="settings_double_tap">Doble toque</string>
+    <string name="settings_double_tap_action_summary">Elige qué ocurre al tocar dos veces un área vacía de Inicio.</string>
+    <string name="settings_swipe_down">Deslizar hacia abajo</string>
+    <string name="settings_swipe_down_action_summary">Elige qué ocurre al deslizar Inicio hacia abajo.</string>
+    <string name="gesture_action_none">Nada</string>
+    <string name="gesture_action_lock">Bloquear pantalla</string>
+    <string name="gesture_action_notifications">Notificaciones</string>
+    <string name="gesture_action_search">Buscar</string>
+    <string name="gesture_action_apps">Todas las apps</string>
+</resources>

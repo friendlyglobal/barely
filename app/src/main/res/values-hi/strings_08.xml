@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Codex खोलें</string>
+    <string name="command_open_codex_summary">ChatGPT ऐप में कोडिंग जारी रखें</string>
+    <string name="settings_ai_assistant">AI सहायक</string>
+    <string name="settings_ai_assistant_summary">केवल तब उपयोग होता है जब स्थानीय खोज को परिणाम नहीं मिलता। आपका प्रश्न इंस्टॉल किए गए ऐप को भेजा जाता है।</string>
+    <string name="onboarding_ai_assistant_summary">स्थानीय खोज में कुछ न मिलने पर प्रश्न पाने वाला इंस्टॉल किया हुआ ऐप चुनें।</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">हर बार पूछें</string>
+    <string name="assistant_not_installed">इंस्टॉल नहीं है</string>
+    <string name="settings_portability">बैकअप</string>
+    <string name="settings_export">सेटिंग निर्यात करें</string>
+    <string name="settings_export_summary">दिखावट, जेस्चर, खोज और वैकल्पिक मॉड्यूल की पोर्टेबल प्राथमिकताएँ सहेजें।</string>
+    <string name="settings_import">सेटिंग आयात करें</string>
+    <string name="settings_import_summary">Barely सेटिंग फ़ाइल पुनर्स्थापित करें। विजेट, अनुमतियाँ, प्रोफ़ाइल और निजी इतिहास शामिल नहीं हैं।</string>
+    <string name="settings_export_complete">सेटिंग निर्यात हो गईं</string>
+    <string name="settings_export_failed">सेटिंग निर्यात नहीं हो सकीं</string>
+    <string name="settings_import_complete">सेटिंग आयात हो गईं</string>
+    <string name="settings_import_failed">यह सेटिंग फ़ाइल आयात नहीं हो सकी</string>
+    <string name="settings_double_tap">दो बार टैप</string>
+    <string name="settings_double_tap_action_summary">खाली होम क्षेत्र पर दो बार टैप करने की क्रिया चुनें।</string>
+    <string name="settings_swipe_down">नीचे स्वाइप</string>
+    <string name="settings_swipe_down_action_summary">होम पर नीचे खींचने की क्रिया चुनें।</string>
+    <string name="gesture_action_none">कुछ नहीं</string>
+    <string name="gesture_action_lock">स्क्रीन लॉक करें</string>
+    <string name="gesture_action_notifications">सूचनाएँ</string>
+    <string name="gesture_action_search">खोज</string>
+    <string name="gesture_action_apps">सभी ऐप</string>
+</resources>

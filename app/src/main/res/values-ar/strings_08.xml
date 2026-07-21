@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">فتح Codex</string>
+    <string name="command_open_codex_summary">تابع عمل البرمجة في تطبيق ChatGPT</string>
+    <string name="settings_ai_assistant">مساعد الذكاء الاصطناعي</string>
+    <string name="settings_ai_assistant_summary">يُستخدم فقط عندما لا يجد البحث المحلي نتيجة. يُرسل سؤالك إلى التطبيق المثبّت.</string>
+    <string name="onboarding_ai_assistant_summary">اختر التطبيق المثبّت الذي يتلقى السؤال عندما لا يجد البحث المحلي شيئًا.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">السؤال دائمًا</string>
+    <string name="assistant_not_installed">غير مثبّت</string>
+    <string name="settings_portability">نسخة احتياطية</string>
+    <string name="settings_export">تصدير الإعدادات</string>
+    <string name="settings_export_summary">احفظ تفضيلات المظهر والإيماءات والبحث والوحدات الاختيارية القابلة للنقل.</string>
+    <string name="settings_import">استيراد الإعدادات</string>
+    <string name="settings_import_summary">استعد ملف إعدادات Barely. لا يتضمن الأدوات والأذونات والملفات الشخصية والسجل الخاص.</string>
+    <string name="settings_export_complete">تم تصدير الإعدادات</string>
+    <string name="settings_export_failed">تعذر تصدير الإعدادات</string>
+    <string name="settings_import_complete">تم استيراد الإعدادات</string>
+    <string name="settings_import_failed">تعذر استيراد ملف الإعدادات هذا</string>
+    <string name="settings_double_tap">النقر المزدوج</string>
+    <string name="settings_double_tap_action_summary">اختر ما يحدث عند النقر مرتين على مساحة فارغة في الشاشة الرئيسية.</string>
+    <string name="settings_swipe_down">السحب لأسفل</string>
+    <string name="settings_swipe_down_action_summary">اختر ما يحدث عند السحب لأسفل على الشاشة الرئيسية.</string>
+    <string name="gesture_action_none">لا شيء</string>
+    <string name="gesture_action_lock">قفل الشاشة</string>
+    <string name="gesture_action_notifications">الإشعارات</string>
+    <string name="gesture_action_search">بحث</string>
+    <string name="gesture_action_apps">كل التطبيقات</string>
+</resources>

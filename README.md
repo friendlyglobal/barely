@@ -31,6 +31,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Uses short, restrained transitions for page changes and search instead of moving the whole screen as one sheet.
 - Launches that bottom, best-ranked result when the phone keyboard's Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
+- Lets published App Shortcuts be pinned to Favorites and opened directly without first opening their app.
 - Shows published shortcuts, favorite actions, app info, and uninstall from a long press.
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
 - Persists favorites with `SharedPreferences`; no database is used.
@@ -48,10 +49,12 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
 - Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
 - Can optionally search contacts in memory after an explicit runtime permission request.
-- Sends an explicitly prefixed question to an installed ChatGPT, Gemini, or Claude app through Android sharing; Barely contains no AI API key or relay server.
+- Keeps AI out of local results while an app, shortcut, contact, calculation, or command matches; only then offers the preferred installed ChatGPT, Gemini, or Claude app through Android sharing. The assistant is selected during onboarding or in Settings, and Barely contains no AI API key or relay server.
 - Supports keyboard and mouse use on DeX, including page arrows, Ctrl+K, result selection, Enter, Escape, and right-click app actions.
 - Offers disabled-by-default notification dots and media controls through Android's notification-listener access screen.
 - Opens launcher settings as a full-screen scrollable page and keeps app actions reachable even when an app publishes a long shortcut list.
+- Lets double tap and swipe down be mapped to a small public-Android action set, including no action, lock/notifications, Search, and All apps where the current Home style supports them.
+- Exports and imports portable JSON preferences through Android's document picker while excluding widget IDs, permission grants, profile state, favorites, and local history.
 
 Shortcut data from other apps is protected by Android. It becomes available only after Barely is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
 
@@ -145,11 +148,11 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 To return to Samsung’s launcher, select **One UI Home** from the same system page before uninstalling Barely.
 
-## Enable the optional home gestures
+## Configure optional Home gestures
 
 The clean home page works without Accessibility. This one optional service is needed only because Android does not let an ordinary third-party launcher lock the screen or open notifications directly.
 
-1. On Barely’s wallpaper page, double-tap or swipe down once.
+1. In **Barely settings > Gestures**, choose the action for double tap and swipe down. Lock screen and Notifications require the optional service; Search, All apps, and Nothing do not.
 2. Android opens the **Barely gestures** service page directly when the device permits it. On Samsung it falls back to **Accessibility > Installed apps**; other devices open Accessibility with **Barely gestures** highlighted. Tap **Barely gestures** and enable the service if one final tap is required.
 3. If Samsung blocks the switch for a sideloaded APK, open **Settings > Apps > Barely**, use the three-dot menu, choose **Allow restricted settings**, then return to Accessibility.
 
@@ -169,7 +172,7 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 10. Search for a shortcut published by an installed app and confirm that a direct label match appears above apps.
 11. Confirm that Classic Search grows upward with the best result nearest the bottom capsule, then press the phone keyboard's Search action and verify that this result opens directly.
 12. Change the Android system language and reopen Barely to verify automatic localization.
-13. On the wallpaper page, swipe down and verify that notifications open; double-tap and verify that the phone locks.
+13. In Settings, map double tap and swipe down to each available action. Verify Lock screen and Notifications request gesture access, while Search, All apps, and Nothing do not.
 14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and the appropriate two- or three-column Apps/search layout. Resize the window and confirm it returns to one column below 600 dp.
 15. On Android 15 or newer, configure Private Space, verify its separate Apps container, lock it, and confirm its apps and shortcuts disappear from search.
 16. Search for `18*12`, `10 km to mi`, or `wifi`; verify calculations and conversions stay local and settings open directly.
@@ -184,6 +187,9 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 25. Enable TalkBack and verify that top commands, settings choices, widget editing controls, and resize actions receive a clear focus target and label.
 26. Set the system font to 150% and use an RTL language. Enable Terminal aesthetics and confirm that localized content follows RTL while Command syntax still reads `:command`, `>_`, and `>`.
 27. Disable Android animator scales and repeat Home, Apps, Search, and back navigation; every state change must remain usable without relying on motion.
+28. With ChatGPT, Gemini, or Claude installed, select a preferred assistant. Type a query with no local match and verify exactly the selected assistant action appears; type an app or shortcut match and verify the AI action stays hidden.
+29. Pin a published shortcut from an app action sheet, open it from Favorites, unpin it, and verify unavailable shortcuts disappear after the publisher removes them.
+30. Export settings, change appearance and gesture choices, import the file, and verify the portable preferences return without altering widgets, permissions, favorites, or local search history.
 
 ## Privacy
 

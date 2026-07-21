@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Ouvrir Codex</string>
+    <string name="command_open_codex_summary">Continuer à programmer dans l’application ChatGPT</string>
+    <string name="settings_ai_assistant">Assistant IA</string>
+    <string name="settings_ai_assistant_summary">Utilisé seulement si la recherche locale ne trouve aucun résultat. Votre question est transmise à l’application installée.</string>
+    <string name="onboarding_ai_assistant_summary">Choisissez l’application installée qui reçoit une question lorsque la recherche locale ne trouve rien.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Toujours demander</string>
+    <string name="assistant_not_installed">Non installée</string>
+    <string name="settings_portability">Sauvegarde</string>
+    <string name="settings_export">Exporter les réglages</string>
+    <string name="settings_export_summary">Enregistrez les préférences portables d’apparence, de gestes, de recherche et de modules optionnels.</string>
+    <string name="settings_import">Importer les réglages</string>
+    <string name="settings_import_summary">Restaurez un fichier Barely. Les widgets, autorisations, profils et l’historique privé sont exclus.</string>
+    <string name="settings_export_complete">Réglages exportés</string>
+    <string name="settings_export_failed">Impossible d’exporter les réglages</string>
+    <string name="settings_import_complete">Réglages importés</string>
+    <string name="settings_import_failed">Impossible d’importer ce fichier</string>
+    <string name="settings_double_tap">Appui double</string>
+    <string name="settings_double_tap_action_summary">Choisissez l’action d’un appui double sur une zone vide de l’accueil.</string>
+    <string name="settings_swipe_down">Balayer vers le bas</string>
+    <string name="settings_swipe_down_action_summary">Choisissez l’action d’un balayage vers le bas sur l’accueil.</string>
+    <string name="gesture_action_none">Aucune action</string>
+    <string name="gesture_action_lock">Verrouiller l’écran</string>
+    <string name="gesture_action_notifications">Notifications</string>
+    <string name="gesture_action_search">Recherche</string>
+    <string name="gesture_action_apps">Toutes les apps</string>
+</resources>

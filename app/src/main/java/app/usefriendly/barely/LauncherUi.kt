@@ -113,6 +113,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -123,6 +124,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -202,9 +204,18 @@ import kotlin.math.roundToInt
 @Composable
 fun BarelyOnboarding(
     initialMode: LauncherHomeMode,
-    onComplete: (LauncherHomeMode) -> Unit,
+    initialAssistant: AssistantPreference,
+    availableAssistants: List<AssistantPreference>,
+    onComplete: (LauncherHomeMode, AssistantPreference) -> Unit,
 ) {
     var selectedMode by remember { mutableStateOf(initialMode) }
+    var selectedAssistant by remember(availableAssistants) {
+        mutableStateOf(
+            initialAssistant.takeIf { it in availableAssistants }
+                ?: availableAssistants.firstOrNull()
+                ?: AssistantPreference.ASK_EVERY_TIME,
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -264,6 +275,31 @@ fun BarelyOnboarding(
                 selected = selectedMode == LauncherHomeMode.TERMINAL,
                 onClick = { selectedMode = LauncherHomeMode.TERMINAL },
             )
+            if (availableAssistants.isNotEmpty()) {
+                Spacer(Modifier.height(22.dp))
+                Text(
+                    stringResource(R.string.settings_ai_assistant),
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    stringResource(R.string.onboarding_ai_assistant_summary),
+                    color = Color.White.copy(alpha = BarelyVisualTokens.contentSecondary),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    availableAssistants.forEach { assistant ->
+                        AssistantPreferenceChoice(
+                            modifier = Modifier.weight(1f),
+                            assistant = assistant,
+                            selected = assistant == selectedAssistant,
+                            onClick = { selectedAssistant = assistant },
+                        )
+                    }
+                }
+            }
             Spacer(Modifier.height(18.dp))
             Text(
                 stringResource(R.string.onboarding_change_later),
@@ -272,7 +308,7 @@ fun BarelyOnboarding(
             )
             Spacer(Modifier.height(18.dp))
             FilledTonalButton(
-                onClick = { onComplete(selectedMode) },
+                onClick = { onComplete(selectedMode, selectedAssistant) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
@@ -281,6 +317,51 @@ fun BarelyOnboarding(
             }
         }
     }
+}
+
+@Composable
+private fun AssistantPreferenceChoice(
+    modifier: Modifier,
+    assistant: AssistantPreference,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .clip(BarelyVisualTokens.compactRowShape)
+            .combinedClickable(onClick = onClick)
+            .semantics { this.selected = selected },
+        shape = BarelyVisualTokens.compactRowShape,
+        color = if (selected) Color.White.copy(alpha = 0.18f)
+        else Color.Black.copy(alpha = BarelyVisualTokens.surfaceIdle),
+        contentColor = Color.White,
+        border = BorderStroke(
+            1.dp,
+            if (selected) Color.White.copy(alpha = 0.68f)
+            else Color.White.copy(alpha = 0.14f),
+        ),
+    ) {
+        Box(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 12.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                assistantPreferenceLabel(assistant),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}
+
+@Composable
+private fun assistantPreferenceLabel(preference: AssistantPreference): String = when (preference) {
+    AssistantPreference.CHATGPT -> stringResource(R.string.assistant_chatgpt)
+    AssistantPreference.GEMINI -> stringResource(R.string.assistant_gemini)
+    AssistantPreference.CLAUDE -> stringResource(R.string.assistant_claude)
+    AssistantPreference.ASK_EVERY_TIME -> stringResource(R.string.assistant_ask_every_time)
 }
 
 @Composable
@@ -363,6 +444,7 @@ fun LauncherScreen(
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
     launcherSettings: LauncherSettings,
+    availableAssistants: List<AssistantPreference>,
     privateSpaceExpanded: Boolean,
     contacts: List<LauncherContact>,
     hasContactsPermission: Boolean,
@@ -378,6 +460,7 @@ fun LauncherScreen(
     onLaunchApp: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
     onToggleFavorite: (LauncherApp) -> Unit,
+    onToggleShortcutFavorite: (LauncherShortcut) -> Unit,
     onAppInfo: (LauncherApp) -> Unit,
     onUninstall: (LauncherApp) -> Unit,
     onAddWidget: (AppWidgetProviderInfo) -> Unit,
@@ -397,6 +480,8 @@ fun LauncherScreen(
     onOpenAccessibilitySettings: () -> Unit,
     onOpenNotificationAccess: () -> Unit,
     onConfigureContacts: () -> Unit,
+    onExportSettings: () -> Unit,
+    onImportSettings: () -> Unit,
     onBackdropChanged: (LauncherBackdrop) -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = HOME_PAGE, pageCount = { PAGE_COUNT })
@@ -422,6 +507,9 @@ fun LauncherScreen(
     val favorites = remember(snapshot.apps, favoriteKeys) {
         snapshot.apps.filter { it.key in favoriteKeys }
     }
+    val favoriteShortcuts = remember(snapshot.shortcuts, favoriteKeys) {
+        snapshot.shortcuts.filter { it.searchTargetKey in favoriteKeys }
+    }
     val recommendedApps = remember(snapshot.apps, recommendedAppKeys, launcherSettings.localSuggestions) {
         if (!launcherSettings.localSuggestions) emptyList() else recommendedAppKeys.mapNotNull { key ->
             snapshot.apps.firstOrNull { it.key == key && !it.isPrivate }
@@ -444,6 +532,24 @@ fun LauncherScreen(
         initialSearchQuery = initialQuery
         onGestureCoachSeen()
         searchVisible = true
+    }
+
+    fun runHomeGesture(action: LauncherGestureAction) {
+        when (action) {
+            LauncherGestureAction.NONE -> Unit
+            LauncherGestureAction.LOCK_SCREEN -> onLockScreen()
+            LauncherGestureAction.NOTIFICATIONS -> onOpenNotifications()
+            LauncherGestureAction.SEARCH -> {
+                if (launcherSettings.homeMode == LauncherHomeMode.CLASSIC) openSearch()
+            }
+            LauncherGestureAction.APPS -> {
+                if (launcherSettings.homeMode == LauncherHomeMode.TERMINAL) {
+                    terminalAppsVisible = true
+                } else {
+                    scope.launch { pagerState.animateScrollToPage(APPS_PAGE) }
+                }
+            }
+        }
     }
 
     LaunchedEffect(searchVisible, launcherSettings.homeMode) {
@@ -600,6 +706,7 @@ fun LauncherScreen(
                 when (page) {
                     FAVORITES_PAGE -> FavoritesPage(
                         favorites = favorites,
+                        favoriteShortcuts = favoriteShortcuts,
                         widgets = widgets,
                         widgetHost = widgetHost,
                         widgetManager = widgetManager,
@@ -609,6 +716,7 @@ fun LauncherScreen(
                         notificationCounts = notificationCounts,
                         nowPlaying = nowPlaying,
                         onLaunchApp = onLaunchApp,
+                        onLaunchShortcut = onLaunchShortcut,
                         onLongPress = { selectedApp = it },
                         onAddWidget = { widgetPickerVisible = true },
                         onRemoveWidget = onRemoveWidget,
@@ -621,10 +729,16 @@ fun LauncherScreen(
 
                     HOME_PAGE -> WallpaperPage(
                         showGestureCoach = showGestureCoach,
-                        doubleTapToLock = launcherSettings.doubleTapToLock,
-                        swipeDownForNotifications = launcherSettings.swipeDownForNotifications,
-                        onLockScreen = onLockScreen,
-                        onOpenNotifications = onOpenNotifications,
+                        doubleTapEnabled = launcherSettings.doubleTapAction !=
+                            LauncherGestureAction.NONE,
+                        swipeDownEnabled = launcherSettings.swipeDownAction !=
+                            LauncherGestureAction.NONE,
+                        onDoubleTap = {
+                            runHomeGesture(launcherSettings.doubleTapAction)
+                        },
+                        onSwipeDown = {
+                            runHomeGesture(launcherSettings.swipeDownAction)
+                        },
                         onSearch = {
                             openSearch()
                         },
@@ -679,6 +793,7 @@ fun LauncherScreen(
                 hasNotificationAccess = hasNotificationAccess,
                 notificationDotsEnabled = launcherSettings.notificationDots,
                 mediaControlsEnabled = launcherSettings.mediaControls,
+                preferredAssistant = launcherSettings.preferredAssistant,
                 notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
                 backdropBlurEnabled = backdropBlurEnabled,
@@ -744,6 +859,7 @@ fun LauncherScreen(
                     hasNotificationAccess = hasNotificationAccess,
                     notificationDotsEnabled = launcherSettings.notificationDots,
                     mediaControlsEnabled = launcherSettings.mediaControls,
+                    preferredAssistant = launcherSettings.preferredAssistant,
                     launcherSearchLearning = if (launcherSettings.localSuggestions) {
                         launcherSearchLearning
                     } else {
@@ -755,8 +871,10 @@ fun LauncherScreen(
                     topActionBackdrop = launcherSettings.terminalTopActionBackdrop,
                     cornerRadius = launcherSettings.terminalCornerRadius,
                     terminalAesthetic = launcherSettings.terminalAesthetic,
-                    doubleTapToLock = launcherSettings.doubleTapToLock,
-                    swipeDownForNotifications = launcherSettings.swipeDownForNotifications,
+                    doubleTapEnabled = launcherSettings.doubleTapAction !=
+                        LauncherGestureAction.NONE,
+                    swipeDownEnabled = launcherSettings.swipeDownAction !=
+                        LauncherGestureAction.NONE,
                     onLaunchApp = onLaunchApp,
                     onLongPress = { selectedApp = it },
                     onLaunchShortcut = onLaunchShortcut,
@@ -771,8 +889,12 @@ fun LauncherScreen(
                             launcherSettings.copy(homeMode = LauncherHomeMode.CLASSIC),
                         )
                     },
-                    onLockScreen = onLockScreen,
-                    onOpenNotifications = onOpenNotifications,
+                    onDoubleTap = {
+                        runHomeGesture(launcherSettings.doubleTapAction)
+                    },
+                    onSwipeDown = {
+                        runHomeGesture(launcherSettings.swipeDownAction)
+                    },
                 )
             }
             AnimatedVisibility(
@@ -821,6 +943,12 @@ fun LauncherScreen(
                 selectedApp = null
                 onLaunchShortcut(it)
             },
+            favoriteShortcutKeys = favoriteShortcuts.mapTo(mutableSetOf()) {
+                it.searchTargetKey
+            },
+            onToggleShortcutFavorite = { shortcut ->
+                onToggleShortcutFavorite(shortcut)
+            },
             onToggleFavorite = {
                 onToggleFavorite(app)
                 selectedApp = null
@@ -839,6 +967,7 @@ fun LauncherScreen(
     if (settingsVisible) {
         LauncherSettingsPage(
             settings = launcherSettings,
+            availableAssistants = availableAssistants,
             isHomeRoleHeld = isHomeRoleHeld,
             hasGestureAccess = hasGestureAccess,
             hasNotificationAccess = hasNotificationAccess,
@@ -849,6 +978,8 @@ fun LauncherScreen(
             onOpenAccessibilitySettings = onOpenAccessibilitySettings,
             onOpenNotificationAccess = onOpenNotificationAccess,
             onConfigureContacts = onConfigureContacts,
+            onExportSettings = onExportSettings,
+            onImportSettings = onImportSettings,
             onClearLocalHistory = onClearLocalHistory,
         )
     }
@@ -871,11 +1002,11 @@ fun LauncherScreen(
 @Composable
 private fun WallpaperPage(
     showGestureCoach: Boolean,
-    doubleTapToLock: Boolean,
-    swipeDownForNotifications: Boolean,
+    doubleTapEnabled: Boolean,
+    swipeDownEnabled: Boolean,
     onSearch: () -> Unit,
-    onLockScreen: () -> Unit,
-    onOpenNotifications: () -> Unit,
+    onDoubleTap: () -> Unit,
+    onSwipeDown: () -> Unit,
 ) {
     val threshold = with(LocalDensity.current) { 72.dp.toPx() }
     var dragDistance by remember { mutableFloatStateOf(0f) }
@@ -887,10 +1018,10 @@ private fun WallpaperPage(
             .semantics {
                 contentDescription = homeContentDescription
             }
-            .pointerInput(onLockScreen, doubleTapToLock) {
+            .pointerInput(onDoubleTap, doubleTapEnabled) {
                 detectTapGestures(
-                    onDoubleTap = if (doubleTapToLock) {
-                        { _: Offset -> onLockScreen() }
+                    onDoubleTap = if (doubleTapEnabled) {
+                        { _: Offset -> onDoubleTap() }
                     } else {
                         null
                     },
@@ -906,8 +1037,8 @@ private fun WallpaperPage(
                     onDragEnd = {
                         when {
                             dragDistance < -threshold -> onSearch()
-                            dragDistance > threshold && swipeDownForNotifications -> {
-                                onOpenNotifications()
+                            dragDistance > threshold && swipeDownEnabled -> {
+                                onSwipeDown()
                             }
                         }
                         dragDistance = 0f
@@ -967,6 +1098,7 @@ private fun TerminalHomePage(
     hasNotificationAccess: Boolean,
     notificationDotsEnabled: Boolean,
     mediaControlsEnabled: Boolean,
+    preferredAssistant: AssistantPreference,
     launcherSearchLearning: List<LauncherSearchLearning>,
     homeRequestId: Int,
     backgroundColor: Color,
@@ -974,8 +1106,8 @@ private fun TerminalHomePage(
     topActionBackdrop: Boolean,
     cornerRadius: Int,
     terminalAesthetic: Boolean,
-    doubleTapToLock: Boolean,
-    swipeDownForNotifications: Boolean,
+    doubleTapEnabled: Boolean,
+    swipeDownEnabled: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
@@ -986,8 +1118,8 @@ private fun TerminalHomePage(
     onOpenApps: () -> Unit,
     onOpenSettings: () -> Unit,
     onSwitchToClassic: () -> Unit,
-    onLockScreen: () -> Unit,
-    onOpenNotifications: () -> Unit,
+    onDoubleTap: () -> Unit,
+    onSwipeDown: () -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableIntStateOf(0) }
@@ -1039,6 +1171,7 @@ private fun TerminalHomePage(
         hasNotificationAccess,
         notificationDotsEnabled,
         mediaControlsEnabled,
+        preferredAssistant,
         launcherSearchLearning,
     ) {
         if (query.trimStart().startsWith(':')) {
@@ -1054,6 +1187,7 @@ private fun TerminalHomePage(
                 hasNotificationAccess = hasNotificationAccess,
                 notificationDotsEnabled = notificationDotsEnabled,
                 mediaControlsEnabled = mediaControlsEnabled,
+                preferredAssistant = preferredAssistant,
                 launcherSearchLearning = launcherSearchLearning,
                 limit = MAX_TERMINAL_RESULTS,
             ).map(TerminalSuggestion::SearchResult)
@@ -1232,9 +1366,9 @@ private fun TerminalHomePage(
             modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)))
-                .pointerInput(doubleTapToLock) {
+                .pointerInput(doubleTapEnabled, onDoubleTap) {
                     detectTapGestures(
-                        onDoubleTap = { if (doubleTapToLock) onLockScreen() },
+                        onDoubleTap = { if (doubleTapEnabled) onDoubleTap() },
                     )
                 }
                 .draggable(
@@ -1247,9 +1381,9 @@ private fun TerminalHomePage(
                             settleHistory(velocity)
                         } else if (
                             notificationDrag > dragThreshold &&
-                            swipeDownForNotifications
+                            swipeDownEnabled
                         ) {
-                            onOpenNotifications()
+                            onSwipeDown()
                         }
                         notificationDrag = 0f
                     },
@@ -1876,6 +2010,7 @@ private fun TerminalAppsPage(
 @Composable
 private fun FavoritesPage(
     favorites: List<LauncherApp>,
+    favoriteShortcuts: List<LauncherShortcut>,
     widgets: List<WidgetPlacement>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
@@ -1885,6 +2020,7 @@ private fun FavoritesPage(
     notificationCounts: Map<String, Int>,
     nowPlaying: NowPlaying?,
     onLaunchApp: (LauncherApp) -> Unit,
+    onLaunchShortcut: (LauncherShortcut) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onAddWidget: () -> Unit,
     onRemoveWidget: (Int) -> Unit,
@@ -1917,8 +2053,10 @@ private fun FavoritesPage(
                     ) {
                         favoriteItems(
                             favorites,
+                            favoriteShortcuts,
                             notificationCounts,
                             onLaunchApp,
+                            onLaunchShortcut,
                             onLongPress,
                         )
                     }
@@ -1950,8 +2088,10 @@ private fun FavoritesPage(
                 ) {
                     favoriteItems(
                         favorites,
+                        favoriteShortcuts,
                         notificationCounts,
                         onLaunchApp,
+                        onLaunchShortcut,
                         onLongPress,
                     )
                     mediaItem(nowPlaying, onMediaAction)
@@ -1976,11 +2116,13 @@ private fun FavoritesPage(
 
 private fun LazyListScope.favoriteItems(
     favorites: List<LauncherApp>,
+    shortcuts: List<LauncherShortcut>,
     notificationCounts: Map<String, Int>,
     onLaunchApp: (LauncherApp) -> Unit,
+    onLaunchShortcut: (LauncherShortcut) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
 ) {
-    if (favorites.isEmpty()) {
+    if (favorites.isEmpty() && shortcuts.isEmpty()) {
         item(key = "empty_favorites") {
             Column(
                 modifier = Modifier
@@ -2018,6 +2160,54 @@ private fun LazyListScope.favoriteItems(
                 onLongPress = { onLongPress(app) },
             )
         }
+        items(shortcuts, key = { it.searchTargetKey }) { shortcut ->
+            FavoriteShortcutTile(
+                shortcut = shortcut,
+                onClick = { onLaunchShortcut(shortcut) },
+                onLongPress = { onLongPress(shortcut.owner) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FavoriteShortcutTile(
+    shortcut: LauncherShortcut,
+    onClick: () -> Unit,
+    onLongPress: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(BarelyVisualTokens.controlShape)
+            .secondaryClickable(onLongPress)
+            .combinedClickable(onClick = onClick, onLongClick = onLongPress)
+            .padding(horizontal = 12.dp, vertical = 9.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                shortcut.label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.White,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                shortcut.owner.label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.White.copy(alpha = BarelyVisualTokens.contentMuted),
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+        Icon(
+            Icons.Outlined.Bolt,
+            contentDescription = stringResource(R.string.shortcuts),
+            modifier = Modifier.size(18.dp),
+            tint = Color.White.copy(alpha = BarelyVisualTokens.contentMuted),
+        )
     }
 }
 
@@ -3230,21 +3420,24 @@ private fun buildRankedLauncherResults(
     hasNotificationAccess: Boolean,
     notificationDotsEnabled: Boolean,
     mediaControlsEnabled: Boolean,
+    preferredAssistant: AssistantPreference,
     launcherSearchLearning: List<LauncherSearchLearning> = emptyList(),
     limit: Int,
 ): List<LauncherSearchResult> {
     val normalizedQuery = query.normalizedForSearch()
     if (normalizedQuery.isBlank()) return emptyList()
-    return buildList {
+    val installedPackages = apps.mapTo(mutableSetOf(), LauncherApp::packageName)
+    val ranked = buildList {
         buildLauncherCommands(
             context = context,
             query = query,
-            installedPackages = apps.mapTo(mutableSetOf(), LauncherApp::packageName),
+            installedPackages = installedPackages,
             contacts = contacts,
             hasContactsPermission = hasContactsPermission,
             hasNotificationAccess = hasNotificationAccess,
             notificationDotsEnabled = notificationDotsEnabled,
             mediaControlsEnabled = mediaControlsEnabled,
+            preferredAssistant = preferredAssistant,
         ).forEach { command -> add(CommandSearchResult(command)) }
         apps.forEach { app ->
             relevanceScore(
@@ -3292,7 +3485,15 @@ private fun buildRankedLauncherResults(
             .thenBy { it.typePriority }
             .thenBy { it.publisherRank }
             .thenBy { it.label },
-    ).take(limit)
+    )
+    if (ranked.isNotEmpty()) return ranked.take(limit)
+    if (normalizedQuery.length < 2 || query.trimStart().startsWith(':')) return emptyList()
+    return buildAssistantCommands(
+        context = context,
+        prompt = query.trim(),
+        installedPackages = installedPackages,
+        preferredAssistant = preferredAssistant,
+    ).map(::CommandSearchResult).take(limit)
 }
 
 @Composable
@@ -3306,6 +3507,7 @@ private fun SearchPage(
     hasNotificationAccess: Boolean,
     notificationDotsEnabled: Boolean,
     mediaControlsEnabled: Boolean,
+    preferredAssistant: AssistantPreference,
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
@@ -3352,6 +3554,7 @@ private fun SearchPage(
         hasNotificationAccess,
         notificationDotsEnabled,
         mediaControlsEnabled,
+        preferredAssistant,
         launcherSearchLearning,
         normalizedQuery,
     ) {
@@ -3365,6 +3568,7 @@ private fun SearchPage(
             hasNotificationAccess = hasNotificationAccess,
             notificationDotsEnabled = notificationDotsEnabled,
             mediaControlsEnabled = mediaControlsEnabled,
+            preferredAssistant = preferredAssistant,
             launcherSearchLearning = launcherSearchLearning,
             limit = MAX_SEARCH_RESULTS,
         )
@@ -4323,9 +4527,24 @@ private fun WidgetBitmapIcon(bitmap: android.graphics.Bitmap?, label: String, si
 private fun resourcesQuantityString(id: Int, quantity: Int, vararg formatArgs: Any): String =
     LocalContext.current.resources.getQuantityString(id, quantity, *formatArgs)
 
+private enum class GesturePicker {
+    DOUBLE_TAP,
+    SWIPE_DOWN,
+}
+
+@Composable
+private fun gestureActionLabel(action: LauncherGestureAction): String = when (action) {
+    LauncherGestureAction.NONE -> stringResource(R.string.gesture_action_none)
+    LauncherGestureAction.LOCK_SCREEN -> stringResource(R.string.gesture_action_lock)
+    LauncherGestureAction.NOTIFICATIONS -> stringResource(R.string.gesture_action_notifications)
+    LauncherGestureAction.SEARCH -> stringResource(R.string.gesture_action_search)
+    LauncherGestureAction.APPS -> stringResource(R.string.gesture_action_apps)
+}
+
 @Composable
 private fun LauncherSettingsPage(
     settings: LauncherSettings,
+    availableAssistants: List<AssistantPreference>,
     isHomeRoleHeld: Boolean,
     hasGestureAccess: Boolean,
     hasNotificationAccess: Boolean,
@@ -4336,8 +4555,141 @@ private fun LauncherSettingsPage(
     onOpenAccessibilitySettings: () -> Unit,
     onOpenNotificationAccess: () -> Unit,
     onConfigureContacts: () -> Unit,
+    onExportSettings: () -> Unit,
+    onImportSettings: () -> Unit,
     onClearLocalHistory: () -> Unit,
 ) {
+    var assistantPickerVisible by remember { mutableStateOf(false) }
+    var gesturePicker by remember { mutableStateOf<GesturePicker?>(null) }
+    val assistantOptions = remember(availableAssistants) {
+        buildList {
+            addAll(availableAssistants)
+            if (availableAssistants.size > 1) add(AssistantPreference.ASK_EVERY_TIME)
+        }
+    }
+    val selectedAssistant = settings.preferredAssistant.takeIf { it in assistantOptions }
+        ?: assistantOptions.firstOrNull()
+        ?: AssistantPreference.ASK_EVERY_TIME
+
+    if (assistantPickerVisible) {
+        AlertDialog(
+            onDismissRequest = { assistantPickerVisible = false },
+            title = { Text(stringResource(R.string.settings_ai_assistant)) },
+            text = {
+                Column {
+                    assistantOptions.forEach { assistant ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(BarelyVisualTokens.compactRowShape)
+                                .combinedClickable {
+                                    onSettingsChanged(
+                                        settings.copy(preferredAssistant = assistant),
+                                    )
+                                    assistantPickerVisible = false
+                                }
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = assistant == selectedAssistant,
+                                onClick = null,
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(assistantPreferenceLabel(assistant))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { assistantPickerVisible = false }) {
+                    Text(stringResource(R.string.close_search))
+                }
+            },
+        )
+    }
+
+    gesturePicker?.let { picker ->
+        val options = if (picker == GesturePicker.DOUBLE_TAP) {
+            buildList {
+                add(LauncherGestureAction.NONE)
+                add(LauncherGestureAction.LOCK_SCREEN)
+                if (settings.homeMode == LauncherHomeMode.CLASSIC) {
+                    add(LauncherGestureAction.SEARCH)
+                }
+                add(LauncherGestureAction.APPS)
+            }
+        } else {
+            buildList {
+                add(LauncherGestureAction.NONE)
+                add(LauncherGestureAction.NOTIFICATIONS)
+                if (settings.homeMode == LauncherHomeMode.CLASSIC) {
+                    add(LauncherGestureAction.SEARCH)
+                }
+                add(LauncherGestureAction.APPS)
+            }
+        }
+        val selected = if (picker == GesturePicker.DOUBLE_TAP) {
+            settings.doubleTapAction
+        } else {
+            settings.swipeDownAction
+        }
+        AlertDialog(
+            onDismissRequest = { gesturePicker = null },
+            title = {
+                Text(
+                    stringResource(
+                        if (picker == GesturePicker.DOUBLE_TAP) {
+                            R.string.settings_double_tap
+                        } else {
+                            R.string.settings_swipe_down
+                        },
+                    ),
+                )
+            },
+            text = {
+                Column {
+                    options.forEach { action ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(BarelyVisualTokens.compactRowShape)
+                                .combinedClickable {
+                                    val updated = if (picker == GesturePicker.DOUBLE_TAP) {
+                                        settings.copy(doubleTapAction = action)
+                                    } else {
+                                        settings.copy(swipeDownAction = action)
+                                    }
+                                    onSettingsChanged(updated)
+                                    gesturePicker = null
+                                    if (
+                                        !hasGestureAccess &&
+                                        action in setOf(
+                                            LauncherGestureAction.LOCK_SCREEN,
+                                            LauncherGestureAction.NOTIFICATIONS,
+                                        )
+                                    ) {
+                                        onOpenAccessibilitySettings()
+                                    }
+                                }
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(selected = action == selected, onClick = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(gestureActionLabel(action))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { gesturePicker = null }) {
+                    Text(stringResource(R.string.close_search))
+                }
+            },
+        )
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surface,
@@ -4388,25 +4740,19 @@ private fun LauncherSettingsPage(
                 SettingsSectionTitle(stringResource(R.string.settings_gestures))
             }
             item(key = "double_tap_lock") {
-                SettingsSwitchItem(
-                    title = stringResource(R.string.settings_double_tap_lock),
-                    summary = stringResource(R.string.settings_double_tap_lock_summary),
-                    checked = settings.doubleTapToLock,
-                    onCheckedChange = { enabled ->
-                        onSettingsChanged(settings.copy(doubleTapToLock = enabled))
-                        if (enabled && !hasGestureAccess) onOpenAccessibilitySettings()
-                    },
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_double_tap),
+                    summary = stringResource(R.string.settings_double_tap_action_summary),
+                    status = gestureActionLabel(settings.doubleTapAction),
+                    onClick = { gesturePicker = GesturePicker.DOUBLE_TAP },
                 )
             }
             item(key = "swipe_notifications") {
-                SettingsSwitchItem(
-                    title = stringResource(R.string.settings_swipe_notifications),
-                    summary = stringResource(R.string.settings_swipe_notifications_summary),
-                    checked = settings.swipeDownForNotifications,
-                    onCheckedChange = { enabled ->
-                        onSettingsChanged(settings.copy(swipeDownForNotifications = enabled))
-                        if (enabled && !hasGestureAccess) onOpenAccessibilitySettings()
-                    },
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_swipe_down),
+                    summary = stringResource(R.string.settings_swipe_down_action_summary),
+                    status = gestureActionLabel(settings.swipeDownAction),
+                    onClick = { gesturePicker = GesturePicker.SWIPE_DOWN },
                 )
             }
 
@@ -4499,6 +4845,20 @@ private fun LauncherSettingsPage(
             item(key = "settings_search_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_search))
             }
+            item(key = "preferred_assistant") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_ai_assistant),
+                    summary = stringResource(R.string.settings_ai_assistant_summary),
+                    status = if (assistantOptions.isEmpty()) {
+                        stringResource(R.string.assistant_not_installed)
+                    } else {
+                        assistantPreferenceLabel(selectedAssistant)
+                    },
+                    onClick = {
+                        if (assistantOptions.isNotEmpty()) assistantPickerVisible = true
+                    },
+                )
+            }
             item(key = "local_suggestions") {
                 SettingsSwitchItem(
                     title = stringResource(R.string.settings_local_suggestions),
@@ -4550,6 +4910,26 @@ private fun LauncherSettingsPage(
                         onSettingsChanged(settings.copy(mediaControls = enabled))
                         if (enabled && !hasNotificationAccess) onOpenNotificationAccess()
                     },
+                )
+            }
+
+            item(key = "settings_portability_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_portability))
+            }
+            item(key = "export_settings") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_export),
+                    summary = stringResource(R.string.settings_export_summary),
+                    status = "",
+                    onClick = onExportSettings,
+                )
+            }
+            item(key = "import_settings") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_import),
+                    summary = stringResource(R.string.settings_import_summary),
+                    status = "",
+                    onClick = onImportSettings,
                 )
             }
 
@@ -4941,6 +5321,8 @@ private fun AppActionsSheet(
     canReadShortcuts: Boolean,
     onDismiss: () -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
+    favoriteShortcutKeys: Set<String>,
+    onToggleShortcutFavorite: (LauncherShortcut) -> Unit,
     onToggleFavorite: () -> Unit,
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
@@ -5061,6 +5443,10 @@ private fun AppActionsSheet(
                         AppShortcutItem(
                             shortcut = shortcut,
                             onClick = { onLaunchShortcut(shortcut) },
+                            isFavorite = shortcut.searchTargetKey in favoriteShortcutKeys,
+                            onToggleFavorite = {
+                                onToggleShortcutFavorite(shortcut)
+                            },
                         )
                     }
                 }
@@ -5134,6 +5520,8 @@ private fun SheetRowDivider() {
 private fun AppShortcutItem(
     shortcut: LauncherShortcut,
     onClick: () -> Unit,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
 ) {
     val enabled = shortcut.info.isEnabled
     Row(
@@ -5172,6 +5560,19 @@ private fun AppShortcutItem(
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
+        }
+        IconButton(onClick = onToggleFavorite) {
+            Icon(
+                if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                contentDescription = stringResource(
+                    if (isFavorite) {
+                        R.string.remove_from_favorites
+                    } else {
+                        R.string.add_to_favorites
+                    },
+                ),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
