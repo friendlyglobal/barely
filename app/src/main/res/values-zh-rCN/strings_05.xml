@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">返回</string>
+    <string name="choose_widget">选择微件</string>
+    <string name="widget_picker_summary">按应用分组，并在可用时显示真实预览</string>
+    <string name="widget_apps">微件应用</string>
+    <string name="search_widgets">搜索微件</string>
+    <string name="no_widgets_found">未找到微件</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="other">%1$d 个微件</item></plurals>
+    <string name="launcher_settings">Barely 设置</string>
+    <string name="barely_tagline">几乎隐形，随时就绪。</string>
+    <string name="settings_gestures">手势</string>
+    <string name="settings_double_tap_lock">双击锁屏</string>
+    <string name="settings_double_tap_lock_summary">双击空白主屏幕以锁定屏幕。</string>
+    <string name="settings_swipe_notifications">下滑打开通知</string>
+    <string name="settings_swipe_notifications_summary">在空白主屏幕上下拉以打开通知。</string>
+    <string name="settings_appearance">外观</string>
+    <string name="settings_frosted_wallpaper">壁纸模糊</string>
+    <string name="settings_frosted_wallpaper_summary">Android 支持时，模糊收藏、应用和搜索后方的壁纸。</string>
+    <string name="settings_optional_modules">可选模块</string>
+    <string name="settings_notification_dots">通知圆点</string>
+    <string name="settings_media_controls">媒体控制</string>
+    <string name="settings_system_access">系统访问权限</string>
+    <string name="settings_default_home">默认主屏幕应用</string>
+    <string name="settings_gesture_access">手势权限</string>
+    <string name="settings_gesture_access_summary">仅用于锁屏和打开通知，不读取屏幕内容。</string>
+    <string name="settings_notification_access">通知和媒体访问权限</string>
+    <string name="settings_contact_search">联系人搜索</string>
+    <string name="settings_active">已启用</string>
+    <string name="settings_allowed">已允许</string>
+    <string name="settings_set_up">设置</string>
+    <string name="settings_optional">可选</string>
+    <string name="settings_privacy_note">Barely 没有互联网权限。可随时在 Android 设置中撤销可选权限。</string>
+    <string name="settings_search">搜索</string>
+    <string name="settings_local_suggestions">本地建议</string>
+    <string name="settings_local_suggestions_summary">推荐通过 Barely 打开的应用，并显示最近成功打开应用的搜索。</string>
+    <string name="settings_show_search_hint">搜索提示</string>
+    <string name="settings_show_search_hint_summary">在搜索框上方显示简短的命令提示。</string>
+    <string name="settings_clear_local_history">清除本地历史记录</string>
+    <string name="settings_clear_local_history_summary">从此设备移除应用启动评分和最近的应用搜索。</string>
+    <string name="settings_history_cleared">已清除本地历史记录</string>
+    <string name="recommended_apps">推荐</string>
+    <string name="recent_searches">最近搜索</string>
+    <string name="dismiss_search_hint">隐藏搜索提示</string>
+</resources>

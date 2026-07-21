@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">वापस जाएँ</string>
+    <string name="choose_widget">विजेट चुनें</string>
+    <string name="widget_picker_summary">ऐप के अनुसार समूहित, उपलब्ध होने पर असली प्रीव्यू के साथ</string>
+    <string name="widget_apps">विजेट वाले ऐप</string>
+    <string name="search_widgets">विजेट खोजें</string>
+    <string name="no_widgets_found">कोई विजेट नहीं मिला</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="one">%1$d विजेट</item><item quantity="other">%1$d विजेट</item></plurals>
+    <string name="launcher_settings">Barely सेटिंग</string>
+    <string name="barely_tagline">लगभग अदृश्य। हमेशा तैयार।</string>
+    <string name="settings_gestures">जेस्चर</string>
+    <string name="settings_double_tap_lock">लॉक करने के लिए दो बार टैप करें</string>
+    <string name="settings_double_tap_lock_summary">स्क्रीन लॉक करने के लिए खाली होम पेज पर दो बार टैप करें।</string>
+    <string name="settings_swipe_notifications">सूचनाओं के लिए नीचे स्वाइप करें</string>
+    <string name="settings_swipe_notifications_summary">सूचनाएँ खोलने के लिए खाली होम पेज पर नीचे खींचें।</string>
+    <string name="settings_appearance">दिखावट</string>
+    <string name="settings_frosted_wallpaper">धुंधला वॉलपेपर</string>
+    <string name="settings_frosted_wallpaper_summary">Android के समर्थन पर पसंदीदा, ऐप और खोज के पीछे वॉलपेपर धुंधला करें।</string>
+    <string name="settings_optional_modules">वैकल्पिक मॉड्यूल</string>
+    <string name="settings_notification_dots">सूचना बिंदु</string>
+    <string name="settings_media_controls">मीडिया कंट्रोल</string>
+    <string name="settings_system_access">सिस्टम एक्सेस</string>
+    <string name="settings_default_home">डिफ़ॉल्ट होम ऐप</string>
+    <string name="settings_gesture_access">जेस्चर एक्सेस</string>
+    <string name="settings_gesture_access_summary">सिर्फ स्क्रीन लॉक करने और सूचनाएँ खोलने के लिए उपयोग होता है। स्क्रीन की सामग्री नहीं पढ़ी जाती।</string>
+    <string name="settings_notification_access">सूचना और मीडिया एक्सेस</string>
+    <string name="settings_contact_search">संपर्क खोज</string>
+    <string name="settings_active">सक्रिय</string>
+    <string name="settings_allowed">अनुमति है</string>
+    <string name="settings_set_up">सेट अप करें</string>
+    <string name="settings_optional">वैकल्पिक</string>
+    <string name="settings_privacy_note">Barely के पास इंटरनेट अनुमति नहीं है। वैकल्पिक एक्सेस Android सेटिंग में कभी भी हटाया जा सकता है।</string>
+    <string name="settings_search">खोज</string>
+    <string name="settings_local_suggestions">स्थानीय सुझाव</string>
+    <string name="settings_local_suggestions_summary">Barely से खोले गए ऐप सुझाएँ और ऐप खोलने वाली हाल की खोजें दिखाएँ।</string>
+    <string name="settings_show_search_hint">खोज सुझाव</string>
+    <string name="settings_show_search_hint_summary">खोज के ऊपर छोटा कमांड सुझाव दिखाएँ।</string>
+    <string name="settings_clear_local_history">स्थानीय इतिहास मिटाएँ</string>
+    <string name="settings_clear_local_history_summary">इस डिवाइस से ऐप लॉन्च स्कोर और हाल की ऐप खोजें हटाएँ।</string>
+    <string name="settings_history_cleared">स्थानीय इतिहास मिटा दिया गया</string>
+    <string name="recommended_apps">सुझाए गए</string>
+    <string name="recent_searches">हाल की खोजें</string>
+    <string name="dismiss_search_hint">खोज सुझाव छिपाएँ</string>
+</resources>

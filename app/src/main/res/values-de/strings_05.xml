@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">Zurück</string>
+    <string name="choose_widget">Widget auswählen</string>
+    <string name="widget_picker_summary">Nach App gruppiert, mit echten Vorschauen, wenn verfügbar</string>
+    <string name="widget_apps">Widget-Apps</string>
+    <string name="search_widgets">Widgets durchsuchen</string>
+    <string name="no_widgets_found">Keine Widgets gefunden</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="one">%1$d Widget</item><item quantity="other">%1$d Widgets</item></plurals>
+    <string name="launcher_settings">Barely-Einstellungen</string>
+    <string name="barely_tagline">Kaum sichtbar. Immer bereit.</string>
+    <string name="settings_gestures">Gesten</string>
+    <string name="settings_double_tap_lock">Doppeltippen zum Sperren</string>
+    <string name="settings_double_tap_lock_summary">Doppeltippe auf die leere Startseite, um den Bildschirm zu sperren.</string>
+    <string name="settings_swipe_notifications">Für Benachrichtigungen nach unten wischen</string>
+    <string name="settings_swipe_notifications_summary">Ziehe auf der leeren Startseite nach unten, um Benachrichtigungen zu öffnen.</string>
+    <string name="settings_appearance">Darstellung</string>
+    <string name="settings_frosted_wallpaper">Mattiertes Hintergrundbild</string>
+    <string name="settings_frosted_wallpaper_summary">Weichzeichnet das Hintergrundbild hinter Favoriten, Apps und Suche, wenn Android dies unterstützt.</string>
+    <string name="settings_optional_modules">Optionale Module</string>
+    <string name="settings_notification_dots">Benachrichtigungspunkte</string>
+    <string name="settings_media_controls">Mediensteuerung</string>
+    <string name="settings_system_access">Systemzugriff</string>
+    <string name="settings_default_home">Standard-Start-App</string>
+    <string name="settings_gesture_access">Gestenzugriff</string>
+    <string name="settings_gesture_access_summary">Wird nur zum Sperren und Öffnen der Benachrichtigungen verwendet. Bildschirminhalte werden nicht gelesen.</string>
+    <string name="settings_notification_access">Benachrichtigungs- und Medienzugriff</string>
+    <string name="settings_contact_search">Kontaktsuche</string>
+    <string name="settings_active">Aktiv</string>
+    <string name="settings_allowed">Erlaubt</string>
+    <string name="settings_set_up">Einrichten</string>
+    <string name="settings_optional">Optional</string>
+    <string name="settings_privacy_note">Barely hat keine Internetberechtigung. Optionaler Zugriff kann jederzeit in den Android-Einstellungen entzogen werden.</string>
+    <string name="settings_search">Suche</string>
+    <string name="settings_local_suggestions">Lokale Vorschläge</string>
+    <string name="settings_local_suggestions_summary">Empfiehlt über Barely geöffnete Apps und zeigt erfolgreiche letzte App-Suchen.</string>
+    <string name="settings_show_search_hint">Suchtipps</string>
+    <string name="settings_show_search_hint_summary">Zeigt den kleinen Befehlstipp über dem Suchfeld.</string>
+    <string name="settings_clear_local_history">Lokalen Verlauf löschen</string>
+    <string name="settings_clear_local_history_summary">Entfernt App-Startwertungen und letzte App-Suchen von diesem Gerät.</string>
+    <string name="settings_history_cleared">Lokaler Verlauf gelöscht</string>
+    <string name="recommended_apps">Empfohlen</string>
+    <string name="recent_searches">Letzte Suchanfragen</string>
+    <string name="dismiss_search_hint">Suchtipp ausblenden</string>
+</resources>

@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -37,7 +37,7 @@ private val LightColors = lightColorScheme(
 )
 
 @Composable
-fun MinimalLauncherTheme(content: @Composable () -> Unit) {
+fun BarelyTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val dark = isSystemInDarkTheme()
     val colors = when {

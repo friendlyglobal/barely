@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import java.text.Normalizer
 import java.util.Locale

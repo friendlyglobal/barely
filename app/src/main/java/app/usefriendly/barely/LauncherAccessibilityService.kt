@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent

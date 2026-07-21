@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
-    <string name="home_content_description">Home screen. Swipe up to search, down for notifications, or double-tap to lock.</string>
+    <string name="app_name">Barely</string>
+    <string name="home_content_description">Home screen. Swipe up to search.</string>
     <string name="favorites">Favorites</string>
     <string name="search">Search</string>
     <string name="apps">Apps</string>
@@ -14,6 +14,7 @@
     <string name="set_default">Set</string>
     <string name="actions_for_app">Actions for %1$s</string>
     <string name="close_search">Close search</string>
+    <string name="navigate_back">Back</string>
     <string name="apps_and_shortcuts">Apps and shortcuts</string>
     <string name="clear_search">Clear</string>
     <string name="shortcuts">Shortcuts</string>
@@ -39,9 +40,19 @@
     <string name="remove_widget">Remove widget</string>
     <string name="widgets_empty_message">Add the widgets you want to see at a glance.</string>
     <string name="error_add_widget">Could not add this widget</string>
-    <string name="accessibility_service_label">Launchly gestures</string>
+    <string name="choose_widget">Choose a widget</string>
+    <string name="widget_picker_summary">Grouped by app with real previews when available</string>
+    <string name="widget_apps">Widget apps</string>
+    <string name="search_widgets">Search widgets</string>
+    <string name="no_widgets_found">No widgets found</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count">
+        <item quantity="one">%1$d widget</item>
+        <item quantity="other">%1$d widgets</item>
+    </plurals>
+    <string name="accessibility_service_label">Barely gestures</string>
     <string name="accessibility_service_description">Provides only the optional home gestures to lock the screen and open notifications. It does not read screen content.</string>
-    <string name="enable_accessibility_gestures">Enable Launchly gestures in Accessibility to use this action.</string>
+    <string name="enable_accessibility_gestures">Enable Barely gestures in Accessibility to use this action.</string>
     <string name="private_space">Private space</string>
     <string name="private_space_locked">Locked</string>
     <string name="private_space_unlocked">Unlocked</string>
@@ -56,7 +67,7 @@
     <string name="command_quick_setting_subtitle">Open Android setting</string>
     <string name="command_ask_assistant">Ask %1$s</string>
     <string name="command_enable_contacts">Enable contact search</string>
-    <string name="command_contacts_private">Optional. Contacts stay in memory and are never saved by Launchly.</string>
+    <string name="command_contacts_private">Optional. Contacts stay in memory and are never saved by Barely.</string>
     <string name="command_internet">Internet controls</string>
     <string name="command_bluetooth">Bluetooth settings</string>
     <string name="command_display">Display settings</string>
@@ -67,10 +78,10 @@
     <string name="command_copied">Copied</string>
     <string name="error_command">Could not complete this action</string>
     <string name="contacts_permission_denied">Contact search stays off. You can enable it later by searching for contacts.</string>
-    <string name="notification_service_label">Launchly optional notifications and media</string>
+    <string name="notification_service_label">Barely optional notifications and media</string>
     <string name="command_enable_notification_access">Enable notification and media access</string>
     <string name="command_manage_notification_access">Manage notification access</string>
-    <string name="command_notification_access_warning">Optional sensitive access. Launchly can see notification metadata while enabled.</string>
+    <string name="command_notification_access_warning">Optional sensitive access. Barely can see notification metadata while enabled.</string>
     <string name="command_enable_notification_dots">Show notification dots</string>
     <string name="command_disable_notification_dots">Hide notification dots</string>
     <string name="command_notification_dots_subtitle">Only per-app counts are kept in memory.</string>
@@ -81,4 +92,39 @@
     <string name="media_play">Play</string>
     <string name="media_pause">Pause</string>
     <string name="media_next">Next</string>
+    <string name="launcher_settings">Barely settings</string>
+    <string name="barely_tagline">Barely there. Always ready.</string>
+    <string name="settings_gestures">Gestures</string>
+    <string name="settings_double_tap_lock">Double-tap to lock</string>
+    <string name="settings_double_tap_lock_summary">Double-tap the empty Home page to lock the screen.</string>
+    <string name="settings_swipe_notifications">Swipe down for notifications</string>
+    <string name="settings_swipe_notifications_summary">Pull down on the empty Home page to open notifications.</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_frosted_wallpaper">Frosted wallpaper</string>
+    <string name="settings_frosted_wallpaper_summary">Blur the wallpaper behind Favorites, Apps, and Search when Android supports it.</string>
+    <string name="settings_optional_modules">Optional modules</string>
+    <string name="settings_notification_dots">Notification dots</string>
+    <string name="settings_media_controls">Media controls</string>
+    <string name="settings_system_access">System access</string>
+    <string name="settings_default_home">Default Home app</string>
+    <string name="settings_gesture_access">Gesture access</string>
+    <string name="settings_gesture_access_summary">Used only to lock the screen and open notifications. Screen content is not read.</string>
+    <string name="settings_notification_access">Notification and media access</string>
+    <string name="settings_contact_search">Contact search</string>
+    <string name="settings_active">Active</string>
+    <string name="settings_allowed">Allowed</string>
+    <string name="settings_set_up">Set up</string>
+    <string name="settings_optional">Optional</string>
+    <string name="settings_privacy_note">Barely has no internet permission. Optional access can be revoked at any time in Android Settings.</string>
+    <string name="settings_search">Search</string>
+    <string name="settings_local_suggestions">Local suggestions</string>
+    <string name="settings_local_suggestions_summary">Recommend apps from launches made in Barely and show successful recent app searches.</string>
+    <string name="settings_show_search_hint">Search tips</string>
+    <string name="settings_show_search_hint_summary">Show the small command hint above the search field.</string>
+    <string name="settings_clear_local_history">Clear local history</string>
+    <string name="settings_clear_local_history_summary">Remove app launch scores and recent app searches from this device.</string>
+    <string name="settings_history_cleared">Local history cleared</string>
+    <string name="recommended_apps">Recommended</string>
+    <string name="recent_searches">Recent searches</string>
+    <string name="dismiss_search_hint">Hide search tip</string>
 </resources>

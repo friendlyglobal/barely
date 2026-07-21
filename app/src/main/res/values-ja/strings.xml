@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">ホーム画面。上にスワイプして検索、下にスワイプして通知、ダブルタップしてロックします。</string>
     <string name="favorites">お気に入り</string>
     <string name="search">検索</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">ウィジェットを削除</string>
     <string name="widgets_empty_message">すぐに確認したいウィジェットを追加できます。</string>
     <string name="error_add_widget">このウィジェットを追加できませんでした</string>
-    <string name="accessibility_service_label">Launchly のジェスチャー</string>
+    <string name="accessibility_service_label">Barely のジェスチャー</string>
     <string name="accessibility_service_description">画面のロックと通知の表示に使う、任意のホーム画面ジェスチャーだけを提供します。画面の内容は読み取りません。</string>
-    <string name="enable_accessibility_gestures">この操作を使うには、ユーザー補助で Launchly のジェスチャーを有効にしてください。</string>
+    <string name="enable_accessibility_gestures">この操作を使うには、ユーザー補助で Barely のジェスチャーを有効にしてください。</string>
     <string name="private_space">プライベート スペース</string>
     <string name="private_space_locked">ロック中</string>
     <string name="private_space_unlocked">ロック解除済み</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Android の設定を開く</string>
     <string name="command_ask_assistant">%1$s に質問</string>
     <string name="command_enable_contacts">連絡先検索を有効にする</string>
-    <string name="command_contacts_private">任意。連絡先はメモリ内にのみ保持され、Launchly は保存しません。</string>
+    <string name="command_contacts_private">任意。連絡先はメモリ内にのみ保持され、Barely は保存しません。</string>
     <string name="command_internet">インターネットの管理</string>
     <string name="command_bluetooth">Bluetooth 設定</string>
     <string name="command_display">ディスプレイ設定</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">コピーしました</string>
     <string name="error_command">この操作を完了できませんでした</string>
     <string name="contacts_permission_denied">連絡先検索はオフのままです。後で連絡先を検索して有効にできます。</string>
-    <string name="notification_service_label">Launchly の任意の通知とメディア</string>
+    <string name="notification_service_label">Barely の任意の通知とメディア</string>
     <string name="command_enable_notification_access">通知とメディアへのアクセスを有効にする</string>
     <string name="command_manage_notification_access">通知へのアクセスを管理</string>
-    <string name="command_notification_access_warning">任意の機密アクセスです。有効な間、Launchly は通知メタデータを確認できます。</string>
+    <string name="command_notification_access_warning">任意の機密アクセスです。有効な間、Barely は通知メタデータを確認できます。</string>
     <string name="command_enable_notification_dots">通知ドットを表示</string>
     <string name="command_disable_notification_dots">通知ドットを隠す</string>
     <string name="command_notification_dots_subtitle">アプリごとの件数だけをメモリに保持します。</string>

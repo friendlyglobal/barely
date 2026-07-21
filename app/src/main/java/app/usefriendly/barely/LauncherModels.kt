@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.content.ComponentName
 import android.content.pm.ShortcutInfo
@@ -10,6 +10,16 @@ enum class LauncherBackdrop {
     FROSTED,
     SEARCH,
 }
+
+data class LauncherSettings(
+    val doubleTapToLock: Boolean = true,
+    val swipeDownForNotifications: Boolean = true,
+    val frostedWallpaper: Boolean = true,
+    val notificationDots: Boolean = false,
+    val mediaControls: Boolean = false,
+    val localSuggestions: Boolean = true,
+    val showSearchHint: Boolean = true,
+)
 
 enum class LauncherProfileType {
     PERSONAL,

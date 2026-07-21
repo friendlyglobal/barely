@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">뒤로</string>
+    <string name="choose_widget">위젯 선택</string>
+    <string name="widget_picker_summary">앱별로 묶고 가능한 경우 실제 미리보기를 표시합니다</string>
+    <string name="widget_apps">위젯 앱</string>
+    <string name="search_widgets">위젯 검색</string>
+    <string name="no_widgets_found">위젯을 찾을 수 없음</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="other">위젯 %1$d개</item></plurals>
+    <string name="launcher_settings">Barely 설정</string>
+    <string name="barely_tagline">거의 보이지 않게. 언제나 준비.</string>
+    <string name="settings_gestures">제스처</string>
+    <string name="settings_double_tap_lock">두 번 탭하여 잠금</string>
+    <string name="settings_double_tap_lock_summary">빈 홈 화면을 두 번 탭하여 화면을 잠급니다.</string>
+    <string name="settings_swipe_notifications">아래로 밀어 알림 열기</string>
+    <string name="settings_swipe_notifications_summary">빈 홈 화면에서 아래로 당겨 알림을 엽니다.</string>
+    <string name="settings_appearance">화면 스타일</string>
+    <string name="settings_frosted_wallpaper">배경화면 흐림</string>
+    <string name="settings_frosted_wallpaper_summary">Android에서 지원하는 경우 즐겨찾기, 앱, 검색 뒤의 배경화면을 흐리게 합니다.</string>
+    <string name="settings_optional_modules">선택 기능</string>
+    <string name="settings_notification_dots">알림 점</string>
+    <string name="settings_media_controls">미디어 컨트롤</string>
+    <string name="settings_system_access">시스템 접근</string>
+    <string name="settings_default_home">기본 홈 앱</string>
+    <string name="settings_gesture_access">제스처 접근</string>
+    <string name="settings_gesture_access_summary">화면 잠금과 알림 열기에만 사용됩니다. 화면 내용은 읽지 않습니다.</string>
+    <string name="settings_notification_access">알림 및 미디어 접근</string>
+    <string name="settings_contact_search">연락처 검색</string>
+    <string name="settings_active">활성</string>
+    <string name="settings_allowed">허용됨</string>
+    <string name="settings_set_up">설정</string>
+    <string name="settings_optional">선택사항</string>
+    <string name="settings_privacy_note">Barely에는 인터넷 권한이 없습니다. 선택 접근 권한은 Android 설정에서 언제든 해제할 수 있습니다.</string>
+    <string name="settings_search">검색</string>
+    <string name="settings_local_suggestions">기기 내 추천</string>
+    <string name="settings_local_suggestions_summary">Barely에서 연 앱을 추천하고 앱을 연 최근 검색을 표시합니다.</string>
+    <string name="settings_show_search_hint">검색 도움말</string>
+    <string name="settings_show_search_hint_summary">검색창 위에 짧은 명령 도움말을 표시합니다.</string>
+    <string name="settings_clear_local_history">기기 내 기록 삭제</string>
+    <string name="settings_clear_local_history_summary">이 기기에서 앱 실행 점수와 최근 앱 검색을 삭제합니다.</string>
+    <string name="settings_history_cleared">기기 내 기록을 삭제했습니다</string>
+    <string name="recommended_apps">추천</string>
+    <string name="recent_searches">최근 검색</string>
+    <string name="dismiss_search_hint">검색 도움말 숨기기</string>
+</resources>

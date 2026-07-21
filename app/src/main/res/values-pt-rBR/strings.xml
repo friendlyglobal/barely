@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
-    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar, para baixo para ver notificações ou toque duas vezes para bloquear.</string>
+    <string name="app_name">Barely</string>
+    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar.</string>
     <string name="favorites">Favoritos</string>
     <string name="search">Buscar</string>
     <string name="apps">Apps</string>
@@ -14,6 +14,7 @@
     <string name="set_default">Definir</string>
     <string name="actions_for_app">Ações de %1$s</string>
     <string name="close_search">Fechar busca</string>
+    <string name="navigate_back">Voltar</string>
     <string name="apps_and_shortcuts">Apps e atalhos</string>
     <string name="clear_search">Limpar</string>
     <string name="shortcuts">Atalhos</string>
@@ -39,9 +40,20 @@
     <string name="remove_widget">Remover widget</string>
     <string name="widgets_empty_message">Adicione os widgets que você quer ver rapidamente.</string>
     <string name="error_add_widget">Não foi possível adicionar este widget</string>
-    <string name="accessibility_service_label">Gestos do Launchly</string>
+    <string name="choose_widget">Escolher widget</string>
+    <string name="widget_picker_summary">Organizados por app, com previews reais quando disponíveis</string>
+    <string name="widget_apps">Apps com widgets</string>
+    <string name="search_widgets">Buscar widgets</string>
+    <string name="no_widgets_found">Nenhum widget encontrado</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count">
+        <item quantity="one">%1$d widget</item>
+        <item quantity="many">%1$d widgets</item>
+        <item quantity="other">%1$d widgets</item>
+    </plurals>
+    <string name="accessibility_service_label">Gestos do Barely</string>
     <string name="accessibility_service_description">Fornece apenas os gestos opcionais da tela inicial para bloquear a tela e abrir as notificações. Não lê o conteúdo da tela.</string>
-    <string name="enable_accessibility_gestures">Ative os gestos do Launchly em Acessibilidade para usar esta ação.</string>
+    <string name="enable_accessibility_gestures">Ative os gestos do Barely em Acessibilidade para usar esta ação.</string>
     <string name="private_space">Espaço privado</string>
     <string name="private_space_locked">Bloqueado</string>
     <string name="private_space_unlocked">Desbloqueado</string>
@@ -56,7 +68,7 @@
     <string name="command_quick_setting_subtitle">Abrir configuração do Android</string>
     <string name="command_ask_assistant">Perguntar ao %1$s</string>
     <string name="command_enable_contacts">Ativar busca de contatos</string>
-    <string name="command_contacts_private">Opcional. Os contatos ficam na memória e nunca são salvos pelo Launchly.</string>
+    <string name="command_contacts_private">Opcional. Os contatos ficam na memória e nunca são salvos pelo Barely.</string>
     <string name="command_internet">Controles de internet</string>
     <string name="command_bluetooth">Configurações de Bluetooth</string>
     <string name="command_display">Configurações de tela</string>
@@ -67,10 +79,10 @@
     <string name="command_copied">Copiado</string>
     <string name="error_command">Não foi possível concluir esta ação</string>
     <string name="contacts_permission_denied">A busca de contatos continua desativada. Você pode ativá-la depois buscando por contatos.</string>
-    <string name="notification_service_label">Notificações e mídia opcionais do Launchly</string>
+    <string name="notification_service_label">Notificações e mídia opcionais do Barely</string>
     <string name="command_enable_notification_access">Ativar acesso a notificações e mídia</string>
     <string name="command_manage_notification_access">Gerenciar acesso a notificações</string>
-    <string name="command_notification_access_warning">Acesso sensível opcional. O Launchly pode ver metadados de notificações enquanto estiver ativo.</string>
+    <string name="command_notification_access_warning">Acesso sensível opcional. O Barely pode ver metadados de notificações enquanto estiver ativo.</string>
     <string name="command_enable_notification_dots">Mostrar pontos de notificação</string>
     <string name="command_disable_notification_dots">Ocultar pontos de notificação</string>
     <string name="command_notification_dots_subtitle">Somente as contagens por app ficam na memória.</string>
@@ -81,4 +93,39 @@
     <string name="media_play">Reproduzir</string>
     <string name="media_pause">Pausar</string>
     <string name="media_next">Próxima</string>
+    <string name="launcher_settings">Configurações do Barely</string>
+    <string name="barely_tagline">Quase invisível. Sempre pronto.</string>
+    <string name="settings_gestures">Gestos</string>
+    <string name="settings_double_tap_lock">Toque duplo para bloquear</string>
+    <string name="settings_double_tap_lock_summary">Toque duas vezes na tela inicial vazia para bloquear.</string>
+    <string name="settings_swipe_notifications">Deslizar para ver notificações</string>
+    <string name="settings_swipe_notifications_summary">Puxe para baixo na tela inicial vazia para abrir as notificações.</string>
+    <string name="settings_appearance">Aparência</string>
+    <string name="settings_frosted_wallpaper">Wallpaper fosco</string>
+    <string name="settings_frosted_wallpaper_summary">Desfoca o wallpaper em Favoritos, Apps e Busca quando o Android permite.</string>
+    <string name="settings_optional_modules">Módulos opcionais</string>
+    <string name="settings_notification_dots">Pontos de notificação</string>
+    <string name="settings_media_controls">Controles de mídia</string>
+    <string name="settings_system_access">Acesso ao sistema</string>
+    <string name="settings_default_home">App de tela inicial padrão</string>
+    <string name="settings_gesture_access">Acesso aos gestos</string>
+    <string name="settings_gesture_access_summary">Usado apenas para bloquear e abrir notificações. O conteúdo da tela não é lido.</string>
+    <string name="settings_notification_access">Acesso a notificações e mídia</string>
+    <string name="settings_contact_search">Busca de contatos</string>
+    <string name="settings_active">Ativo</string>
+    <string name="settings_allowed">Permitido</string>
+    <string name="settings_set_up">Configurar</string>
+    <string name="settings_optional">Opcional</string>
+    <string name="settings_privacy_note">O Barely não tem permissão de internet. Acessos opcionais podem ser revogados nas Configurações do Android.</string>
+    <string name="settings_search">Busca</string>
+    <string name="settings_local_suggestions">Sugestões locais</string>
+    <string name="settings_local_suggestions_summary">Recomenda apps abertos pelo Barely e mostra buscas recentes que abriram apps.</string>
+    <string name="settings_show_search_hint">Dicas de busca</string>
+    <string name="settings_show_search_hint_summary">Mostra a pequena dica de comandos acima da busca.</string>
+    <string name="settings_clear_local_history">Limpar histórico local</string>
+    <string name="settings_clear_local_history_summary">Remove as pontuações de uso e buscas recentes deste aparelho.</string>
+    <string name="settings_history_cleared">Histórico local apagado</string>
+    <string name="recommended_apps">Recomendados</string>
+    <string name="recent_searches">Buscas recentes</string>
+    <string name="dismiss_search_hint">Ocultar dica de busca</string>
 </resources>

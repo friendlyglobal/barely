@@ -4,16 +4,16 @@ plugins {
 }
 
 android {
-    namespace = "com.example.minimallauncher"
+    namespace = "app.usefriendly.barely"
     compileSdk = 37
     compileSdkMinor = 0
 
     defaultConfig {
-        applicationId = "com.example.minimallauncher"
+        applicationId = "app.usefriendly.barely"
         minSdk = 29
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.4"
+        versionCode = 5
+        versionName = "0.5"
     }
 
     buildFeatures {

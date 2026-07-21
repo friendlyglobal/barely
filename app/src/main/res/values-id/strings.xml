@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">Layar utama. Geser ke atas untuk mencari, ke bawah untuk notifikasi, atau ketuk dua kali untuk mengunci.</string>
     <string name="favorites">Favorit</string>
     <string name="search">Cari</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">Hapus widget</string>
     <string name="widgets_empty_message">Tambahkan widget yang ingin Anda lihat sekilas.</string>
     <string name="error_add_widget">Tidak dapat menambahkan widget ini</string>
-    <string name="accessibility_service_label">Gestur Launchly</string>
+    <string name="accessibility_service_label">Gestur Barely</string>
     <string name="accessibility_service_description">Hanya menyediakan gestur layar utama opsional untuk mengunci layar dan membuka notifikasi. Tidak membaca konten layar.</string>
-    <string name="enable_accessibility_gestures">Aktifkan gestur Launchly di Aksesibilitas untuk menggunakan tindakan ini.</string>
+    <string name="enable_accessibility_gestures">Aktifkan gestur Barely di Aksesibilitas untuk menggunakan tindakan ini.</string>
     <string name="private_space">Ruang pribadi</string>
     <string name="private_space_locked">Terkunci</string>
     <string name="private_space_unlocked">Terbuka</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Buka setelan Android</string>
     <string name="command_ask_assistant">Tanya %1$s</string>
     <string name="command_enable_contacts">Aktifkan pencarian kontak</string>
-    <string name="command_contacts_private">Opsional. Kontak tetap di memori dan tidak pernah disimpan oleh Launchly.</string>
+    <string name="command_contacts_private">Opsional. Kontak tetap di memori dan tidak pernah disimpan oleh Barely.</string>
     <string name="command_internet">Kontrol internet</string>
     <string name="command_bluetooth">Setelan Bluetooth</string>
     <string name="command_display">Setelan tampilan</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">Disalin</string>
     <string name="error_command">Tindakan ini tidak dapat diselesaikan</string>
     <string name="contacts_permission_denied">Pencarian kontak tetap nonaktif. Anda dapat mengaktifkannya nanti dengan mencari kontak.</string>
-    <string name="notification_service_label">Notifikasi dan media opsional Launchly</string>
+    <string name="notification_service_label">Notifikasi dan media opsional Barely</string>
     <string name="command_enable_notification_access">Aktifkan akses notifikasi dan media</string>
     <string name="command_manage_notification_access">Kelola akses notifikasi</string>
-    <string name="command_notification_access_warning">Akses sensitif opsional. Launchly dapat melihat metadata notifikasi saat diaktifkan.</string>
+    <string name="command_notification_access_warning">Akses sensitif opsional. Barely dapat melihat metadata notifikasi saat diaktifkan.</string>
     <string name="command_enable_notification_dots">Tampilkan titik notifikasi</string>
     <string name="command_disable_notification_dots">Sembunyikan titik notifikasi</string>
     <string name="command_notification_dots_subtitle">Hanya jumlah per aplikasi yang disimpan di memori.</string>

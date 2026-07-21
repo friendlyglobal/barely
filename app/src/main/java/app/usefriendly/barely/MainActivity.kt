@@ -1,10 +1,11 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.Manifest
 import android.app.role.RoleManager
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -16,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.provider.ContactsContract
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -58,17 +60,21 @@ class MainActivity : ComponentActivity() {
     private var showGestureCoach by androidx.compose.runtime.mutableStateOf(false)
     private var homeRequestId by androidx.compose.runtime.mutableIntStateOf(0)
     private var widgetIds by androidx.compose.runtime.mutableStateOf(emptyList<Int>())
+    private var widgetProviders by androidx.compose.runtime.mutableStateOf(emptyList<AppWidgetProviderInfo>())
+    private var recommendedAppKeys by androidx.compose.runtime.mutableStateOf(emptyList<String>())
+    private var recentAppSearches by androidx.compose.runtime.mutableStateOf(emptyList<String>())
     private var privateSpaceExpanded by androidx.compose.runtime.mutableStateOf(true)
     private var contacts by androidx.compose.runtime.mutableStateOf(emptyList<LauncherContact>())
     private var hasContactsPermission by androidx.compose.runtime.mutableStateOf(false)
     private var hasNotificationAccess by androidx.compose.runtime.mutableStateOf(false)
-    private var notificationDotsEnabled by androidx.compose.runtime.mutableStateOf(false)
-    private var mediaControlsEnabled by androidx.compose.runtime.mutableStateOf(false)
+    private var launcherSettings by androidx.compose.runtime.mutableStateOf(LauncherSettings())
+    private var hasGestureAccess by androidx.compose.runtime.mutableStateOf(false)
     private var notificationState by androidx.compose.runtime.mutableStateOf(LauncherNotificationState())
     private var pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private var foldingFeature by androidx.compose.runtime.mutableStateOf<FoldingFeature?>(null)
     private var crossWindowBlurEnabled by androidx.compose.runtime.mutableStateOf(false)
     private var blurEnabledListener: Consumer<Boolean>? = null
+    private var requestedBackdrop = LauncherBackdrop.CLEAR
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,9 +128,11 @@ class MainActivity : ComponentActivity() {
         widgetController = WidgetHostController(this)
         favoriteKeys = repository.favoriteKeys()
         widgetIds = widgetController.savedWidgetIds()
+        widgetProviders = widgetController.availableProviders()
+        refreshLocalSuggestions()
         privateSpaceExpanded = repository.isPrivateSpaceExpanded()
-        notificationDotsEnabled = repository.areNotificationDotsEnabled()
-        mediaControlsEnabled = repository.areMediaControlsEnabled()
+        launcherSettings = repository.launcherSettings()
+        hasGestureAccess = isGestureAccessGranted()
         hasNotificationAccess = isNotificationAccessGranted()
         pendingWidgetId = savedInstanceState?.getInt(
             PENDING_WIDGET_ID,
@@ -133,7 +141,7 @@ class MainActivity : ComponentActivity() {
         showGestureCoach = !repository.isGestureCoachSeen()
 
         setContent {
-            MinimalLauncherTheme {
+            BarelyTheme {
                 LauncherScreen(
                     snapshot = snapshot,
                     favoriteKeys = favoriteKeys,
@@ -142,24 +150,26 @@ class MainActivity : ComponentActivity() {
                     showGestureCoach = showGestureCoach,
                     homeRequestId = homeRequestId,
                     widgetIds = widgetIds,
+                    widgetProviders = widgetProviders,
                     widgetHost = widgetController.host,
                     widgetManager = widgetController.manager,
                     foldingFeature = foldingFeature,
-                    backdropBlurEnabled = crossWindowBlurEnabled,
+                    backdropBlurEnabled = crossWindowBlurEnabled &&
+                        launcherSettings.frostedWallpaper,
+                    launcherSettings = launcherSettings,
                     privateSpaceExpanded = privateSpaceExpanded,
                     contacts = contacts,
                     hasContactsPermission = hasContactsPermission,
+                    hasGestureAccess = hasGestureAccess,
                     hasNotificationAccess = hasNotificationAccess,
-                    notificationDotsEnabled = notificationDotsEnabled,
-                    mediaControlsEnabled = mediaControlsEnabled,
                     notificationCounts = if (
-                        hasNotificationAccess && notificationDotsEnabled
+                        hasNotificationAccess && launcherSettings.notificationDots
                     ) {
                         notificationState.countsByPackage
                     } else {
                         emptyMap()
                     },
-                    nowPlaying = if (hasNotificationAccess && mediaControlsEnabled) {
+                    nowPlaying = if (hasNotificationAccess && launcherSettings.mediaControls) {
                         notificationState.nowPlaying
                     } else {
                         null
@@ -169,9 +179,14 @@ class MainActivity : ComponentActivity() {
                         repository.markGestureCoachSeen()
                         showGestureCoach = false
                     },
-                    onLaunchApp = { app -> perform(getString(R.string.error_open_app, app.label)) {
-                        repository.launch(app)
-                    } },
+                    recommendedAppKeys = recommendedAppKeys,
+                    recentAppSearches = recentAppSearches,
+                    onLaunchApp = { app ->
+                        perform(getString(R.string.error_open_app, app.label)) {
+                            repository.launch(app)
+                            refreshLocalSuggestions()
+                        }
+                    },
                     onLaunchShortcut = { shortcut -> perform(getString(R.string.error_shortcut_unavailable)) {
                         repository.launch(shortcut)
                     } },
@@ -203,6 +218,19 @@ class MainActivity : ComponentActivity() {
                     onOpenNotifications = {
                         runAccessibilityAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
                     },
+                    onSettingsChanged = ::updateLauncherSettings,
+                    onAppSearchCommitted = { query ->
+                        repository.recordRecentAppSearch(query)
+                        refreshLocalSuggestions()
+                    },
+                    onClearLocalHistory = {
+                        repository.clearLocalHistory()
+                        refreshLocalSuggestions()
+                        Toast.makeText(this, R.string.settings_history_cleared, Toast.LENGTH_SHORT).show()
+                    },
+                    onOpenAccessibilitySettings = ::openAccessibilitySettings,
+                    onOpenNotificationAccess = ::openNotificationAccess,
+                    onConfigureContacts = ::configureContacts,
                     onBackdropChanged = ::applyBackdrop,
                 )
             }
@@ -226,7 +254,9 @@ class MainActivity : ComponentActivity() {
             updateRoleState()
             refresh()
             refreshContacts()
+            hasGestureAccess = isGestureAccessGranted()
             hasNotificationAccess = isNotificationAccessGranted()
+            widgetProviders = widgetController.availableProviders()
         }
     }
 
@@ -280,15 +310,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun pickWidget() {
+    private fun pickWidget(provider: AppWidgetProviderInfo) {
         val widgetId = widgetController.allocateWidgetId()
         pendingWidgetId = widgetId
+        if (widgetController.bindWidget(widgetId, provider)) {
+            configureOrAddWidget(widgetId)
+            return
+        }
         runCatching {
             widgetPicker.launch(
-                Intent(AppWidgetManager.ACTION_APPWIDGET_PICK).putExtra(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    widgetId,
-                ),
+                Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider.provider)
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER_PROFILE, provider.profile)
+                },
             )
         }.onFailure {
             widgetController.discardWidgetId(widgetId)
@@ -375,23 +410,71 @@ class MainActivity : ComponentActivity() {
             LauncherCommandAction.OpenNotificationAccess -> perform(
                 getString(R.string.error_command),
             ) {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                openNotificationAccess()
             }
 
             is LauncherCommandAction.ToggleNotificationDots -> {
-                repository.setNotificationDotsEnabled(action.enabled)
-                notificationDotsEnabled = action.enabled
+                updateLauncherSettings(
+                    launcherSettings.copy(notificationDots = action.enabled),
+                )
             }
 
             is LauncherCommandAction.ToggleMediaControls -> {
-                repository.setMediaControlsEnabled(action.enabled)
-                mediaControlsEnabled = action.enabled
+                updateLauncherSettings(
+                    launcherSettings.copy(mediaControls = action.enabled),
+                )
             }
         }
     }
 
     private fun isNotificationAccessGranted(): Boolean =
         packageName in NotificationManagerCompat.getEnabledListenerPackages(this)
+
+    private fun isGestureAccessGranted(): Boolean =
+        getSystemService(AccessibilityManager::class.java)
+            .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+            .any { service ->
+                service.resolveInfo.serviceInfo.packageName == packageName &&
+                    service.resolveInfo.serviceInfo.name == LauncherAccessibilityService::class.java.name
+            }
+
+    private fun updateLauncherSettings(settings: LauncherSettings) {
+        repository.setLauncherSettings(settings)
+        launcherSettings = settings
+        applyBackdrop(requestedBackdrop)
+    }
+
+    private fun refreshLocalSuggestions() {
+        recommendedAppKeys = repository.recommendedAppKeys()
+        recentAppSearches = repository.recentAppSearches()
+    }
+
+    private fun openAccessibilitySettings() {
+        perform(getString(R.string.error_command)) {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+    }
+
+    private fun openNotificationAccess() {
+        perform(getString(R.string.error_command)) {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
+    }
+
+    private fun configureContacts() {
+        if (!hasContactsPermission) {
+            contactsPermissionRequest.launch(Manifest.permission.READ_CONTACTS)
+            return
+        }
+        perform(getString(R.string.error_command)) {
+            startActivity(
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    "package:$packageName".toUri(),
+                ),
+            )
+        }
+    }
 
     private fun observeCrossWindowBlur() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
@@ -402,8 +485,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun applyBackdrop(backdrop: LauncherBackdrop) {
+        requestedBackdrop = backdrop
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
-        val radiusDp = when (backdrop) {
+        val radiusDp = if (!launcherSettings.frostedWallpaper) {
+            0
+        } else when (backdrop) {
             LauncherBackdrop.CLEAR -> 0
             LauncherBackdrop.FROSTED -> 34
             LauncherBackdrop.SEARCH -> 48
@@ -413,7 +499,7 @@ class MainActivity : ComponentActivity() {
             (radiusDp * resources.displayMetrics.density).toInt(),
         )
         window.attributes = attributes
-        if (backdrop == LauncherBackdrop.CLEAR) {
+        if (backdrop == LauncherBackdrop.CLEAR || !launcherSettings.frostedWallpaper) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)

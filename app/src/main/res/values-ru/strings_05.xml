@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">Назад</string>
+    <string name="choose_widget">Выберите виджет</string>
+    <string name="widget_picker_summary">Сгруппированы по приложениям, с настоящими предпросмотрами, когда они доступны</string>
+    <string name="widget_apps">Приложения с виджетами</string>
+    <string name="search_widgets">Поиск виджетов</string>
+    <string name="no_widgets_found">Виджеты не найдены</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="one">%1$d виджет</item><item quantity="few">%1$d виджета</item><item quantity="many">%1$d виджетов</item><item quantity="other">%1$d виджета</item></plurals>
+    <string name="launcher_settings">Настройки Barely</string>
+    <string name="barely_tagline">Почти незаметен. Всегда готов.</string>
+    <string name="settings_gestures">Жесты</string>
+    <string name="settings_double_tap_lock">Двойное касание для блокировки</string>
+    <string name="settings_double_tap_lock_summary">Дважды коснитесь пустого главного экрана, чтобы заблокировать устройство.</string>
+    <string name="settings_swipe_notifications">Смахивание для уведомлений</string>
+    <string name="settings_swipe_notifications_summary">Потяните вниз на пустом главном экране, чтобы открыть уведомления.</string>
+    <string name="settings_appearance">Оформление</string>
+    <string name="settings_frosted_wallpaper">Размытые обои</string>
+    <string name="settings_frosted_wallpaper_summary">Размывает обои за Избранным, Приложениями и Поиском, если Android это поддерживает.</string>
+    <string name="settings_optional_modules">Дополнительные модули</string>
+    <string name="settings_notification_dots">Точки уведомлений</string>
+    <string name="settings_media_controls">Управление мультимедиа</string>
+    <string name="settings_system_access">Системный доступ</string>
+    <string name="settings_default_home">Главное приложение по умолчанию</string>
+    <string name="settings_gesture_access">Доступ к жестам</string>
+    <string name="settings_gesture_access_summary">Используется только для блокировки экрана и открытия уведомлений. Содержимое экрана не читается.</string>
+    <string name="settings_notification_access">Доступ к уведомлениям и мультимедиа</string>
+    <string name="settings_contact_search">Поиск контактов</string>
+    <string name="settings_active">Активно</string>
+    <string name="settings_allowed">Разрешено</string>
+    <string name="settings_set_up">Настроить</string>
+    <string name="settings_optional">Необязательно</string>
+    <string name="settings_privacy_note">У Barely нет разрешения на доступ в интернет. Дополнительный доступ можно отозвать в настройках Android.</string>
+    <string name="settings_search">Поиск</string>
+    <string name="settings_local_suggestions">Локальные предложения</string>
+    <string name="settings_local_suggestions_summary">Рекомендует приложения, открытые через Barely, и показывает недавние успешные поиски приложений.</string>
+    <string name="settings_show_search_hint">Подсказки поиска</string>
+    <string name="settings_show_search_hint_summary">Показывает короткую подсказку команд над поиском.</string>
+    <string name="settings_clear_local_history">Очистить локальную историю</string>
+    <string name="settings_clear_local_history_summary">Удаляет оценки запусков и недавние поиски приложений с этого устройства.</string>
+    <string name="settings_history_cleared">Локальная история очищена</string>
+    <string name="recommended_apps">Рекомендуемые</string>
+    <string name="recent_searches">Недавние поиски</string>
+    <string name="dismiss_search_hint">Скрыть подсказку поиска</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">Retour</string>
+    <string name="choose_widget">Choisir un widget</string>
+    <string name="widget_picker_summary">Regroupés par appli, avec de vrais aperçus lorsqu’ils sont disponibles</string>
+    <string name="widget_apps">Applis avec widgets</string>
+    <string name="search_widgets">Rechercher des widgets</string>
+    <string name="no_widgets_found">Aucun widget trouvé</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="one">%1$d widget</item><item quantity="many">%1$d widgets</item><item quantity="other">%1$d widgets</item></plurals>
+    <string name="launcher_settings">Paramètres de Barely</string>
+    <string name="barely_tagline">À peine visible. Toujours prêt.</string>
+    <string name="settings_gestures">Gestes</string>
+    <string name="settings_double_tap_lock">Appuyer deux fois pour verrouiller</string>
+    <string name="settings_double_tap_lock_summary">Appuyez deux fois sur l’écran d’accueil vide pour le verrouiller.</string>
+    <string name="settings_swipe_notifications">Balayer pour les notifications</string>
+    <string name="settings_swipe_notifications_summary">Tirez vers le bas sur l’écran d’accueil vide pour ouvrir les notifications.</string>
+    <string name="settings_appearance">Apparence</string>
+    <string name="settings_frosted_wallpaper">Fond d’écran dépoli</string>
+    <string name="settings_frosted_wallpaper_summary">Floute le fond derrière Favoris, Applis et Recherche lorsque Android le permet.</string>
+    <string name="settings_optional_modules">Modules facultatifs</string>
+    <string name="settings_notification_dots">Pastilles de notification</string>
+    <string name="settings_media_controls">Commandes multimédias</string>
+    <string name="settings_system_access">Accès système</string>
+    <string name="settings_default_home">Appli d’accueil par défaut</string>
+    <string name="settings_gesture_access">Accès aux gestes</string>
+    <string name="settings_gesture_access_summary">Utilisé uniquement pour verrouiller l’écran et ouvrir les notifications. Le contenu de l’écran n’est pas lu.</string>
+    <string name="settings_notification_access">Accès aux notifications et aux médias</string>
+    <string name="settings_contact_search">Recherche de contacts</string>
+    <string name="settings_active">Actif</string>
+    <string name="settings_allowed">Autorisé</string>
+    <string name="settings_set_up">Configurer</string>
+    <string name="settings_optional">Facultatif</string>
+    <string name="settings_privacy_note">Barely n’a pas d’autorisation Internet. Les accès facultatifs peuvent être révoqués dans les paramètres Android.</string>
+    <string name="settings_search">Recherche</string>
+    <string name="settings_local_suggestions">Suggestions locales</string>
+    <string name="settings_local_suggestions_summary">Recommande les applis ouvertes par Barely et affiche les recherches récentes ayant ouvert une appli.</string>
+    <string name="settings_show_search_hint">Conseils de recherche</string>
+    <string name="settings_show_search_hint_summary">Affiche le petit conseil de commandes au-dessus de la recherche.</string>
+    <string name="settings_clear_local_history">Effacer l’historique local</string>
+    <string name="settings_clear_local_history_summary">Supprime les scores d’utilisation et les recherches récentes de cet appareil.</string>
+    <string name="settings_history_cleared">Historique local effacé</string>
+    <string name="recommended_apps">Recommandées</string>
+    <string name="recent_searches">Recherches récentes</string>
+    <string name="dismiss_search_hint">Masquer le conseil de recherche</string>
+</resources>

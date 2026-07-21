@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">主屏幕。向上滑动搜索，向下滑动查看通知，双击锁屏。</string>
     <string name="favorites">收藏</string>
     <string name="search">搜索</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">移除小组件</string>
     <string name="widgets_empty_message">添加你想快速查看的小组件。</string>
     <string name="error_add_widget">无法添加此小组件</string>
-    <string name="accessibility_service_label">Launchly 手势</string>
+    <string name="accessibility_service_label">Barely 手势</string>
     <string name="accessibility_service_description">仅提供用于锁定屏幕和打开通知的可选主屏幕手势，不会读取屏幕内容。</string>
-    <string name="enable_accessibility_gestures">请在无障碍设置中启用 Launchly 手势以使用此操作。</string>
+    <string name="enable_accessibility_gestures">请在无障碍设置中启用 Barely 手势以使用此操作。</string>
     <string name="private_space">私密空间</string>
     <string name="private_space_locked">已锁定</string>
     <string name="private_space_unlocked">已解锁</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">打开 Android 设置</string>
     <string name="command_ask_assistant">询问 %1$s</string>
     <string name="command_enable_contacts">启用联系人搜索</string>
-    <string name="command_contacts_private">可选。联系人仅保留在内存中，Launchly 从不保存。</string>
+    <string name="command_contacts_private">可选。联系人仅保留在内存中，Barely 从不保存。</string>
     <string name="command_internet">互联网控制</string>
     <string name="command_bluetooth">蓝牙设置</string>
     <string name="command_display">显示设置</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">已复制</string>
     <string name="error_command">无法完成此操作</string>
     <string name="contacts_permission_denied">联系人搜索仍处于关闭状态。稍后可通过搜索联系人启用。</string>
-    <string name="notification_service_label">Launchly 可选通知和媒体</string>
+    <string name="notification_service_label">Barely 可选通知和媒体</string>
     <string name="command_enable_notification_access">启用通知和媒体访问权限</string>
     <string name="command_manage_notification_access">管理通知访问权限</string>
-    <string name="command_notification_access_warning">可选的敏感权限。启用后，Launchly 可以查看通知元数据。</string>
+    <string name="command_notification_access_warning">可选的敏感权限。启用后，Barely 可以查看通知元数据。</string>
     <string name="command_enable_notification_dots">显示通知圆点</string>
     <string name="command_disable_notification_dots">隐藏通知圆点</string>
     <string name="command_notification_dots_subtitle">内存中仅保留每个应用的数量。</string>

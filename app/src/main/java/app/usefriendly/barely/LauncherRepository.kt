@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.Collator
 import java.util.Locale
+import kotlin.math.ln
 
 class LauncherRepository(
     context: Context,
@@ -28,7 +29,7 @@ class LauncherRepository(
     private val appContext = context.applicationContext
     private val launcherApps = appContext.getSystemService(LauncherApps::class.java)
     private val userManager = appContext.getSystemService(UserManager::class.java)
-    private val preferences = appContext.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+    private val preferences = appContext.getSharedPreferences("barely", Context.MODE_PRIVATE)
     private val densityDpi = appContext.resources.displayMetrics.densityDpi
 
     private val callback = object : LauncherApps.Callback() {
@@ -184,6 +185,7 @@ class LauncherRepository(
     }
 
     fun launch(app: LauncherApp) {
+        recordAppLaunch(app)
         launcherApps.startMainActivity(app.component, app.user, null, null)
     }
 
@@ -218,18 +220,86 @@ class LauncherRepository(
         preferences.edit { putBoolean(PRIVATE_SPACE_EXPANDED_KEY, expanded) }
     }
 
-    fun areNotificationDotsEnabled(): Boolean =
-        preferences.getBoolean(NOTIFICATION_DOTS_KEY, false)
+    fun launcherSettings(): LauncherSettings = LauncherSettings(
+        doubleTapToLock = preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true),
+        swipeDownForNotifications = preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true),
+        frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
+        notificationDots = preferences.getBoolean(NOTIFICATION_DOTS_KEY, false),
+        mediaControls = preferences.getBoolean(MEDIA_CONTROLS_KEY, false),
+        localSuggestions = preferences.getBoolean(LOCAL_SUGGESTIONS_KEY, true),
+        showSearchHint = preferences.getBoolean(SHOW_SEARCH_HINT_KEY, true),
+    )
 
-    fun setNotificationDotsEnabled(enabled: Boolean) {
-        preferences.edit { putBoolean(NOTIFICATION_DOTS_KEY, enabled) }
+    fun setLauncherSettings(settings: LauncherSettings) {
+        preferences.edit {
+            putBoolean(DOUBLE_TAP_LOCK_KEY, settings.doubleTapToLock)
+            putBoolean(SWIPE_NOTIFICATIONS_KEY, settings.swipeDownForNotifications)
+            putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
+            putBoolean(NOTIFICATION_DOTS_KEY, settings.notificationDots)
+            putBoolean(MEDIA_CONTROLS_KEY, settings.mediaControls)
+            putBoolean(LOCAL_SUGGESTIONS_KEY, settings.localSuggestions)
+            putBoolean(SHOW_SEARCH_HINT_KEY, settings.showSearchHint)
+        }
     }
 
-    fun areMediaControlsEnabled(): Boolean =
-        preferences.getBoolean(MEDIA_CONTROLS_KEY, false)
+    fun recommendedAppKeys(limit: Int = 5): List<String> {
+        val now = System.currentTimeMillis()
+        return preferences.all.keys
+            .asSequence()
+            .filter { it.startsWith(USAGE_COUNT_PREFIX) }
+            .map { countKey ->
+                val appKey = countKey.removePrefix(USAGE_COUNT_PREFIX)
+                val count = preferences.getInt(countKey, 0)
+                val lastUsed = preferences.getLong(USAGE_LAST_PREFIX + appKey, 0L)
+                val ageHours = ((now - lastUsed).coerceAtLeast(0L) / 3_600_000.0)
+                val recency = when {
+                    ageHours < 3 -> 8.0
+                    ageHours < 24 -> 5.0
+                    ageHours < 72 -> 3.0
+                    ageHours < 168 -> 1.0
+                    else -> 0.0
+                }
+                appKey to (ln(count + 1.0) * 2.0 + recency)
+            }
+            .sortedByDescending { it.second }
+            .map { it.first }
+            .take(limit)
+            .toList()
+    }
 
-    fun setMediaControlsEnabled(enabled: Boolean) {
-        preferences.edit { putBoolean(MEDIA_CONTROLS_KEY, enabled) }
+    fun recentAppSearches(): List<String> = preferences
+        .getString(RECENT_APP_SEARCHES_KEY, null)
+        ?.split(RECENT_SEPARATOR)
+        ?.filter(String::isNotBlank)
+        .orEmpty()
+
+    fun recordRecentAppSearch(query: String) {
+        val cleanQuery = query.trim().replace(RECENT_SEPARATOR, " ")
+        if (cleanQuery.length < 2) return
+        val updated = buildList {
+            add(cleanQuery)
+            addAll(recentAppSearches().filterNot { it.equals(cleanQuery, ignoreCase = true) })
+        }.take(MAX_RECENT_SEARCHES)
+        preferences.edit { putString(RECENT_APP_SEARCHES_KEY, updated.joinToString(RECENT_SEPARATOR)) }
+    }
+
+    fun clearLocalHistory() {
+        val dynamicKeys = preferences.all.keys.filter {
+            it.startsWith(USAGE_COUNT_PREFIX) || it.startsWith(USAGE_LAST_PREFIX)
+        }
+        preferences.edit {
+            dynamicKeys.forEach(::remove)
+            remove(RECENT_APP_SEARCHES_KEY)
+        }
+    }
+
+    private fun recordAppLaunch(app: LauncherApp) {
+        val countKey = USAGE_COUNT_PREFIX + app.key
+        val lastKey = USAGE_LAST_PREFIX + app.key
+        preferences.edit {
+            putInt(countKey, preferences.getInt(countKey, 0) + 1)
+            putLong(lastKey, System.currentTimeMillis())
+        }
     }
 
     fun setPrivateSpaceLocked(profile: LauncherProfile, locked: Boolean): Boolean {
@@ -272,8 +342,18 @@ class LauncherRepository(
         const val FAVORITES_KEY = "favorites"
         const val GESTURE_COACH_KEY = "gesture_coach_seen"
         const val PRIVATE_SPACE_EXPANDED_KEY = "private_space_expanded"
+        const val DOUBLE_TAP_LOCK_KEY = "double_tap_lock_enabled"
+        const val SWIPE_NOTIFICATIONS_KEY = "swipe_notifications_enabled"
+        const val FROSTED_WALLPAPER_KEY = "frosted_wallpaper_enabled"
         const val NOTIFICATION_DOTS_KEY = "notification_dots_enabled"
         const val MEDIA_CONTROLS_KEY = "media_controls_enabled"
+        const val LOCAL_SUGGESTIONS_KEY = "local_suggestions_enabled"
+        const val SHOW_SEARCH_HINT_KEY = "show_search_hint"
+        const val USAGE_COUNT_PREFIX = "usage_count:"
+        const val USAGE_LAST_PREFIX = "usage_last:"
+        const val RECENT_APP_SEARCHES_KEY = "recent_app_searches"
+        const val RECENT_SEPARATOR = "\u001F"
+        const val MAX_RECENT_SEARCHES = 5
         const val ICON_SIZE_PX = 144
     }
 }

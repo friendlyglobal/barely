@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">رجوع</string>
+    <string name="choose_widget">اختيار أداة</string>
+    <string name="widget_picker_summary">مجمّعة حسب التطبيق، مع معاينات فعلية عند توفرها</string>
+    <string name="widget_apps">تطبيقات الأدوات</string>
+    <string name="search_widgets">البحث عن أدوات</string>
+    <string name="no_widgets_found">لم يتم العثور على أدوات</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="zero">لا توجد أدوات</item><item quantity="one">أداة واحدة</item><item quantity="two">أداتان</item><item quantity="few">%1$d أدوات</item><item quantity="many">%1$d أداة</item><item quantity="other">%1$d أداة</item></plurals>
+    <string name="launcher_settings">إعدادات Barely</string>
+    <string name="barely_tagline">بالكاد يظهر. جاهز دائماً.</string>
+    <string name="settings_gestures">الإيماءات</string>
+    <string name="settings_double_tap_lock">النقر مرتين للقفل</string>
+    <string name="settings_double_tap_lock_summary">انقر مرتين على الشاشة الرئيسية الفارغة لقفل الشاشة.</string>
+    <string name="settings_swipe_notifications">السحب لفتح الإشعارات</string>
+    <string name="settings_swipe_notifications_summary">اسحب إلى أسفل على الشاشة الرئيسية الفارغة لفتح الإشعارات.</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_frosted_wallpaper">خلفية ضبابية</string>
+    <string name="settings_frosted_wallpaper_summary">تمويه الخلفية وراء المفضلة والتطبيقات والبحث عندما يدعم Android ذلك.</string>
+    <string name="settings_optional_modules">وحدات اختيارية</string>
+    <string name="settings_notification_dots">نقاط الإشعارات</string>
+    <string name="settings_media_controls">عناصر التحكم بالوسائط</string>
+    <string name="settings_system_access">الوصول إلى النظام</string>
+    <string name="settings_default_home">تطبيق الشاشة الرئيسية الافتراضي</string>
+    <string name="settings_gesture_access">الوصول إلى الإيماءات</string>
+    <string name="settings_gesture_access_summary">يُستخدم فقط لقفل الشاشة وفتح الإشعارات. لا تتم قراءة محتوى الشاشة.</string>
+    <string name="settings_notification_access">الوصول إلى الإشعارات والوسائط</string>
+    <string name="settings_contact_search">البحث في جهات الاتصال</string>
+    <string name="settings_active">نشط</string>
+    <string name="settings_allowed">مسموح</string>
+    <string name="settings_set_up">إعداد</string>
+    <string name="settings_optional">اختياري</string>
+    <string name="settings_privacy_note">لا يملك Barely إذن الإنترنت. يمكن إلغاء الوصول الاختياري في أي وقت من إعدادات Android.</string>
+    <string name="settings_search">البحث</string>
+    <string name="settings_local_suggestions">اقتراحات محلية</string>
+    <string name="settings_local_suggestions_summary">اقتراح التطبيقات المفتوحة عبر Barely وعرض عمليات البحث الأخيرة التي فتحت تطبيقاً.</string>
+    <string name="settings_show_search_hint">تلميحات البحث</string>
+    <string name="settings_show_search_hint_summary">عرض تلميح الأوامر الصغير أعلى حقل البحث.</string>
+    <string name="settings_clear_local_history">مسح السجل المحلي</string>
+    <string name="settings_clear_local_history_summary">إزالة درجات تشغيل التطبيقات وعمليات البحث الأخيرة من هذا الجهاز.</string>
+    <string name="settings_history_cleared">تم مسح السجل المحلي</string>
+    <string name="recommended_apps">مقترحة</string>
+    <string name="recent_searches">عمليات البحث الأخيرة</string>
+    <string name="dismiss_search_hint">إخفاء تلميح البحث</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">Kembali</string>
+    <string name="choose_widget">Pilih widget</string>
+    <string name="widget_picker_summary">Dikelompokkan menurut aplikasi, dengan pratinjau asli jika tersedia</string>
+    <string name="widget_apps">Aplikasi widget</string>
+    <string name="search_widgets">Cari widget</string>
+    <string name="no_widgets_found">Widget tidak ditemukan</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="other">%1$d widget</item></plurals>
+    <string name="launcher_settings">Setelan Barely</string>
+    <string name="barely_tagline">Hampir tak terlihat. Selalu siap.</string>
+    <string name="settings_gestures">Gestur</string>
+    <string name="settings_double_tap_lock">Ketuk dua kali untuk mengunci</string>
+    <string name="settings_double_tap_lock_summary">Ketuk dua kali halaman Beranda yang kosong untuk mengunci layar.</string>
+    <string name="settings_swipe_notifications">Geser untuk notifikasi</string>
+    <string name="settings_swipe_notifications_summary">Tarik ke bawah di halaman Beranda yang kosong untuk membuka notifikasi.</string>
+    <string name="settings_appearance">Tampilan</string>
+    <string name="settings_frosted_wallpaper">Wallpaper buram</string>
+    <string name="settings_frosted_wallpaper_summary">Buramkan wallpaper di belakang Favorit, Aplikasi, dan Pencarian jika didukung Android.</string>
+    <string name="settings_optional_modules">Modul opsional</string>
+    <string name="settings_notification_dots">Titik notifikasi</string>
+    <string name="settings_media_controls">Kontrol media</string>
+    <string name="settings_system_access">Akses sistem</string>
+    <string name="settings_default_home">Aplikasi Beranda default</string>
+    <string name="settings_gesture_access">Akses gestur</string>
+    <string name="settings_gesture_access_summary">Hanya digunakan untuk mengunci layar dan membuka notifikasi. Isi layar tidak dibaca.</string>
+    <string name="settings_notification_access">Akses notifikasi dan media</string>
+    <string name="settings_contact_search">Pencarian kontak</string>
+    <string name="settings_active">Aktif</string>
+    <string name="settings_allowed">Diizinkan</string>
+    <string name="settings_set_up">Siapkan</string>
+    <string name="settings_optional">Opsional</string>
+    <string name="settings_privacy_note">Barely tidak memiliki izin internet. Akses opsional dapat dicabut kapan saja di Setelan Android.</string>
+    <string name="settings_search">Pencarian</string>
+    <string name="settings_local_suggestions">Saran lokal</string>
+    <string name="settings_local_suggestions_summary">Sarankan aplikasi yang dibuka melalui Barely dan tampilkan pencarian aplikasi terbaru yang berhasil.</string>
+    <string name="settings_show_search_hint">Tips pencarian</string>
+    <string name="settings_show_search_hint_summary">Tampilkan tips perintah kecil di atas kolom pencarian.</string>
+    <string name="settings_clear_local_history">Hapus riwayat lokal</string>
+    <string name="settings_clear_local_history_summary">Hapus skor peluncuran aplikasi dan pencarian terbaru dari perangkat ini.</string>
+    <string name="settings_history_cleared">Riwayat lokal dihapus</string>
+    <string name="recommended_apps">Disarankan</string>
+    <string name="recent_searches">Pencarian terbaru</string>
+    <string name="dismiss_search_hint">Sembunyikan tips pencarian</string>
+</resources>

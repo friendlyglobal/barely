@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">Pantalla de inicio. Desliza hacia arriba para buscar, hacia abajo para ver notificaciones o toca dos veces para bloquear.</string>
     <string name="favorites">Favoritos</string>
     <string name="search">Buscar</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">Quitar widget</string>
     <string name="widgets_empty_message">Añade los widgets que quieras consultar rápidamente.</string>
     <string name="error_add_widget">No se pudo añadir este widget</string>
-    <string name="accessibility_service_label">Gestos de Launchly</string>
+    <string name="accessibility_service_label">Gestos de Barely</string>
     <string name="accessibility_service_description">Solo ofrece gestos opcionales en la pantalla de inicio para bloquear la pantalla y abrir las notificaciones. No lee el contenido de la pantalla.</string>
-    <string name="enable_accessibility_gestures">Activa los gestos de Launchly en Accesibilidad para usar esta acción.</string>
+    <string name="enable_accessibility_gestures">Activa los gestos de Barely en Accesibilidad para usar esta acción.</string>
     <string name="private_space">Espacio privado</string>
     <string name="private_space_locked">Bloqueado</string>
     <string name="private_space_unlocked">Desbloqueado</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Abrir ajuste de Android</string>
     <string name="command_ask_assistant">Preguntar a %1$s</string>
     <string name="command_enable_contacts">Activar búsqueda de contactos</string>
-    <string name="command_contacts_private">Opcional. Los contactos permanecen en memoria y Launchly nunca los guarda.</string>
+    <string name="command_contacts_private">Opcional. Los contactos permanecen en memoria y Barely nunca los guarda.</string>
     <string name="command_internet">Controles de Internet</string>
     <string name="command_bluetooth">Ajustes de Bluetooth</string>
     <string name="command_display">Ajustes de pantalla</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">Copiado</string>
     <string name="error_command">No se pudo completar esta acción</string>
     <string name="contacts_permission_denied">La búsqueda de contactos sigue desactivada. Puedes activarla más tarde buscando contactos.</string>
-    <string name="notification_service_label">Notificaciones y multimedia opcionales de Launchly</string>
+    <string name="notification_service_label">Notificaciones y multimedia opcionales de Barely</string>
     <string name="command_enable_notification_access">Activar acceso a notificaciones y multimedia</string>
     <string name="command_manage_notification_access">Administrar acceso a notificaciones</string>
-    <string name="command_notification_access_warning">Acceso sensible opcional. Launchly puede ver metadatos de notificaciones mientras esté activo.</string>
+    <string name="command_notification_access_warning">Acceso sensible opcional. Barely puede ver metadatos de notificaciones mientras esté activo.</string>
     <string name="command_enable_notification_dots">Mostrar puntos de notificación</string>
     <string name="command_disable_notification_dots">Ocultar puntos de notificación</string>
     <string name="command_notification_dots_subtitle">Solo se conservan en memoria los recuentos por app.</string>

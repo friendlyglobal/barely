@@ -3,13 +3,16 @@
     androidx.compose.material3.ExperimentalMaterial3Api::class,
 )
 
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.app.Activity
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
+import android.widget.FrameLayout
+import android.widget.RemoteViews
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -27,6 +30,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,6 +44,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -71,6 +76,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Info
@@ -102,7 +108,9 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -121,10 +129,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -140,6 +150,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
@@ -152,6 +163,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -167,18 +179,21 @@ fun LauncherScreen(
     showGestureCoach: Boolean,
     homeRequestId: Int,
     widgetIds: List<Int>,
+    widgetProviders: List<AppWidgetProviderInfo>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
+    launcherSettings: LauncherSettings,
     privateSpaceExpanded: Boolean,
     contacts: List<LauncherContact>,
     hasContactsPermission: Boolean,
+    hasGestureAccess: Boolean,
     hasNotificationAccess: Boolean,
-    notificationDotsEnabled: Boolean,
-    mediaControlsEnabled: Boolean,
     notificationCounts: Map<String, Int>,
     nowPlaying: NowPlaying?,
+    recommendedAppKeys: List<String>,
+    recentAppSearches: List<String>,
     onRequestHomeRole: () -> Unit,
     onGestureCoachSeen: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -186,7 +201,7 @@ fun LauncherScreen(
     onToggleFavorite: (LauncherApp) -> Unit,
     onAppInfo: (LauncherApp) -> Unit,
     onUninstall: (LauncherApp) -> Unit,
-    onAddWidget: () -> Unit,
+    onAddWidget: (AppWidgetProviderInfo) -> Unit,
     onRemoveWidget: (Int) -> Unit,
     onSetPrivateSpaceExpanded: (Boolean) -> Unit,
     onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
@@ -194,12 +209,20 @@ fun LauncherScreen(
     onMediaAction: (MediaAction) -> Unit,
     onLockScreen: () -> Unit,
     onOpenNotifications: () -> Unit,
+    onSettingsChanged: (LauncherSettings) -> Unit,
+    onAppSearchCommitted: (String) -> Unit,
+    onClearLocalHistory: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit,
+    onOpenNotificationAccess: () -> Unit,
+    onConfigureContacts: () -> Unit,
     onBackdropChanged: (LauncherBackdrop) -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = HOME_PAGE, pageCount = { PAGE_COUNT })
     var searchVisible by remember { mutableStateOf(false) }
     var initialSearchQuery by remember { mutableStateOf("") }
     var selectedApp by remember { mutableStateOf<LauncherApp?>(null) }
+    var settingsVisible by remember { mutableStateOf(false) }
+    var widgetPickerVisible by remember { mutableStateOf(false) }
     val rootFocusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -214,6 +237,11 @@ fun LauncherScreen(
     }
     val favorites = remember(snapshot.apps, favoriteKeys) {
         snapshot.apps.filter { it.key in favoriteKeys }
+    }
+    val recommendedApps = remember(snapshot.apps, recommendedAppKeys, launcherSettings.localSuggestions) {
+        if (!launcherSettings.localSuggestions) emptyList() else recommendedAppKeys.mapNotNull { key ->
+            snapshot.apps.firstOrNull { it.key == key && !it.isPrivate }
+        }
     }
     val pagerFlingBehavior = PagerDefaults.flingBehavior(
         state = pagerState,
@@ -255,6 +283,8 @@ fun LauncherScreen(
         if (homeRequestId > 0) {
             searchVisible = false
             selectedApp = null
+            settingsVisible = false
+            widgetPickerVisible = false
             pagerState.scrollToPage(HOME_PAGE)
         }
     }
@@ -373,13 +403,15 @@ fun LauncherScreen(
                         nowPlaying = nowPlaying,
                         onLaunchApp = onLaunchApp,
                         onLongPress = { selectedApp = it },
-                        onAddWidget = onAddWidget,
+                        onAddWidget = { widgetPickerVisible = true },
                         onRemoveWidget = onRemoveWidget,
                         onMediaAction = onMediaAction,
                     )
 
                     HOME_PAGE -> WallpaperPage(
                         showGestureCoach = showGestureCoach,
+                        doubleTapToLock = launcherSettings.doubleTapToLock,
+                        swipeDownForNotifications = launcherSettings.swipeDownForNotifications,
                         onLockScreen = onLockScreen,
                         onOpenNotifications = onOpenNotifications,
                         onSearch = {
@@ -402,6 +434,7 @@ fun LauncherScreen(
                         onLongPress = { selectedApp = it },
                         onSetPrivateSpaceExpanded = onSetPrivateSpaceExpanded,
                         onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
+                        onOpenSettings = { settingsVisible = true },
                         onSearch = {
                             openSearch()
                         },
@@ -427,12 +460,27 @@ fun LauncherScreen(
                 contacts = contacts,
                 hasContactsPermission = hasContactsPermission,
                 hasNotificationAccess = hasNotificationAccess,
-                notificationDotsEnabled = notificationDotsEnabled,
-                mediaControlsEnabled = mediaControlsEnabled,
+                notificationDotsEnabled = launcherSettings.notificationDots,
+                mediaControlsEnabled = launcherSettings.mediaControls,
                 notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
                 backdropBlurEnabled = backdropBlurEnabled,
                 onClose = { searchVisible = false },
+                onDismissToHome = {
+                    searchVisible = false
+                    scope.launch { pagerState.animateScrollToPage(HOME_PAGE) }
+                },
+                recommendedApps = recommendedApps,
+                recentAppSearches = if (launcherSettings.localSuggestions) {
+                    recentAppSearches
+                } else {
+                    emptyList()
+                },
+                showSearchHint = launcherSettings.showSearchHint,
+                onDismissSearchHint = {
+                    onSettingsChanged(launcherSettings.copy(showSearchHint = false))
+                },
+                onAppSearchCommitted = onAppSearchCommitted,
                 onLaunchApp = {
                     searchVisible = false
                     onLaunchApp(it)
@@ -484,11 +532,44 @@ fun LauncherScreen(
             },
         )
     }
+
+    if (settingsVisible) {
+        LauncherSettingsPage(
+            settings = launcherSettings,
+            isHomeRoleHeld = isHomeRoleHeld,
+            hasGestureAccess = hasGestureAccess,
+            hasNotificationAccess = hasNotificationAccess,
+            hasContactsPermission = hasContactsPermission,
+            onDismiss = { settingsVisible = false },
+            onSettingsChanged = onSettingsChanged,
+            onRequestHomeRole = onRequestHomeRole,
+            onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+            onOpenNotificationAccess = onOpenNotificationAccess,
+            onConfigureContacts = onConfigureContacts,
+            onClearLocalHistory = onClearLocalHistory,
+        )
+    }
+
+    BackHandler(enabled = settingsVisible) { settingsVisible = false }
+
+    if (widgetPickerVisible) {
+        WidgetPickerSheet(
+            providers = widgetProviders,
+            widgetManager = widgetManager,
+            onDismiss = { widgetPickerVisible = false },
+            onSelect = { provider ->
+                widgetPickerVisible = false
+                onAddWidget(provider)
+            },
+        )
+    }
 }
 
 @Composable
 private fun WallpaperPage(
     showGestureCoach: Boolean,
+    doubleTapToLock: Boolean,
+    swipeDownForNotifications: Boolean,
     onSearch: () -> Unit,
     onLockScreen: () -> Unit,
     onOpenNotifications: () -> Unit,
@@ -503,8 +584,14 @@ private fun WallpaperPage(
             .semantics {
                 contentDescription = homeContentDescription
             }
-            .pointerInput(onLockScreen) {
-                detectTapGestures(onDoubleTap = { onLockScreen() })
+            .pointerInput(onLockScreen, doubleTapToLock) {
+                detectTapGestures(
+                    onDoubleTap = if (doubleTapToLock) {
+                        { _: Offset -> onLockScreen() }
+                    } else {
+                        null
+                    },
+                )
             }
             .pointerInput(threshold) {
                 detectVerticalDragGestures(
@@ -516,7 +603,9 @@ private fun WallpaperPage(
                     onDragEnd = {
                         when {
                             dragDistance < -threshold -> onSearch()
-                            dragDistance > threshold -> onOpenNotifications()
+                            dragDistance > threshold && swipeDownForNotifications -> {
+                                onOpenNotifications()
+                            }
                         }
                         dragDistance = 0f
                     },
@@ -933,12 +1022,14 @@ private fun AppsPage(
     onLongPress: (LauncherApp) -> Unit,
     onSetPrivateSpaceExpanded: (Boolean) -> Unit,
     onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
+    onOpenSettings: () -> Unit,
     onSearch: () -> Unit,
 ) {
     PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
         PageHeader(
             title = stringResource(R.string.apps),
             trailing = apps.size.toString(),
+            onSettings = onOpenSettings,
         )
 
         if (!isHomeRoleHeld || !hasShortcutPermission) {
@@ -1027,6 +1118,7 @@ private fun PageSurface(
 private fun PageHeader(
     title: String,
     trailing: String? = null,
+    onSettings: (() -> Unit)? = null,
 ) {
     Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1043,6 +1135,20 @@ private fun PageHeader(
                     color = Color.White.copy(alpha = 0.58f),
                     style = MaterialTheme.typography.labelLarge,
                 )
+            }
+            onSettings?.let { openSettings ->
+                Spacer(Modifier.width(8.dp))
+                IconButton(
+                    onClick = openSettings,
+                    modifier = Modifier.size(40.dp),
+                ) {
+                    Icon(
+                        Icons.Outlined.Settings,
+                        contentDescription = stringResource(R.string.launcher_settings),
+                        modifier = Modifier.size(21.dp),
+                        tint = Color.White.copy(alpha = 0.82f),
+                    )
+                }
             }
         }
     }
@@ -1365,6 +1471,12 @@ private fun SearchPage(
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
     onClose: () -> Unit,
+    onDismissToHome: () -> Unit,
+    recommendedApps: List<LauncherApp>,
+    recentAppSearches: List<String>,
+    showSearchHint: Boolean,
+    onDismissSearchHint: () -> Unit,
+    onAppSearchCommitted: (String) -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
@@ -1376,6 +1488,7 @@ private fun SearchPage(
     var dismissDrag by remember { mutableFloatStateOf(0f) }
     var dismissDragging by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val dismissThreshold = with(LocalDensity.current) { 76.dp.toPx() }
@@ -1460,7 +1573,10 @@ private fun SearchPage(
         keyboard?.hide()
         when (val result = rankedResults.getOrNull(selectedResultIndex)) {
             is CommandSearchResult -> onExecuteCommand(result.command)
-            is AppSearchResult -> onLaunchApp(result.app)
+            is AppSearchResult -> {
+                onAppSearchCommitted(query)
+                onLaunchApp(result.app)
+            }
             is ShortcutSearchResult -> onLaunchShortcut(result.shortcut)
             null -> Unit
         }
@@ -1531,8 +1647,9 @@ private fun SearchPage(
                                         onDragEnd = {
                                             dismissDragging = false
                                             if (dismissDrag >= dismissThreshold) {
+                                                focusManager.clearFocus(force = true)
                                                 keyboard?.hide()
-                                                onClose()
+                                                onDismissToHome()
                                             } else {
                                                 dismissDrag = 0f
                                             }
@@ -1546,6 +1663,7 @@ private fun SearchPage(
                         ) {
                             IconButton(
                                 onClick = {
+                                    focusManager.clearFocus(force = true)
                                     keyboard?.hide()
                                     onClose()
                                 },
@@ -1575,7 +1693,15 @@ private fun SearchPage(
                             selectedResultIndex = selectedResultIndex,
                             canSearchShortcuts = canSearchShortcuts,
                             foldingFeature = foldingFeature,
-                            onLaunchApp = onLaunchApp,
+                            recommendedApps = recommendedApps,
+                            recentAppSearches = recentAppSearches,
+                            showSearchHint = showSearchHint,
+                            onDismissSearchHint = onDismissSearchHint,
+                            onRecentSearch = { query = it },
+                            onLaunchApp = { app ->
+                                onAppSearchCommitted(query)
+                                onLaunchApp(app)
+                            },
                             onLongPress = onLongPress,
                             onLaunchShortcut = onLaunchShortcut,
                             onExecuteCommand = onExecuteCommand,
@@ -1623,7 +1749,7 @@ private fun SearchInput(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(18.dp),
+        shape = CircleShape,
         color = Color.Black.copy(alpha = 0.58f),
         contentColor = Color.White,
     ) {
@@ -1710,6 +1836,89 @@ private fun SearchInput(
 }
 
 @Composable
+private fun ZeroQueryContent(
+    modifier: Modifier,
+    recommendedApps: List<LauncherApp>,
+    recentAppSearches: List<String>,
+    showHint: Boolean,
+    onDismissHint: () -> Unit,
+    onRecentSearch: (String) -> Unit,
+    onLaunchApp: (LauncherApp) -> Unit,
+    onLongPress: (LauncherApp) -> Unit,
+    notificationCounts: Map<String, Int>,
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.Bottom,
+    ) {
+        if (showHint) {
+            Surface(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                shape = RoundedCornerShape(22.dp),
+                color = Color.Black.copy(alpha = 0.32f),
+                contentColor = Color.White,
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.command_palette_hint),
+                        modifier = Modifier.weight(1f),
+                        color = Color.White.copy(alpha = 0.68f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    IconButton(onClick = onDismissHint) {
+                        Icon(
+                            Icons.Outlined.Close,
+                            contentDescription = stringResource(R.string.dismiss_search_hint),
+                            modifier = Modifier.size(18.dp),
+                            tint = Color.White.copy(alpha = 0.7f),
+                        )
+                    }
+                }
+            }
+        }
+        if (recommendedApps.isNotEmpty()) {
+            Text(
+                stringResource(R.string.recommended_apps),
+                modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 4.dp),
+                color = Color.White.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            recommendedApps.take(4).forEach { app ->
+                AppSearchRow(
+                    app = app,
+                    notificationCount = notificationCounts[app.packageName] ?: 0,
+                    selected = false,
+                    onLaunchApp = onLaunchApp,
+                    onLongPress = onLongPress,
+                )
+            }
+        }
+        if (recentAppSearches.isNotEmpty()) {
+            Text(
+                stringResource(R.string.recent_searches),
+                modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 4.dp),
+                color = Color.White.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            recentAppSearches.take(3).forEach { recent ->
+                ListItem(
+                    onClick = { onRecentSearch(recent) },
+                    colors = minimalListItemColors(),
+                    leadingContent = {
+                        Icon(Icons.Outlined.Search, contentDescription = null)
+                    },
+                ) {
+                    Text(recent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun SearchResults(
     modifier: Modifier,
     query: String,
@@ -1717,6 +1926,11 @@ private fun SearchResults(
     selectedResultIndex: Int,
     canSearchShortcuts: Boolean,
     foldingFeature: FoldingFeature?,
+    recommendedApps: List<LauncherApp>,
+    recentAppSearches: List<String>,
+    showSearchHint: Boolean,
+    onDismissSearchHint: () -> Unit,
+    onRecentSearch: (String) -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
@@ -1724,17 +1938,17 @@ private fun SearchResults(
     notificationCounts: Map<String, Int>,
 ) {
     if (query.isBlank()) {
-        Box(modifier.fillMaxWidth()) {
-            Text(
-                stringResource(R.string.command_palette_hint),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 28.dp, vertical = 22.dp),
-                color = Color.White.copy(alpha = 0.48f),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+        ZeroQueryContent(
+            modifier = modifier,
+            recommendedApps = recommendedApps,
+            recentAppSearches = recentAppSearches,
+            showHint = showSearchHint,
+            onDismissHint = onDismissSearchHint,
+            onRecentSearch = onRecentSearch,
+            onLaunchApp = onLaunchApp,
+            onLongPress = onLongPress,
+            notificationCounts = notificationCounts,
+        )
         return
     }
     BoxWithConstraints(modifier.fillMaxWidth()) {
@@ -1931,6 +2145,604 @@ private fun minimalListItemColors(selected: Boolean = false) = ListItemDefaults.
     leadingIconColor = Color.White,
 )
 
+private data class WidgetAppGroup(
+    val packageName: String,
+    val label: String,
+    val icon: android.graphics.Bitmap?,
+    val providers: List<AppWidgetProviderInfo>,
+)
+
+@Composable
+private fun WidgetPickerSheet(
+    providers: List<AppWidgetProviderInfo>,
+    widgetManager: AppWidgetManager,
+    onDismiss: () -> Unit,
+    onSelect: (AppWidgetProviderInfo) -> Unit,
+) {
+    val context = LocalContext.current
+    val packageManager = context.packageManager
+    var query by remember { mutableStateOf("") }
+    var selectedPackage by remember { mutableStateOf<String?>(null) }
+    val groups = remember(providers, query) {
+        providers.groupBy { it.provider.packageName }.map { (packageName, appProviders) ->
+            val applicationInfo = runCatching {
+                packageManager.getApplicationInfo(packageName, 0)
+            }.getOrNull()
+            val appLabel = applicationInfo?.let { packageManager.getApplicationLabel(it).toString() }
+                ?: packageName
+            val icon = applicationInfo?.let {
+                runCatching { packageManager.getApplicationIcon(it).toBitmap(112, 112) }.getOrNull()
+            }
+            WidgetAppGroup(
+                packageName = packageName,
+                label = appLabel,
+                icon = icon,
+                providers = appProviders.sortedBy { it.loadLabel(packageManager) },
+            )
+        }.filter { group ->
+            query.isBlank() || group.label.contains(query, ignoreCase = true) ||
+                group.providers.any {
+                    it.loadLabel(packageManager).contains(query, ignoreCase = true)
+                }
+        }.sortedBy { it.label.lowercase() }
+    }
+    val selectedGroup = groups.firstOrNull { it.packageName == selectedPackage }
+
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (selectedPackage != null) {
+                    IconButton(onClick = { selectedPackage = null }) {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.widget_apps),
+                        )
+                    }
+                } else {
+                    Spacer(Modifier.width(12.dp))
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        selectedGroup?.label ?: stringResource(R.string.choose_widget),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    Text(
+                        if (selectedGroup == null) {
+                            stringResource(R.string.widget_picker_summary)
+                        } else {
+                            resourcesQuantityString(
+                                R.plurals.widget_count,
+                                selectedGroup.providers.size,
+                                selectedGroup.providers.size,
+                            )
+                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+
+            if (selectedGroup == null) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, end = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(Icons.Outlined.Search, contentDescription = null)
+                    BasicTextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 12.dp, vertical = 14.dp),
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        decorationBox = { inner ->
+                            Box(contentAlignment = Alignment.CenterStart) {
+                                if (query.isBlank()) {
+                                    Text(
+                                        stringResource(R.string.search_widgets),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                inner()
+                            }
+                        },
+                    )
+                    if (query.isNotEmpty()) {
+                        IconButton(onClick = { query = "" }) {
+                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.clear_search))
+                        }
+                    }
+                }
+            }
+            }
+
+            if (selectedGroup == null) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                ) {
+                    items(groups, key = WidgetAppGroup::packageName) { group ->
+                        ListItem(
+                            onClick = { selectedPackage = group.packageName },
+                            leadingContent = {
+                                WidgetBitmapIcon(group.icon, group.label, 50)
+                            },
+                            supportingContent = {
+                                Text(
+                                    resourcesQuantityString(
+                                        R.plurals.widget_count,
+                                        group.providers.size,
+                                        group.providers.size,
+                                    ),
+                                )
+                            },
+                            trailingContent = {
+                                Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+                            },
+                        ) {
+                            Text(group.label)
+                        }
+                    }
+                    if (groups.isEmpty()) {
+                        item {
+                            SearchHint(
+                                title = stringResource(R.string.no_widgets_found),
+                                description = stringResource(R.string.try_another_name),
+                            )
+                        }
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    items(selectedGroup.providers, key = { it.provider.flattenToString() }) { provider ->
+                        WidgetPreviewCard(
+                            provider = provider,
+                            widgetManager = widgetManager,
+                            onClick = { onSelect(provider) },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WidgetPreviewCard(
+    provider: AppWidgetProviderInfo,
+    widgetManager: AppWidgetManager,
+    onClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val packageManager = context.packageManager
+    val label = remember(provider.provider) { provider.loadLabel(packageManager) }
+    val cells = remember(provider.provider) {
+        val width = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && provider.targetCellWidth > 0) {
+            provider.targetCellWidth
+        } else {
+            ((provider.minWidth / context.resources.displayMetrics.density) / 70f)
+                .toInt().coerceAtLeast(1)
+        }
+        val height = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && provider.targetCellHeight > 0) {
+            provider.targetCellHeight
+        } else {
+            ((provider.minHeight / context.resources.displayMetrics.density) / 70f)
+                .toInt().coerceAtLeast(1)
+        }
+        width.coerceIn(1, 6) to height.coerceIn(1, 6)
+    }
+    val previewBitmap = remember(provider.provider) {
+        runCatching {
+            provider.loadPreviewImage(context, context.resources.displayMetrics.densityDpi)
+                ?.toBitmap()
+        }.getOrNull()
+    }
+    val remotePreview = remember(provider.provider) {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM &&
+                provider.generatedPreviewCategories.and(
+                    AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                ) != 0 -> runCatching {
+                widgetManager.getWidgetPreview(
+                    provider.provider,
+                    provider.profile,
+                    AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                )
+            }.getOrNull()
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && provider.previewLayout != 0 ->
+                RemoteViews(provider.provider.packageName, provider.previewLayout)
+
+            else -> null
+        }
+    }
+    val aspectRatio = (cells.first.toFloat() / cells.second.toFloat()).coerceIn(0.75f, 2.2f)
+    val previewHeight = (220f / aspectRatio).coerceIn(130f, 220f).dp
+
+    Card(onClick = onClick, shape = RoundedCornerShape(28.dp)) {
+        Column(Modifier.padding(14.dp)) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(previewHeight),
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            ) {
+                when {
+                    previewBitmap != null -> Image(
+                        bitmap = previewBitmap.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize().padding(8.dp),
+                        contentScale = ContentScale.Fit,
+                    )
+
+                    remotePreview != null -> AndroidView(
+                        factory = { previewContext ->
+                            FrameLayout(previewContext).apply {
+                                clipChildren = true
+                                clipToPadding = true
+                                runCatching {
+                                    val previewView = remotePreview.apply(previewContext, this)
+                                    addView(
+                                        previewView,
+                                        FrameLayout.LayoutParams(
+                                            FrameLayout.LayoutParams.MATCH_PARENT,
+                                            FrameLayout.LayoutParams.MATCH_PARENT,
+                                        ),
+                                    )
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp)),
+                    )
+
+                    else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        val icon = remember(provider.provider) {
+                            runCatching {
+                                provider.loadIcon(context, context.resources.displayMetrics.densityDpi)
+                                    .toBitmap(112, 112)
+                            }.getOrNull()
+                        }
+                        WidgetBitmapIcon(icon, label, 64)
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 12.dp, bottom = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    label,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    stringResource(R.string.widget_dimensions, cells.first, cells.second),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WidgetBitmapIcon(bitmap: android.graphics.Bitmap?, label: String, sizeDp: Int) {
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = null,
+            modifier = Modifier.size(sizeDp.dp),
+        )
+    } else {
+        Surface(
+            modifier = Modifier.size(sizeDp.dp),
+            shape = RoundedCornerShape((sizeDp / 3).dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(label.firstOrNull()?.uppercase() ?: "?", fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Composable
+private fun resourcesQuantityString(id: Int, quantity: Int, vararg formatArgs: Any): String =
+    LocalContext.current.resources.getQuantityString(id, quantity, *formatArgs)
+
+@Composable
+private fun LauncherSettingsPage(
+    settings: LauncherSettings,
+    isHomeRoleHeld: Boolean,
+    hasGestureAccess: Boolean,
+    hasNotificationAccess: Boolean,
+    hasContactsPermission: Boolean,
+    onDismiss: () -> Unit,
+    onSettingsChanged: (LauncherSettings) -> Unit,
+    onRequestHomeRole: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit,
+    onOpenNotificationAccess: () -> Unit,
+    onConfigureContacts: () -> Unit,
+    onClearLocalHistory: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+            contentPadding = PaddingValues(bottom = 28.dp),
+        ) {
+            item(key = "settings_header") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 24.dp, top = 8.dp, bottom = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.navigate_back),
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            stringResource(R.string.launcher_settings),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.barely_tagline),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+            }
+
+            item(key = "settings_gestures_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_gestures))
+            }
+            item(key = "double_tap_lock") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_double_tap_lock),
+                    summary = stringResource(R.string.settings_double_tap_lock_summary),
+                    checked = settings.doubleTapToLock,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(doubleTapToLock = enabled))
+                        if (enabled && !hasGestureAccess) onOpenAccessibilitySettings()
+                    },
+                )
+            }
+            item(key = "swipe_notifications") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_swipe_notifications),
+                    summary = stringResource(R.string.settings_swipe_notifications_summary),
+                    checked = settings.swipeDownForNotifications,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(swipeDownForNotifications = enabled))
+                        if (enabled && !hasGestureAccess) onOpenAccessibilitySettings()
+                    },
+                )
+            }
+
+            item(key = "settings_appearance_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_appearance))
+            }
+            item(key = "frosted_wallpaper") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_frosted_wallpaper),
+                    summary = stringResource(R.string.settings_frosted_wallpaper_summary),
+                    checked = settings.frostedWallpaper,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(frostedWallpaper = enabled))
+                    },
+                )
+            }
+
+            item(key = "settings_search_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_search))
+            }
+            item(key = "local_suggestions") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_local_suggestions),
+                    summary = stringResource(R.string.settings_local_suggestions_summary),
+                    checked = settings.localSuggestions,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(localSuggestions = enabled))
+                    },
+                )
+            }
+            item(key = "search_hint") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_show_search_hint),
+                    summary = stringResource(R.string.settings_show_search_hint_summary),
+                    checked = settings.showSearchHint,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(showSearchHint = enabled))
+                    },
+                )
+            }
+            item(key = "clear_local_history") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_clear_local_history),
+                    summary = stringResource(R.string.settings_clear_local_history_summary),
+                    status = "",
+                    onClick = onClearLocalHistory,
+                )
+            }
+            item(key = "settings_optional_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_optional_modules))
+            }
+            item(key = "notification_dots") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_notification_dots),
+                    summary = stringResource(R.string.command_notification_dots_subtitle),
+                    checked = settings.notificationDots,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(notificationDots = enabled))
+                        if (enabled && !hasNotificationAccess) onOpenNotificationAccess()
+                    },
+                )
+            }
+            item(key = "media_controls") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_media_controls),
+                    summary = stringResource(R.string.command_media_controls_subtitle),
+                    checked = settings.mediaControls,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(mediaControls = enabled))
+                        if (enabled && !hasNotificationAccess) onOpenNotificationAccess()
+                    },
+                )
+            }
+
+            item(key = "settings_access_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_system_access))
+            }
+            item(key = "home_role") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_default_home),
+                    summary = stringResource(R.string.home_role_required),
+                    status = stringResource(
+                        if (isHomeRoleHeld) R.string.settings_active else R.string.settings_set_up,
+                    ),
+                    onClick = onRequestHomeRole,
+                )
+            }
+            item(key = "gesture_access") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_gesture_access),
+                    summary = stringResource(R.string.settings_gesture_access_summary),
+                    status = stringResource(
+                        if (hasGestureAccess) R.string.settings_allowed else R.string.settings_set_up,
+                    ),
+                    onClick = onOpenAccessibilitySettings,
+                )
+            }
+            item(key = "notification_access") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_notification_access),
+                    summary = stringResource(R.string.command_notification_access_warning),
+                    status = stringResource(
+                        if (hasNotificationAccess) R.string.settings_allowed else R.string.settings_optional,
+                    ),
+                    onClick = onOpenNotificationAccess,
+                )
+            }
+            item(key = "contacts_access") {
+                SettingsActionItem(
+                    title = stringResource(R.string.settings_contact_search),
+                    summary = stringResource(R.string.command_contacts_private),
+                    status = stringResource(
+                        if (hasContactsPermission) R.string.settings_allowed else R.string.settings_optional,
+                    ),
+                    onClick = onConfigureContacts,
+                )
+            }
+            item(key = "settings_privacy_note") {
+                Text(
+                    stringResource(R.string.settings_privacy_note),
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsSectionTitle(title: String) {
+    Text(
+        title,
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 6.dp),
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+    )
+}
+
+@Composable
+private fun SettingsSwitchItem(
+    title: String,
+    summary: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    ListItem(
+        onClick = { onCheckedChange(!checked) },
+        supportingContent = { Text(summary) },
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+            )
+        },
+    ) {
+        Text(title)
+    }
+}
+
+@Composable
+private fun SettingsActionItem(
+    title: String,
+    summary: String,
+    status: String,
+    onClick: () -> Unit,
+) {
+    ListItem(
+        onClick = onClick,
+        supportingContent = { Text(summary) },
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    status,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Icon(
+                    Icons.Outlined.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+    ) {
+        Text(title)
+    }
+}
+
 @Composable
 private fun AppActionsSheet(
     app: LauncherApp,
@@ -1943,78 +2755,119 @@ private fun AppActionsSheet(
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
-        Row(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f),
+            contentPadding = PaddingValues(bottom = 24.dp),
         ) {
-            AppIcon(app, Modifier.size(58.dp))
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Text(app.label, style = MaterialTheme.typography.headlineSmall)
-                Text(
-                    stringResource(R.string.app_actions),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-
-        Spacer(Modifier.height(10.dp))
-        when {
-            shortcuts.isNotEmpty() -> {
-                Text(
-                    stringResource(R.string.shortcuts),
+            item(key = "app_header") {
+                Row(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                shortcuts.forEach { shortcut ->
-                    ListItem(
-                        onClick = { onLaunchShortcut(shortcut) },
-                        enabled = shortcut.info.isEnabled,
-                        supportingContent = {
-                            shortcut.description
-                                ?.takeIf { it != shortcut.label }
-                                ?.let { Text(it) }
-                        },
-                        leadingContent = { Icon(Icons.Outlined.Bolt, contentDescription = null) },
-                    ) { Text(shortcut.label) }
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AppIcon(app, Modifier.size(58.dp))
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            app.label,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.app_actions),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
+            item(key = "favorite_action") {
+                ActionItem(
+                    icon = if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                    label = if (isFavorite) {
+                        stringResource(R.string.remove_from_favorites)
+                    } else {
+                        stringResource(R.string.add_to_favorites)
+                    },
+                    onClick = onToggleFavorite,
+                )
+            }
+            item(key = "info_action") {
+                ActionItem(Icons.Outlined.Info, stringResource(R.string.app_info), onAppInfo)
+            }
+            item(key = "uninstall_action") {
+                ActionItem(
+                    icon = Icons.Outlined.DeleteOutline,
+                    label = stringResource(R.string.uninstall),
+                    onClick = onUninstall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            item(key = "shortcut_divider") {
+                HorizontalDivider(Modifier.padding(vertical = 10.dp))
+            }
+            when {
+                shortcuts.isNotEmpty() -> {
+                    item(key = "shortcut_header") {
+                        Text(
+                            stringResource(R.string.shortcuts),
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                    items(
+                        items = shortcuts,
+                        key = { shortcut ->
+                            "shortcut_${shortcut.owner.key}_${shortcut.info.id}"
+                        },
+                    ) { shortcut ->
+                        ListItem(
+                            onClick = { onLaunchShortcut(shortcut) },
+                            enabled = shortcut.info.isEnabled,
+                            supportingContent = {
+                                shortcut.description
+                                    ?.takeIf { it != shortcut.label }
+                                    ?.let { Text(it) }
+                            },
+                            leadingContent = {
+                                Icon(Icons.Outlined.Bolt, contentDescription = null)
+                            },
+                        ) {
+                            Text(
+                                shortcut.label,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
 
-            !canReadShortcuts -> Text(
-                stringResource(R.string.set_default_to_view_shortcuts),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                !canReadShortcuts -> item(key = "shortcut_permission") {
+                    Text(
+                        stringResource(R.string.set_default_to_view_shortcuts),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
 
-            else -> Text(
-                stringResource(R.string.app_has_no_shortcuts),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                else -> item(key = "no_shortcuts") {
+                    Text(
+                        stringResource(R.string.app_has_no_shortcuts),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
-
-        HorizontalDivider(Modifier.padding(vertical = 10.dp))
-        ActionItem(
-            icon = if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
-            label = if (isFavorite) {
-                stringResource(R.string.remove_from_favorites)
-            } else {
-                stringResource(R.string.add_to_favorites)
-            },
-            onClick = onToggleFavorite,
-        )
-        ActionItem(Icons.Outlined.Info, stringResource(R.string.app_info), onAppInfo)
-        ActionItem(
-            icon = Icons.Outlined.DeleteOutline,
-            label = stringResource(R.string.uninstall),
-            onClick = onUninstall,
-            color = MaterialTheme.colorScheme.error,
-        )
-        Spacer(Modifier.height(18.dp))
     }
 }
 

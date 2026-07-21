@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
