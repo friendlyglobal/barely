@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">위젯 편집</string>
+    <string name="finish_editing_widgets">위젯 편집 완료</string>
+    <string name="widget_edit_hint">핸들을 끌어 순서를 바꾸고 모서리를 끌어 크기를 조절하세요.</string>
+    <string name="move_widget_up">위젯을 위로 이동</string>
+    <string name="move_widget_down">위젯을 아래로 이동</string>
+    <string name="move_widget">위젯 이동</string>
+    <string name="position_widget">위젯 위치 변경</string>
+    <string name="resize_widget">위젯 크기 조절</string>
+</resources>

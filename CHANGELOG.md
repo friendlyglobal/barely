@@ -2,6 +2,19 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.5.1 — 2026-07-21
+
+### Added
+
+- Added a dedicated widget editing mode with persistent width, height, horizontal position, and vertical ordering.
+- Added drag handles plus accessible move controls for resizing and reordering widgets.
+
+### Fixed
+
+- Made the bottom search entry on the Apps page a true capsule.
+- Prevented widgets from being forced into one full-width, provider-minimum-height layout.
+- Kept existing widget IDs compatible while migrating them to the new local layout metadata.
+
 ## 0.5 — 2026-07-21
 
 ### Added

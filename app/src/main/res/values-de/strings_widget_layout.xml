@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">Widgets bearbeiten</string>
+    <string name="finish_editing_widgets">Widget-Bearbeitung beenden</string>
+    <string name="widget_edit_hint">Ziehe den Griff zum Sortieren. Ziehe die Ecke zum Ändern der Größe.</string>
+    <string name="move_widget_up">Widget nach oben verschieben</string>
+    <string name="move_widget_down">Widget nach unten verschieben</string>
+    <string name="move_widget">Widget verschieben</string>
+    <string name="position_widget">Widget-Position ändern</string>
+    <string name="resize_widget">Widget-Größe ändern</string>
+</resources>
