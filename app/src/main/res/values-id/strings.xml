@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Layar utama. Geser ke atas untuk mencari.</string>
+    <string name="favorites">Favorit</string>
+    <string name="search">Cari</string>
+    <string name="apps">Aplikasi</string>
+    <string name="no_favorites">Belum ada favorit</string>
+    <string name="favorites_empty_message">Tekan lama aplikasi untuk menambahkannya ke favorit.</string>
+    <string name="activating_shortcuts">Mengaktifkan pintasan…</string>
+    <string name="use_as_home">Gunakan sebagai layar utama</string>
+    <string name="android_granting_shortcuts">Android sedang memberikan akses pintasan.</string>
+    <string name="home_role_required">Diperlukan untuk gestur Beranda dan pintasan.</string>
+    <string name="set_default">Tetapkan</string>
+    <string name="actions_for_app">Tindakan untuk %1$s</string>
+    <string name="close_search">Tutup pencarian</string>
+    <string name="apps_and_shortcuts">Aplikasi dan pintasan</string>
+    <string name="clear_search">Hapus</string>
+    <string name="shortcuts">Pintasan</string>
+    <string name="find_anything">Temukan apa saja</string>
+    <string name="search_hint">Ketik nama aplikasi atau tindakan yang diterbitkannya.</string>
+    <string name="nothing_found">Tidak ada hasil</string>
+    <string name="try_another_name">Coba nama lain.</string>
+    <string name="set_default_to_search_shortcuts">Tetapkan launcher ini sebagai default untuk menyertakan pintasan.</string>
+    <string name="app_actions">Tindakan aplikasi</string>
+    <string name="set_default_to_view_shortcuts">Tetapkan launcher ini sebagai default untuk melihat pintasan yang diterbitkan.</string>
+    <string name="app_has_no_shortcuts">Aplikasi ini belum menerbitkan pintasan.</string>
+    <string name="remove_from_favorites">Hapus dari favorit</string>
+    <string name="add_to_favorites">Tambahkan ke favorit</string>
+    <string name="app_info">Info aplikasi</string>
+    <string name="uninstall">Uninstal</string>
+    <string name="error_open_app">Tidak dapat membuka %1$s</string>
+    <string name="error_shortcut_unavailable">Pintasan ini tidak lagi tersedia</string>
+    <string name="error_open_app_info">Tidak dapat membuka info aplikasi</string>
+    <string name="error_start_uninstall">Tidak dapat memulai uninstal</string>
+    <string name="error_refresh_apps">Tidak dapat memuat ulang aplikasi</string>
+</resources>

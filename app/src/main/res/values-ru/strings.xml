@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Главный экран. Проведите вверх для поиска.</string>
+    <string name="favorites">Избранное</string>
+    <string name="search">Поиск</string>
+    <string name="apps">Приложения</string>
+    <string name="no_favorites">В избранном пока пусто</string>
+    <string name="favorites_empty_message">Нажмите и удерживайте приложение, чтобы добавить его в избранное.</string>
+    <string name="activating_shortcuts">Активация ярлыков…</string>
+    <string name="use_as_home">Использовать как главный экран</string>
+    <string name="android_granting_shortcuts">Android предоставляет доступ к ярлыкам.</string>
+    <string name="home_role_required">Необходимо для жеста «Домой» и ярлыков.</string>
+    <string name="set_default">Выбрать</string>
+    <string name="actions_for_app">Действия для %1$s</string>
+    <string name="close_search">Закрыть поиск</string>
+    <string name="apps_and_shortcuts">Приложения и ярлыки</string>
+    <string name="clear_search">Очистить</string>
+    <string name="shortcuts">Ярлыки</string>
+    <string name="find_anything">Найдите что угодно</string>
+    <string name="search_hint">Введите название приложения или опубликованного им действия.</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="try_another_name">Попробуйте другое название.</string>
+    <string name="set_default_to_search_shortcuts">Выберите этот лаунчер по умолчанию, чтобы искать ярлыки.</string>
+    <string name="app_actions">Действия приложения</string>
+    <string name="set_default_to_view_shortcuts">Выберите этот лаунчер по умолчанию, чтобы видеть опубликованные ярлыки.</string>
+    <string name="app_has_no_shortcuts">Это приложение не опубликовало ярлыки.</string>
+    <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="app_info">О приложении</string>
+    <string name="uninstall">Удалить</string>
+    <string name="error_open_app">Не удалось открыть %1$s</string>
+    <string name="error_shortcut_unavailable">Этот ярлык больше недоступен</string>
+    <string name="error_open_app_info">Не удалось открыть сведения о приложении</string>
+    <string name="error_start_uninstall">Не удалось начать удаление</string>
+    <string name="error_refresh_apps">Не удалось обновить приложения</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">ホーム画面。上にスワイプして検索します。</string>
+    <string name="favorites">お気に入り</string>
+    <string name="search">検索</string>
+    <string name="apps">アプリ</string>
+    <string name="no_favorites">お気に入りはまだありません</string>
+    <string name="favorites_empty_message">アプリを長押ししてお気に入りに追加できます。</string>
+    <string name="activating_shortcuts">ショートカットを有効化しています…</string>
+    <string name="use_as_home">ホーム画面として使用</string>
+    <string name="android_granting_shortcuts">Android がショートカットへのアクセスを許可しています。</string>
+    <string name="home_role_required">ホームジェスチャーとショートカットに必要です。</string>
+    <string name="set_default">設定</string>
+    <string name="actions_for_app">%1$s の操作</string>
+    <string name="close_search">検索を閉じる</string>
+    <string name="apps_and_shortcuts">アプリとショートカット</string>
+    <string name="clear_search">消去</string>
+    <string name="shortcuts">ショートカット</string>
+    <string name="find_anything">何でも検索</string>
+    <string name="search_hint">アプリ名または公開されている操作名を入力します。</string>
+    <string name="nothing_found">見つかりませんでした</string>
+    <string name="try_another_name">別の名前を試してください。</string>
+    <string name="set_default_to_search_shortcuts">ショートカットを検索するには、このランチャーをデフォルトに設定してください。</string>
+    <string name="app_actions">アプリの操作</string>
+    <string name="set_default_to_view_shortcuts">公開されたショートカットを表示するには、このランチャーをデフォルトに設定してください。</string>
+    <string name="app_has_no_shortcuts">このアプリはショートカットを公開していません。</string>
+    <string name="remove_from_favorites">お気に入りから削除</string>
+    <string name="add_to_favorites">お気に入りに追加</string>
+    <string name="app_info">アプリ情報</string>
+    <string name="uninstall">アンインストール</string>
+    <string name="error_open_app">%1$s を開けませんでした</string>
+    <string name="error_shortcut_unavailable">このショートカットは利用できなくなりました</string>
+    <string name="error_open_app_info">アプリ情報を開けませんでした</string>
+    <string name="error_start_uninstall">アンインストールを開始できませんでした</string>
+    <string name="error_refresh_apps">アプリを更新できませんでした</string>
+</resources>

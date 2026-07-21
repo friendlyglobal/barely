@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Startbildschirm. Zum Suchen nach oben wischen.</string>
+    <string name="favorites">Favoriten</string>
+    <string name="search">Suchen</string>
+    <string name="apps">Apps</string>
+    <string name="no_favorites">Noch keine Favoriten</string>
+    <string name="favorites_empty_message">Eine App gedrückt halten, um sie zu den Favoriten hinzuzufügen.</string>
+    <string name="activating_shortcuts">Verknüpfungen werden aktiviert…</string>
+    <string name="use_as_home">Als Startbildschirm verwenden</string>
+    <string name="android_granting_shortcuts">Android gewährt Zugriff auf Verknüpfungen.</string>
+    <string name="home_role_required">Für die Startbildschirm-Geste und Verknüpfungen erforderlich.</string>
+    <string name="set_default">Festlegen</string>
+    <string name="actions_for_app">Aktionen für %1$s</string>
+    <string name="close_search">Suche schließen</string>
+    <string name="apps_and_shortcuts">Apps und Verknüpfungen</string>
+    <string name="clear_search">Löschen</string>
+    <string name="shortcuts">Verknüpfungen</string>
+    <string name="find_anything">Alles finden</string>
+    <string name="search_hint">Den Namen einer App oder einer von ihr angebotenen Aktion eingeben.</string>
+    <string name="nothing_found">Nichts gefunden</string>
+    <string name="try_another_name">Einen anderen Namen versuchen.</string>
+    <string name="set_default_to_search_shortcuts">Diesen Launcher als Standard festlegen, um Verknüpfungen einzubeziehen.</string>
+    <string name="app_actions">App-Aktionen</string>
+    <string name="set_default_to_view_shortcuts">Diesen Launcher als Standard festlegen, um veröffentlichte Verknüpfungen anzuzeigen.</string>
+    <string name="app_has_no_shortcuts">Diese App hat keine Verknüpfungen veröffentlicht.</string>
+    <string name="remove_from_favorites">Aus Favoriten entfernen</string>
+    <string name="add_to_favorites">Zu Favoriten hinzufügen</string>
+    <string name="app_info">App-Info</string>
+    <string name="uninstall">Deinstallieren</string>
+    <string name="error_open_app">%1$s konnte nicht geöffnet werden</string>
+    <string name="error_shortcut_unavailable">Diese Verknüpfung ist nicht mehr verfügbar</string>
+    <string name="error_open_app_info">App-Info konnte nicht geöffnet werden</string>
+    <string name="error_start_uninstall">Deinstallation konnte nicht gestartet werden</string>
+    <string name="error_refresh_apps">Apps konnten nicht aktualisiert werden</string>
+</resources>

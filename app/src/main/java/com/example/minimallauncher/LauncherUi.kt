@@ -94,6 +94,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -278,12 +279,13 @@ private fun WallpaperPage(
 ) {
     val threshold = with(LocalDensity.current) { 72.dp.toPx() }
     var dragDistance by remember { mutableFloatStateOf(0f) }
+    val homeContentDescription = stringResource(R.string.home_content_description)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .semantics {
-                contentDescription = "Tela inicial. Deslize para cima para pesquisar."
+                contentDescription = homeContentDescription
             }
             .pointerInput(threshold) {
                 detectVerticalDragGestures(
@@ -320,9 +322,9 @@ private fun WallpaperPage(
                     horizontalArrangement = Arrangement.spacedBy(18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    GestureLabel("Favoritos", "←")
-                    GestureLabel("Buscar", "↑")
-                    GestureLabel("Apps", "→")
+                    GestureLabel(stringResource(R.string.favorites), "←")
+                    GestureLabel(stringResource(R.string.search), "↑")
+                    GestureLabel(stringResource(R.string.apps), "→")
                 }
             }
         }
@@ -351,7 +353,7 @@ private fun FavoritesPage(
 ) {
     PageSurface(isLoading = isLoading) {
         PageHeader(
-            title = "Favoritos",
+            title = stringResource(R.string.favorites),
         )
 
         if (favorites.isEmpty()) {
@@ -373,13 +375,13 @@ private fun FavoritesPage(
                     )
                     Spacer(Modifier.height(18.dp))
                     Text(
-                        "Nenhum favorito",
+                        stringResource(R.string.no_favorites),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Pressione um app e adicione aos favoritos.",
+                        stringResource(R.string.favorites_empty_message),
                         color = Color.White.copy(alpha = 0.68f),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
@@ -408,7 +410,7 @@ private fun AppsPage(
 ) {
     PageSurface(isLoading = isLoading) {
         PageHeader(
-            title = "Apps",
+            title = stringResource(R.string.apps),
             trailing = apps.size.toString(),
         )
 
@@ -511,21 +513,27 @@ private fun HomeRoleCard(
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    if (isHomeRoleHeld) "Ativando atalhos…" else "Usar como tela inicial",
+                    if (isHomeRoleHeld) {
+                        stringResource(R.string.activating_shortcuts)
+                    } else {
+                        stringResource(R.string.use_as_home)
+                    },
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
                     if (isHomeRoleHeld) {
-                        "O Android está liberando os shortcuts."
+                        stringResource(R.string.android_granting_shortcuts)
                     } else {
-                        "Necessário para o gesto Início e shortcuts."
+                        stringResource(R.string.home_role_required)
                     },
                     color = Color.White.copy(alpha = 0.68f),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
             if (!isHomeRoleHeld) {
-                FilledTonalButton(onClick = onRequestHomeRole) { Text("Definir") }
+                FilledTonalButton(onClick = onRequestHomeRole) {
+                    Text(stringResource(R.string.set_default))
+                }
             }
         }
     }
@@ -557,6 +565,7 @@ private fun AppTile(
     onClick: () -> Unit,
     onLongPress: () -> Unit,
 ) {
+    val appActionsLabel = stringResource(R.string.actions_for_app, app.label)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -564,7 +573,7 @@ private fun AppTile(
             .clip(RoundedCornerShape(16.dp))
             .combinedClickable(
                 onClick = onClick,
-                onLongClickLabel = "Ações de ${app.label}",
+                onLongClickLabel = appActionsLabel,
                 onLongClick = onLongPress,
             )
             .padding(horizontal = 12.dp, vertical = 13.dp),
@@ -657,10 +666,13 @@ private fun SearchPage(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onClose) {
-                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Fechar busca")
+                    Icon(
+                        Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = stringResource(R.string.close_search),
+                    )
                 }
                 Text(
-                    "Busca",
+                    stringResource(R.string.search),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Normal,
@@ -677,12 +689,15 @@ private fun SearchPage(
                     .focusRequester(focusRequester),
                 singleLine = true,
                 shape = RoundedCornerShape(30.dp),
-                placeholder = { Text("Apps e atalhos") },
+                placeholder = { Text(stringResource(R.string.apps_and_shortcuts)) },
                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { query = "" }) {
-                            Icon(Icons.Outlined.Close, contentDescription = "Limpar")
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = stringResource(R.string.clear_search),
+                            )
                         }
                     }
                 },
@@ -732,7 +747,7 @@ private fun SearchResults(
         contentPadding = PaddingValues(bottom = 24.dp),
     ) {
         if (apps.isNotEmpty()) {
-            item { ResultHeader("Apps") }
+            item { ResultHeader(stringResource(R.string.apps)) }
             items(apps, key = { it.key }) { app ->
                 ListItem(
                     onClick = { onLaunchApp(app) },
@@ -750,7 +765,7 @@ private fun SearchResults(
             }
         }
         if (shortcuts.isNotEmpty()) {
-            item { ResultHeader("Atalhos") }
+            item { ResultHeader(stringResource(R.string.shortcuts)) }
             items(shortcuts, key = { "${it.owner.key}:${it.info.id}" }) { shortcut ->
                 ListItem(
                     onClick = { onLaunchShortcut(shortcut) },
@@ -781,19 +796,19 @@ private fun SearchResults(
             item {
                 SearchHint(
                     icon = Icons.Outlined.Search,
-                    title = "Encontre qualquer coisa",
-                    description = "Digite o nome de um app ou de uma ação publicada por ele.",
+                    title = stringResource(R.string.find_anything),
+                    description = stringResource(R.string.search_hint),
                 )
             }
         } else if (apps.isEmpty() && shortcuts.isEmpty()) {
             item {
                 SearchHint(
                     icon = Icons.Outlined.Bolt,
-                    title = "Nada por aqui",
+                    title = stringResource(R.string.nothing_found),
                     description = if (canSearchShortcuts) {
-                        "Tente outro nome."
+                        stringResource(R.string.try_another_name)
                     } else {
-                        "Defina este launcher como padrão para incluir shortcuts."
+                        stringResource(R.string.set_default_to_search_shortcuts)
                     },
                 )
             }
@@ -867,7 +882,7 @@ private fun AppActionsSheet(
             Column {
                 Text(app.label, style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    "Ações do app",
+                    stringResource(R.string.app_actions),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -878,7 +893,7 @@ private fun AppActionsSheet(
         when {
             shortcuts.isNotEmpty() -> {
                 Text(
-                    "Atalhos",
+                    stringResource(R.string.shortcuts),
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelLarge,
@@ -899,13 +914,13 @@ private fun AppActionsSheet(
             }
 
             !canReadShortcuts -> Text(
-                "Defina este launcher como padrão para ver os atalhos publicados.",
+                stringResource(R.string.set_default_to_view_shortcuts),
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             else -> Text(
-                "Este app não publicou atalhos.",
+                stringResource(R.string.app_has_no_shortcuts),
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -914,13 +929,17 @@ private fun AppActionsSheet(
         HorizontalDivider(Modifier.padding(vertical = 10.dp))
         ActionItem(
             icon = if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
-            label = if (isFavorite) "Remover dos favoritos" else "Adicionar aos favoritos",
+            label = if (isFavorite) {
+                stringResource(R.string.remove_from_favorites)
+            } else {
+                stringResource(R.string.add_to_favorites)
+            },
             onClick = onToggleFavorite,
         )
-        ActionItem(Icons.Outlined.Info, "Informações do app", onAppInfo)
+        ActionItem(Icons.Outlined.Info, stringResource(R.string.app_info), onAppInfo)
         ActionItem(
             icon = Icons.Outlined.DeleteOutline,
-            label = "Desinstalar",
+            label = stringResource(R.string.uninstall),
             onClick = onUninstall,
             color = MaterialTheme.colorScheme.error,
         )

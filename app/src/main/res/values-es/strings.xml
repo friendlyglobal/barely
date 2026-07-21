@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Pantalla de inicio. Desliza hacia arriba para buscar.</string>
+    <string name="favorites">Favoritos</string>
+    <string name="search">Buscar</string>
+    <string name="apps">Apps</string>
+    <string name="no_favorites">Aún no hay favoritos</string>
+    <string name="favorites_empty_message">Mantén pulsada una app para añadirla a favoritos.</string>
+    <string name="activating_shortcuts">Activando accesos directos…</string>
+    <string name="use_as_home">Usar como pantalla de inicio</string>
+    <string name="android_granting_shortcuts">Android está concediendo acceso a los accesos directos.</string>
+    <string name="home_role_required">Necesario para el gesto Inicio y los accesos directos.</string>
+    <string name="set_default">Definir</string>
+    <string name="actions_for_app">Acciones de %1$s</string>
+    <string name="close_search">Cerrar búsqueda</string>
+    <string name="apps_and_shortcuts">Apps y accesos directos</string>
+    <string name="clear_search">Borrar</string>
+    <string name="shortcuts">Accesos directos</string>
+    <string name="find_anything">Encuentra lo que quieras</string>
+    <string name="search_hint">Escribe el nombre de una app o de una acción que publique.</string>
+    <string name="nothing_found">No se encontró nada</string>
+    <string name="try_another_name">Prueba con otro nombre.</string>
+    <string name="set_default_to_search_shortcuts">Define este launcher como predeterminado para incluir accesos directos.</string>
+    <string name="app_actions">Acciones de la app</string>
+    <string name="set_default_to_view_shortcuts">Define este launcher como predeterminado para ver los accesos directos publicados.</string>
+    <string name="app_has_no_shortcuts">Esta app no ha publicado accesos directos.</string>
+    <string name="remove_from_favorites">Quitar de favoritos</string>
+    <string name="add_to_favorites">Añadir a favoritos</string>
+    <string name="app_info">Información de la app</string>
+    <string name="uninstall">Desinstalar</string>
+    <string name="error_open_app">No se pudo abrir %1$s</string>
+    <string name="error_shortcut_unavailable">Este acceso directo ya no está disponible</string>
+    <string name="error_open_app_info">No se pudo abrir la información de la app</string>
+    <string name="error_start_uninstall">No se pudo iniciar la desinstalación</string>
+    <string name="error_refresh_apps">No se pudieron actualizar las apps</string>
+</resources>

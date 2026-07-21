@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
+    <string name="home_content_description">Home screen. Swipe up to search.</string>
+    <string name="favorites">Favorites</string>
+    <string name="search">Search</string>
+    <string name="apps">Apps</string>
+    <string name="no_favorites">No favorites yet</string>
+    <string name="favorites_empty_message">Press and hold an app to add it to favorites.</string>
+    <string name="activating_shortcuts">Activating shortcuts…</string>
+    <string name="use_as_home">Use as home screen</string>
+    <string name="android_granting_shortcuts">Android is granting shortcut access.</string>
+    <string name="home_role_required">Required for the Home gesture and shortcuts.</string>
+    <string name="set_default">Set</string>
+    <string name="actions_for_app">Actions for %1$s</string>
+    <string name="close_search">Close search</string>
+    <string name="apps_and_shortcuts">Apps and shortcuts</string>
+    <string name="clear_search">Clear</string>
+    <string name="shortcuts">Shortcuts</string>
+    <string name="find_anything">Find anything</string>
+    <string name="search_hint">Type the name of an app or an action it publishes.</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="try_another_name">Try another name.</string>
+    <string name="set_default_to_search_shortcuts">Set this launcher as default to include shortcuts.</string>
+    <string name="app_actions">App actions</string>
+    <string name="set_default_to_view_shortcuts">Set this launcher as default to see published shortcuts.</string>
+    <string name="app_has_no_shortcuts">This app has not published any shortcuts.</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="app_info">App info</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="error_open_app">Could not open %1$s</string>
+    <string name="error_shortcut_unavailable">This shortcut is no longer available</string>
+    <string name="error_open_app_info">Could not open app info</string>
+    <string name="error_start_uninstall">Could not start uninstall</string>
+    <string name="error_refresh_apps">Could not refresh apps</string>
 </resources>

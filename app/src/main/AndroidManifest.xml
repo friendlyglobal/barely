@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <!-- Permite iniciar pelo Android Studio antes de ele ser o launcher padrão. -->
+            <!-- Allows Android Studio to launch the app before it becomes the default home app. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

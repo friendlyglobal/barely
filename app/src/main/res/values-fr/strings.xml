@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Écran d’accueil. Balayez vers le haut pour rechercher.</string>
+    <string name="favorites">Favoris</string>
+    <string name="search">Rechercher</string>
+    <string name="apps">Applications</string>
+    <string name="no_favorites">Aucun favori</string>
+    <string name="favorites_empty_message">Appuyez longuement sur une application pour l’ajouter aux favoris.</string>
+    <string name="activating_shortcuts">Activation des raccourcis…</string>
+    <string name="use_as_home">Utiliser comme écran d’accueil</string>
+    <string name="android_granting_shortcuts">Android accorde l’accès aux raccourcis.</string>
+    <string name="home_role_required">Requis pour le geste Accueil et les raccourcis.</string>
+    <string name="set_default">Définir</string>
+    <string name="actions_for_app">Actions pour %1$s</string>
+    <string name="close_search">Fermer la recherche</string>
+    <string name="apps_and_shortcuts">Applications et raccourcis</string>
+    <string name="clear_search">Effacer</string>
+    <string name="shortcuts">Raccourcis</string>
+    <string name="find_anything">Trouvez ce que vous cherchez</string>
+    <string name="search_hint">Saisissez le nom d’une application ou d’une action qu’elle propose.</string>
+    <string name="nothing_found">Aucun résultat</string>
+    <string name="try_another_name">Essayez un autre nom.</string>
+    <string name="set_default_to_search_shortcuts">Définissez ce launcher par défaut pour inclure les raccourcis.</string>
+    <string name="app_actions">Actions de l’application</string>
+    <string name="set_default_to_view_shortcuts">Définissez ce launcher par défaut pour voir les raccourcis publiés.</string>
+    <string name="app_has_no_shortcuts">Cette application n’a publié aucun raccourci.</string>
+    <string name="remove_from_favorites">Retirer des favoris</string>
+    <string name="add_to_favorites">Ajouter aux favoris</string>
+    <string name="app_info">Informations sur l’application</string>
+    <string name="uninstall">Désinstaller</string>
+    <string name="error_open_app">Impossible d’ouvrir %1$s</string>
+    <string name="error_shortcut_unavailable">Ce raccourci n’est plus disponible</string>
+    <string name="error_open_app_info">Impossible d’ouvrir les informations de l’application</string>
+    <string name="error_start_uninstall">Impossible de lancer la désinstallation</string>
+    <string name="error_refresh_apps">Impossible d’actualiser les applications</string>
+</resources>
