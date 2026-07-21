@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">Modifier les widgets</string>
+    <string name="finish_editing_widgets">Terminer la modification</string>
+    <string name="widget_edit_hint">Faites glisser la poignée pour réorganiser. Faites glisser le coin pour redimensionner.</string>
+    <string name="move_widget_up">Déplacer le widget vers le haut</string>
+    <string name="move_widget_down">Déplacer le widget vers le bas</string>
+    <string name="move_widget">Déplacer le widget</string>
+    <string name="position_widget">Modifier la position du widget</string>
+    <string name="resize_widget">Redimensionner le widget</string>
+</resources>

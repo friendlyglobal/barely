@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">ウィジェットを編集</string>
+    <string name="finish_editing_widgets">ウィジェットの編集を完了</string>
+    <string name="widget_edit_hint">ハンドルをドラッグして並べ替え、角をドラッグしてサイズを変更します。</string>
+    <string name="move_widget_up">ウィジェットを上へ移動</string>
+    <string name="move_widget_down">ウィジェットを下へ移動</string>
+    <string name="move_widget">ウィジェットを移動</string>
+    <string name="position_widget">ウィジェットの位置を変更</string>
+    <string name="resize_widget">ウィジェットのサイズを変更</string>
+</resources>

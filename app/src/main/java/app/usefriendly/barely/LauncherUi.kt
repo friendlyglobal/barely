@@ -11,9 +11,11 @@ import android.app.WallpaperManager
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
+import android.util.SizeF
 import android.widget.FrameLayout
 import android.widget.RemoteViews
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.BackHandler
@@ -30,10 +32,12 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -79,6 +83,9 @@ import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.DragHandle
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
@@ -86,6 +93,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.OpenInFull
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
@@ -169,6 +177,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.absoluteValue
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 @Composable
 fun LauncherScreen(
@@ -178,7 +188,7 @@ fun LauncherScreen(
     isLoading: Boolean,
     showGestureCoach: Boolean,
     homeRequestId: Int,
-    widgetIds: List<Int>,
+    widgets: List<WidgetPlacement>,
     widgetProviders: List<AppWidgetProviderInfo>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
@@ -203,6 +213,8 @@ fun LauncherScreen(
     onUninstall: (LauncherApp) -> Unit,
     onAddWidget: (AppWidgetProviderInfo) -> Unit,
     onRemoveWidget: (Int) -> Unit,
+    onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
+    onMoveWidget: (Int, Int) -> Unit,
     onSetPrivateSpaceExpanded: (Boolean) -> Unit,
     onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
     onExecuteCommand: (LauncherCommand) -> Unit,
@@ -393,7 +405,7 @@ fun LauncherScreen(
                 when (page) {
                     FAVORITES_PAGE -> FavoritesPage(
                         favorites = favorites,
-                        widgetIds = widgetIds,
+                        widgets = widgets,
                         widgetHost = widgetHost,
                         widgetManager = widgetManager,
                         foldingFeature = foldingFeature,
@@ -405,6 +417,8 @@ fun LauncherScreen(
                         onLongPress = { selectedApp = it },
                         onAddWidget = { widgetPickerVisible = true },
                         onRemoveWidget = onRemoveWidget,
+                        onUpdateWidget = onUpdateWidget,
+                        onMoveWidget = onMoveWidget,
                         onMediaAction = onMediaAction,
                     )
 
@@ -658,7 +672,7 @@ private fun GestureLabel(label: String, arrow: String) {
 @Composable
 private fun FavoritesPage(
     favorites: List<LauncherApp>,
-    widgetIds: List<Int>,
+    widgets: List<WidgetPlacement>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
     foldingFeature: FoldingFeature?,
@@ -670,11 +684,13 @@ private fun FavoritesPage(
     onLongPress: (LauncherApp) -> Unit,
     onAddWidget: () -> Unit,
     onRemoveWidget: (Int) -> Unit,
+    onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
+    onMoveWidget: (Int, Int) -> Unit,
     onMediaAction: (MediaAction) -> Unit,
 ) {
     var editingWidgets by remember { mutableStateOf(false) }
-    LaunchedEffect(widgetIds.isEmpty()) {
-        if (widgetIds.isEmpty()) editingWidgets = false
+    LaunchedEffect(widgets.isEmpty()) {
+        if (widgets.isEmpty()) editingWidgets = false
     }
     PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
         PageHeader(
@@ -708,13 +724,15 @@ private fun FavoritesPage(
                     ) {
                         mediaItem(nowPlaying, onMediaAction)
                         widgetItems(
-                            widgetIds = widgetIds,
+                            widgets = widgets,
                             widgetHost = widgetHost,
                             widgetManager = widgetManager,
                             editingWidgets = editingWidgets,
                             onToggleEditing = { editingWidgets = !editingWidgets },
                             onAddWidget = onAddWidget,
                             onRemoveWidget = onRemoveWidget,
+                            onUpdateWidget = onUpdateWidget,
+                            onMoveWidget = onMoveWidget,
                         )
                     }
                 }
@@ -731,13 +749,15 @@ private fun FavoritesPage(
                     )
                     mediaItem(nowPlaying, onMediaAction)
                     widgetItems(
-                        widgetIds = widgetIds,
+                        widgets = widgets,
                         widgetHost = widgetHost,
                         widgetManager = widgetManager,
                         editingWidgets = editingWidgets,
                         onToggleEditing = { editingWidgets = !editingWidgets },
                         onAddWidget = onAddWidget,
                         onRemoveWidget = onRemoveWidget,
+                        onUpdateWidget = onUpdateWidget,
+                        onMoveWidget = onMoveWidget,
                     )
                 }
             }
@@ -868,13 +888,15 @@ private fun NowPlayingCard(
 }
 
 private fun LazyListScope.widgetItems(
-    widgetIds: List<Int>,
+    widgets: List<WidgetPlacement>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
     editingWidgets: Boolean,
     onToggleEditing: () -> Unit,
     onAddWidget: () -> Unit,
     onRemoveWidget: (Int) -> Unit,
+    onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
+    onMoveWidget: (Int, Int) -> Unit,
 ) {
     item(key = "widget_header") {
         Row(
@@ -889,7 +911,7 @@ private fun LazyListScope.widgetItems(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Normal,
             )
-            if (widgetIds.isNotEmpty()) {
+            if (widgets.isNotEmpty()) {
                 IconButton(
                     onClick = onToggleEditing,
                     modifier = Modifier
@@ -903,8 +925,11 @@ private fun LazyListScope.widgetItems(
                         ),
                 ) {
                     Icon(
-                        Icons.Outlined.DeleteOutline,
-                        contentDescription = stringResource(R.string.remove_widget),
+                        if (editingWidgets) Icons.Outlined.Done else Icons.Outlined.Edit,
+                        contentDescription = stringResource(
+                            if (editingWidgets) R.string.finish_editing_widgets
+                            else R.string.edit_widgets,
+                        ),
                         tint = Color.White.copy(alpha = 0.8f),
                     )
                 }
@@ -918,7 +943,7 @@ private fun LazyListScope.widgetItems(
         }
     }
 
-    if (widgetIds.isEmpty()) {
+    if (widgets.isEmpty()) {
         item(key = "empty_widgets") {
             Text(
                 stringResource(R.string.widgets_empty_message),
@@ -928,13 +953,38 @@ private fun LazyListScope.widgetItems(
             )
         }
     } else {
-        items(widgetIds, key = { "widget_$it" }) { widgetId ->
+        if (editingWidgets) {
+            item(key = "widget_edit_hint") {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    color = Color.Black.copy(alpha = 0.34f),
+                    contentColor = Color.White.copy(alpha = 0.78f),
+                ) {
+                    Text(
+                        stringResource(R.string.widget_edit_hint),
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        }
+        items(widgets, key = { "widget_${it.widgetId}" }) { widget ->
+            val widgetIndex = widgets.indexOfFirst { it.widgetId == widget.widgetId }
             HostedWidget(
-                widgetId = widgetId,
+                placement = widget,
                 widgetHost = widgetHost,
                 widgetManager = widgetManager,
-                showRemove = editingWidgets,
-                onRemove = { onRemoveWidget(widgetId) },
+                editing = editingWidgets,
+                canMoveUp = widgetIndex > 0,
+                canMoveDown = widgetIndex in 0 until widgets.lastIndex,
+                onRemove = { onRemoveWidget(widget.widgetId) },
+                onMove = { direction -> onMoveWidget(widget.widgetId, direction) },
+                onUpdate = { widthSpan, heightDp, position ->
+                    onUpdateWidget(widget.widgetId, widthSpan, heightDp, position)
+                },
             )
             Spacer(Modifier.height(14.dp))
         }
@@ -943,18 +993,22 @@ private fun LazyListScope.widgetItems(
 
 @Composable
 private fun HostedWidget(
-    widgetId: Int,
+    placement: WidgetPlacement,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
-    showRemove: Boolean,
+    editing: Boolean,
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
     onRemove: () -> Unit,
+    onMove: (Int) -> Unit,
+    onUpdate: (Int, Int, WidgetHorizontalPosition) -> Unit,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val widgetId = placement.widgetId
     val info = remember(widgetId) { widgetManager.getAppWidgetInfo(widgetId) }
     if (info == null) return
 
-    val preferredHeight = with(density) { info.minHeight.toDp() }.coerceIn(110.dp, 360.dp)
     val hostView = remember(widgetId, info) {
         widgetHost.createView(context, widgetId, info)
     }
@@ -962,45 +1016,301 @@ private fun HostedWidget(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
-            .height(preferredHeight)
-            .clip(RoundedCornerShape(28.dp)),
+            .animateContentSize(),
     ) {
-        val widthDp = maxWidth.value.toInt().coerceAtLeast(1)
-        val heightDp = preferredHeight.value.toInt().coerceAtLeast(1)
-        AndroidView(
-            factory = { hostView },
-            modifier = Modifier.fillMaxSize(),
-            update = { view ->
-                view.updateAppWidgetSize(
-                    null,
-                    widthDp,
-                    heightDp,
-                    widthDp,
-                    heightDp,
+        val supportsHorizontalResize =
+            info.resizeMode.and(AppWidgetProviderInfo.RESIZE_HORIZONTAL) != 0
+        val supportsVerticalResize =
+            info.resizeMode.and(AppWidgetProviderInfo.RESIZE_VERTICAL) != 0
+        val cellWidth = maxWidth / WidgetPlacement.MAX_WIDGET_SPAN
+        val providerMinWidth = with(density) {
+            (info.minResizeWidth.takeIf { it > 0 } ?: info.minWidth).toDp()
+        }.coerceAtLeast(1.dp)
+        val minimumWidthSpan = if (supportsHorizontalResize) {
+            ceil(providerMinWidth.value / cellWidth.value)
+                .toInt()
+                .coerceIn(
+                    WidgetPlacement.MIN_WIDGET_SPAN,
+                    WidgetPlacement.MAX_WIDGET_SPAN,
                 )
-            },
+        } else {
+            WidgetPlacement.MAX_WIDGET_SPAN
+        }
+        val widthSpan = placement.widthSpan.coerceIn(
+            minimumWidthSpan,
+            WidgetPlacement.MAX_WIDGET_SPAN,
         )
-        AnimatedVisibility(
-            visible = showRemove,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(7.dp),
-            enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
-            exit = fadeOut(tween(100)),
+        val providerMinHeight = with(density) {
+            (info.minResizeHeight.takeIf { it > 0 } ?: info.minHeight).toDp()
+        }.coerceIn(MIN_WIDGET_HEIGHT_DP.dp, MAX_WIDGET_HEIGHT_DP.dp)
+        val preferredHeight = with(density) { info.minHeight.toDp() }
+            .coerceIn(providerMinHeight, MAX_WIDGET_HEIGHT_DP.dp)
+        val widgetHeight = if (
+            supportsVerticalResize && placement.heightDp != WidgetPlacement.AUTO_WIDGET_HEIGHT
         ) {
-            IconButton(
-                onClick = onRemove,
+            placement.heightDp.dp.coerceIn(providerMinHeight, MAX_WIDGET_HEIGHT_DP.dp)
+        } else {
+            preferredHeight
+        }
+        val widgetWidth = maxWidth * (widthSpan / WidgetPlacement.MAX_WIDGET_SPAN.toFloat())
+        val alignment = when (placement.horizontalPosition) {
+            WidgetHorizontalPosition.START -> Alignment.CenterStart
+            WidgetHorizontalPosition.CENTER -> Alignment.Center
+            WidgetHorizontalPosition.END -> Alignment.CenterEnd
+        }
+        val shape = RoundedCornerShape(28.dp)
+        val widthDp = widgetWidth.value.coerceAtLeast(1f)
+        val heightDp = widgetHeight.value.coerceAtLeast(1f)
+        val cellWidthPx = with(density) { cellWidth.toPx() }
+        val resizeStepPx = with(density) { WIDGET_HEIGHT_STEP_DP.dp.toPx() }
+        val reorderThresholdPx = with(density) { 36.dp.toPx() }
+        var reorderDrag by remember(widgetId) { mutableFloatStateOf(0f) }
+        var resizeDrag by remember(widgetId) { mutableStateOf(Offset.Zero) }
+
+        Box(
+            modifier = Modifier
+                .width(widgetWidth)
+                .height(widgetHeight)
+                .align(alignment)
+                .clip(shape)
+                .then(
+                    if (editing) {
+                        Modifier.border(1.5.dp, Color.White.copy(alpha = 0.72f), shape)
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
+            AndroidView(
+                factory = { hostView },
+                modifier = Modifier.fillMaxSize(),
+                update = { view ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        view.updateAppWidgetSize(Bundle.EMPTY, listOf(SizeF(widthDp, heightDp)))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        view.updateAppWidgetSize(
+                            null,
+                            widthDp.roundToInt(),
+                            heightDp.roundToInt(),
+                            widthDp.roundToInt(),
+                            heightDp.roundToInt(),
+                        )
+                    }
+                },
+            )
+
+            AnimatedVisibility(
+                visible = editing,
                 modifier = Modifier
-                    .size(30.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.68f)),
+                    .align(Alignment.TopStart)
+                    .padding(7.dp),
+                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
+                exit = fadeOut(tween(100)),
             ) {
-                Icon(
-                    Icons.Outlined.Close,
-                    contentDescription = stringResource(R.string.remove_widget),
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.White,
-                )
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.76f),
+                    contentColor = Color.White,
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = { onMove(-1) },
+                            enabled = canMoveUp,
+                            modifier = Modifier.size(34.dp),
+                        ) {
+                            Icon(
+                                Icons.Outlined.ExpandLess,
+                                contentDescription = stringResource(R.string.move_widget_up),
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                        Icon(
+                            Icons.Outlined.DragHandle,
+                            contentDescription = stringResource(R.string.move_widget),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .pointerInput(widgetId, canMoveUp, canMoveDown) {
+                                    detectVerticalDragGestures(
+                                        onVerticalDrag = { change, amount ->
+                                            change.consume()
+                                            reorderDrag += amount
+                                        },
+                                        onDragEnd = {
+                                            when {
+                                                reorderDrag < -reorderThresholdPx && canMoveUp -> onMove(-1)
+                                                reorderDrag > reorderThresholdPx && canMoveDown -> onMove(1)
+                                            }
+                                            reorderDrag = 0f
+                                        },
+                                        onDragCancel = { reorderDrag = 0f },
+                                    )
+                                },
+                        )
+                        IconButton(
+                            onClick = { onMove(1) },
+                            enabled = canMoveDown,
+                            modifier = Modifier.size(34.dp),
+                        ) {
+                            Icon(
+                                Icons.Outlined.ExpandMore,
+                                contentDescription = stringResource(R.string.move_widget_down),
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                    }
+                }
+            }
+
+            AnimatedVisibility(
+                visible = editing,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(7.dp),
+                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
+                exit = fadeOut(tween(100)),
+            ) {
+                IconButton(
+                    onClick = onRemove,
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.76f)),
+                ) {
+                    Icon(
+                        Icons.Outlined.Close,
+                        contentDescription = stringResource(R.string.remove_widget),
+                        modifier = Modifier.size(18.dp),
+                        tint = Color.White,
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = editing,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(7.dp),
+                enter = fadeIn(tween(120)),
+                exit = fadeOut(tween(100)),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.76f),
+                    contentColor = Color.White,
+                ) {
+                    Text(
+                        stringResource(
+                            R.string.widget_dimensions,
+                            widthSpan,
+                            ceil(widgetHeight.value / WIDGET_HEIGHT_STEP_DP).toInt(),
+                        ),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = editing && (
+                    supportsHorizontalResize || supportsVerticalResize || widthSpan < WidgetPlacement.MAX_WIDGET_SPAN
+                ),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(7.dp),
+                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
+                exit = fadeOut(tween(100)),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.76f),
+                    contentColor = Color.White,
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (widthSpan < WidgetPlacement.MAX_WIDGET_SPAN) {
+                            IconButton(
+                                onClick = {
+                                    onUpdate(
+                                        widthSpan,
+                                        placement.heightDp,
+                                        placement.horizontalPosition.next(),
+                                    )
+                                },
+                                modifier = Modifier.size(36.dp),
+                            ) {
+                                Icon(
+                                    Icons.Outlined.SwapHoriz,
+                                    contentDescription = stringResource(R.string.position_widget),
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            }
+                        }
+                        if (supportsHorizontalResize || supportsVerticalResize) {
+                            Icon(
+                                Icons.Outlined.OpenInFull,
+                                contentDescription = stringResource(R.string.resize_widget),
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .padding(8.dp)
+                                    .pointerInput(
+                                        widgetId,
+                                        widthSpan,
+                                        widgetHeight,
+                                        supportsHorizontalResize,
+                                        supportsVerticalResize,
+                                    ) {
+                                        detectDragGestures(
+                                            onDrag = { change, amount ->
+                                                change.consume()
+                                                resizeDrag += amount
+                                            },
+                                            onDragEnd = {
+                                                val spanDelta = if (supportsHorizontalResize) {
+                                                    (resizeDrag.x / cellWidthPx).roundToInt()
+                                                } else {
+                                                    0
+                                                }
+                                                val heightDelta = if (supportsVerticalResize) {
+                                                    (resizeDrag.y / resizeStepPx).roundToInt()
+                                                } else {
+                                                    0
+                                                }
+                                                val resizedSpan = (widthSpan + spanDelta).coerceIn(
+                                                    minimumWidthSpan,
+                                                    WidgetPlacement.MAX_WIDGET_SPAN,
+                                                )
+                                                val resizedHeight = if (
+                                                    supportsVerticalResize && heightDelta != 0
+                                                ) {
+                                                    (
+                                                        widgetHeight.value.roundToInt() +
+                                                            heightDelta * WIDGET_HEIGHT_STEP_DP
+                                                    ).coerceIn(
+                                                        providerMinHeight.value.roundToInt(),
+                                                        MAX_WIDGET_HEIGHT_DP,
+                                                    )
+                                                } else {
+                                                    placement.heightDp
+                                                }
+                                                if (
+                                                    resizedSpan != placement.widthSpan ||
+                                                    resizedHeight != placement.heightDp
+                                                ) {
+                                                    onUpdate(
+                                                        resizedSpan,
+                                                        resizedHeight,
+                                                        placement.horizontalPosition,
+                                                    )
+                                                }
+                                                resizeDrag = Offset.Zero
+                                            },
+                                            onDragCancel = { resizeDrag = Offset.Zero },
+                                        )
+                                    },
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -1361,16 +1671,16 @@ private fun SearchLauncherBar(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .clip(RoundedCornerShape(22.dp))
+            .padding(horizontal = 18.dp, vertical = 10.dp)
+            .height(56.dp)
             .combinedClickable(onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
-        color = Color.Black.copy(alpha = 0.74f),
+        shape = CircleShape,
+        color = Color.Black.copy(alpha = 0.62f),
         contentColor = Color.White,
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.14f)),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f)),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 15.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -2896,6 +3206,9 @@ private const val DESCRIPTION_MATCH_PENALTY = 8
 private const val PACKAGE_MATCH_PENALTY = 70
 private const val SHORTCUT_ID_MATCH_PENALTY = 90
 private const val MAX_SEARCH_RESULTS = 50
+private const val WIDGET_HEIGHT_STEP_DP = 56
+private const val MIN_WIDGET_HEIGHT_DP = 112
+private const val MAX_WIDGET_HEIGHT_DP = 480
 
 private sealed interface LauncherSearchResult {
     val score: Int

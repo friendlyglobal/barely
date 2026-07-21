@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">Edit widget</string>
+    <string name="finish_editing_widgets">Selesai mengedit widget</string>
+    <string name="widget_edit_hint">Seret pegangan untuk mengurutkan. Seret sudut untuk mengubah ukuran.</string>
+    <string name="move_widget_up">Pindahkan widget ke atas</string>
+    <string name="move_widget_down">Pindahkan widget ke bawah</string>
+    <string name="move_widget">Pindahkan widget</string>
+    <string name="position_widget">Ubah posisi widget</string>
+    <string name="resize_widget">Ubah ukuran widget</string>
+</resources>

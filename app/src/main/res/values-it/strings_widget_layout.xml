@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_widgets">Modifica widget</string>
+    <string name="finish_editing_widgets">Termina modifica widget</string>
+    <string name="widget_edit_hint">Trascina la maniglia per riordinare. Trascina l’angolo per ridimensionare.</string>
+    <string name="move_widget_up">Sposta widget in alto</string>
+    <string name="move_widget_down">Sposta widget in basso</string>
+    <string name="move_widget">Sposta widget</string>
+    <string name="position_widget">Cambia posizione del widget</string>
+    <string name="resize_widget">Ridimensiona widget</string>
+</resources>

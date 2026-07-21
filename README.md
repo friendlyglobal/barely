@@ -30,7 +30,8 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
 - Persists favorites with `SharedPreferences`; no database is used.
 - Hosts user-selected Android widgets in a vertical glanceable stack below favorites.
-- Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; widget IDs are the only widget data Barely persists.
+- Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; Barely persists only widget IDs and simple layout metadata, never widget contents.
+- Lets users resize, align, and reorder hosted widgets in a dedicated edit mode; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
 - Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.

@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
     private var isLoading by androidx.compose.runtime.mutableStateOf(true)
     private var showGestureCoach by androidx.compose.runtime.mutableStateOf(false)
     private var homeRequestId by androidx.compose.runtime.mutableIntStateOf(0)
-    private var widgetIds by androidx.compose.runtime.mutableStateOf(emptyList<Int>())
+    private var widgets by androidx.compose.runtime.mutableStateOf(emptyList<WidgetPlacement>())
     private var widgetProviders by androidx.compose.runtime.mutableStateOf(emptyList<AppWidgetProviderInfo>())
     private var recommendedAppKeys by androidx.compose.runtime.mutableStateOf(emptyList<String>())
     private var recentAppSearches by androidx.compose.runtime.mutableStateOf(emptyList<String>())
@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
         ) { result ->
             val widgetId = pendingWidgetId
             if (result.resultCode == RESULT_OK && widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                widgetIds = widgetController.addWidget(widgetId)
+                widgets = widgetController.addWidget(widgetId)
             } else {
                 widgetController.discardWidgetId(widgetId)
             }
@@ -127,7 +127,7 @@ class MainActivity : ComponentActivity() {
         repository = LauncherRepository(this) { refresh() }
         widgetController = WidgetHostController(this)
         favoriteKeys = repository.favoriteKeys()
-        widgetIds = widgetController.savedWidgetIds()
+        widgets = widgetController.savedWidgets()
         widgetProviders = widgetController.availableProviders()
         refreshLocalSuggestions()
         privateSpaceExpanded = repository.isPrivateSpaceExpanded()
@@ -149,7 +149,7 @@ class MainActivity : ComponentActivity() {
                     isLoading = isLoading,
                     showGestureCoach = showGestureCoach,
                     homeRequestId = homeRequestId,
-                    widgetIds = widgetIds,
+                    widgets = widgets,
                     widgetProviders = widgetProviders,
                     widgetHost = widgetController.host,
                     widgetManager = widgetController.manager,
@@ -199,7 +199,18 @@ class MainActivity : ComponentActivity() {
                     onUninstall = ::requestUninstall,
                     onAddWidget = ::pickWidget,
                     onRemoveWidget = { widgetId ->
-                        widgetIds = widgetController.removeWidget(widgetId)
+                        widgets = widgetController.removeWidget(widgetId)
+                    },
+                    onUpdateWidget = { widgetId, widthSpan, heightDp, position ->
+                        widgets = widgetController.updateWidget(
+                            widgetId = widgetId,
+                            widthSpan = widthSpan,
+                            heightDp = heightDp,
+                            horizontalPosition = position,
+                        )
+                    },
+                    onMoveWidget = { widgetId, direction ->
+                        widgets = widgetController.moveWidget(widgetId, direction)
                     },
                     onSetPrivateSpaceExpanded = { expanded ->
                         repository.setPrivateSpaceExpanded(expanded)
@@ -344,7 +355,7 @@ class MainActivity : ComponentActivity() {
             info.widgetFeatures
                 .and(AppWidgetProviderInfo.WIDGET_FEATURE_CONFIGURATION_OPTIONAL) != 0
         if (info.configure == null || configurationIsOptional) {
-            widgetIds = widgetController.addWidget(widgetId)
+            widgets = widgetController.addWidget(widgetId)
             pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
             return
         }
