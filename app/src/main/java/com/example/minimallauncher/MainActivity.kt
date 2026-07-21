@@ -1,15 +1,20 @@
 package com.example.minimallauncher
 
+import android.Manifest
 import android.app.role.RoleManager
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.provider.ContactsContract
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -19,6 +24,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
+import androidx.core.content.ContextCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.compose.runtime.getValue
@@ -30,6 +37,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.function.Consumer
 
 class MainActivity : ComponentActivity() {
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -38,6 +47,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var roleRequest: ActivityResultLauncher<Intent>
     private lateinit var widgetPicker: ActivityResultLauncher<Intent>
     private lateinit var widgetConfigurator: ActivityResultLauncher<Intent>
+    private lateinit var contactsPermissionRequest: ActivityResultLauncher<String>
     private var refreshJob: Job? = null
     private var windowLayoutJob: Job? = null
 
@@ -48,8 +58,17 @@ class MainActivity : ComponentActivity() {
     private var showGestureCoach by androidx.compose.runtime.mutableStateOf(false)
     private var homeRequestId by androidx.compose.runtime.mutableIntStateOf(0)
     private var widgetIds by androidx.compose.runtime.mutableStateOf(emptyList<Int>())
+    private var privateSpaceExpanded by androidx.compose.runtime.mutableStateOf(true)
+    private var contacts by androidx.compose.runtime.mutableStateOf(emptyList<LauncherContact>())
+    private var hasContactsPermission by androidx.compose.runtime.mutableStateOf(false)
+    private var hasNotificationAccess by androidx.compose.runtime.mutableStateOf(false)
+    private var notificationDotsEnabled by androidx.compose.runtime.mutableStateOf(false)
+    private var mediaControlsEnabled by androidx.compose.runtime.mutableStateOf(false)
+    private var notificationState by androidx.compose.runtime.mutableStateOf(LauncherNotificationState())
     private var pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private var foldingFeature by androidx.compose.runtime.mutableStateOf<FoldingFeature?>(null)
+    private var crossWindowBlurEnabled by androidx.compose.runtime.mutableStateOf(false)
+    private var blurEnabledListener: Consumer<Boolean>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,10 +78,22 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
+        observeCrossWindowBlur()
 
         roleRequest = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             updateRoleState()
             refresh()
+        }
+        contactsPermissionRequest = registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            hasContactsPermission = granted
+            if (granted) {
+                refreshContacts()
+            } else {
+                contacts = emptyList()
+                Toast.makeText(this, R.string.contacts_permission_denied, Toast.LENGTH_LONG).show()
+            }
         }
         widgetPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val widgetId = result.data?.getIntExtra(
@@ -91,6 +122,10 @@ class MainActivity : ComponentActivity() {
         widgetController = WidgetHostController(this)
         favoriteKeys = repository.favoriteKeys()
         widgetIds = widgetController.savedWidgetIds()
+        privateSpaceExpanded = repository.isPrivateSpaceExpanded()
+        notificationDotsEnabled = repository.areNotificationDotsEnabled()
+        mediaControlsEnabled = repository.areMediaControlsEnabled()
+        hasNotificationAccess = isNotificationAccessGranted()
         pendingWidgetId = savedInstanceState?.getInt(
             PENDING_WIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID,
@@ -110,6 +145,25 @@ class MainActivity : ComponentActivity() {
                     widgetHost = widgetController.host,
                     widgetManager = widgetController.manager,
                     foldingFeature = foldingFeature,
+                    backdropBlurEnabled = crossWindowBlurEnabled,
+                    privateSpaceExpanded = privateSpaceExpanded,
+                    contacts = contacts,
+                    hasContactsPermission = hasContactsPermission,
+                    hasNotificationAccess = hasNotificationAccess,
+                    notificationDotsEnabled = notificationDotsEnabled,
+                    mediaControlsEnabled = mediaControlsEnabled,
+                    notificationCounts = if (
+                        hasNotificationAccess && notificationDotsEnabled
+                    ) {
+                        notificationState.countsByPackage
+                    } else {
+                        emptyMap()
+                    },
+                    nowPlaying = if (hasNotificationAccess && mediaControlsEnabled) {
+                        notificationState.nowPlaying
+                    } else {
+                        null
+                    },
                     onRequestHomeRole = ::requestHomeRole,
                     onGestureCoachSeen = {
                         repository.markGestureCoachSeen()
@@ -132,13 +186,30 @@ class MainActivity : ComponentActivity() {
                     onRemoveWidget = { widgetId ->
                         widgetIds = widgetController.removeWidget(widgetId)
                     },
+                    onSetPrivateSpaceExpanded = { expanded ->
+                        repository.setPrivateSpaceExpanded(expanded)
+                        privateSpaceExpanded = expanded
+                    },
+                    onSetPrivateSpaceLocked = { profile, locked ->
+                        perform(getString(R.string.error_private_space)) {
+                            repository.setPrivateSpaceLocked(profile, locked)
+                        }
+                    },
+                    onExecuteCommand = ::executeCommand,
+                    onMediaAction = LauncherNotificationService::performMediaAction,
                     onLockScreen = {
                         runAccessibilityAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
                     },
                     onOpenNotifications = {
                         runAccessibilityAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
                     },
+                    onBackdropChanged = ::applyBackdrop,
                 )
+            }
+        }
+        activityScope.launch {
+            LauncherNotificationService.state.collect { state ->
+                notificationState = state
             }
         }
     }
@@ -154,6 +225,8 @@ class MainActivity : ComponentActivity() {
         if (::repository.isInitialized) {
             updateRoleState()
             refresh()
+            refreshContacts()
+            hasNotificationAccess = isNotificationAccessGranted()
         }
     }
 
@@ -268,6 +341,126 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun executeCommand(command: LauncherCommand) {
+        when (val action = command.action) {
+            is LauncherCommandAction.CopyResult -> perform(getString(R.string.error_command)) {
+                getSystemService(ClipboardManager::class.java).setPrimaryClip(
+                    ClipData.newPlainText(command.title, action.value),
+                )
+                Toast.makeText(this, R.string.command_copied, Toast.LENGTH_SHORT).show()
+            }
+
+            is LauncherCommandAction.OpenSettings -> perform(getString(R.string.error_command)) {
+                startActivity(Intent(action.intentAction))
+            }
+
+            is LauncherCommandAction.Dial -> perform(getString(R.string.error_command)) {
+                startActivity(Intent(Intent.ACTION_DIAL, "tel:${action.phoneNumber}".toUri()))
+            }
+
+            is LauncherCommandAction.AskAssistant -> perform(getString(R.string.error_command)) {
+                startActivity(
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        setPackage(action.packageName)
+                        putExtra(Intent.EXTRA_TEXT, action.prompt)
+                    },
+                )
+            }
+
+            LauncherCommandAction.RequestContactsPermission -> {
+                contactsPermissionRequest.launch(Manifest.permission.READ_CONTACTS)
+            }
+
+            LauncherCommandAction.OpenNotificationAccess -> perform(
+                getString(R.string.error_command),
+            ) {
+                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+            }
+
+            is LauncherCommandAction.ToggleNotificationDots -> {
+                repository.setNotificationDotsEnabled(action.enabled)
+                notificationDotsEnabled = action.enabled
+            }
+
+            is LauncherCommandAction.ToggleMediaControls -> {
+                repository.setMediaControlsEnabled(action.enabled)
+                mediaControlsEnabled = action.enabled
+            }
+        }
+    }
+
+    private fun isNotificationAccessGranted(): Boolean =
+        packageName in NotificationManagerCompat.getEnabledListenerPackages(this)
+
+    private fun observeCrossWindowBlur() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val manager = getSystemService(WindowManager::class.java)
+        val listener = Consumer<Boolean> { enabled -> crossWindowBlurEnabled = enabled }
+        blurEnabledListener = listener
+        manager.addCrossWindowBlurEnabledListener(mainExecutor, listener)
+    }
+
+    private fun applyBackdrop(backdrop: LauncherBackdrop) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val radiusDp = when (backdrop) {
+            LauncherBackdrop.CLEAR -> 0
+            LauncherBackdrop.FROSTED -> 34
+            LauncherBackdrop.SEARCH -> 48
+        }
+        val attributes = window.attributes
+        attributes.setBlurBehindRadius(
+            (radiusDp * resources.displayMetrics.density).toInt(),
+        )
+        window.attributes = attributes
+        if (backdrop == LauncherBackdrop.CLEAR) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+        }
+    }
+
+    private fun refreshContacts() {
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_CONTACTS,
+        ) == PackageManager.PERMISSION_GRANTED
+        hasContactsPermission = granted
+        if (!granted) {
+            contacts = emptyList()
+            return
+        }
+        activityScope.launch {
+            contacts = withContext(Dispatchers.IO) {
+                val projection = arrayOf(
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY,
+                    ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                )
+                val results = mutableListOf<LauncherContact>()
+                contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY + " COLLATE LOCALIZED ASC",
+                )?.use { cursor ->
+                    val nameIndex = cursor.getColumnIndexOrThrow(projection[0])
+                    val normalizedNumberIndex = cursor.getColumnIndexOrThrow(projection[1])
+                    val numberIndex = cursor.getColumnIndexOrThrow(projection[2])
+                    while (cursor.moveToNext()) {
+                        val name = cursor.getString(nameIndex)?.trim().orEmpty()
+                        val number = cursor.getString(normalizedNumberIndex)
+                            ?: cursor.getString(numberIndex)
+                            ?: continue
+                        if (name.isNotEmpty()) results += LauncherContact(name, number)
+                    }
+                }
+                results.distinctBy { "${it.name}:${it.phoneNumber}" }
+            }
+        }
+    }
+
     private fun refresh() {
         refreshJob?.cancel()
         refreshJob = activityScope.launch {
@@ -295,6 +488,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         refreshJob?.cancel()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            blurEnabledListener?.let { listener ->
+                getSystemService(WindowManager::class.java)
+                    .removeCrossWindowBlurEnabledListener(listener)
+            }
+        }
+        applyBackdrop(LauncherBackdrop.CLEAR)
         if (::repository.isInitialized) repository.close()
         activityScope.cancel()
         super.onDestroy()

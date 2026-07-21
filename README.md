@@ -34,6 +34,14 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
 - Adapts at runtime to phones, split-screen windows, tablets, and foldables: one column on compact windows, two on medium/foldable windows, and three only on expanded windows.
 - Uses Jetpack WindowManager `FoldingFeature` data to keep controls and list items away from a separating vertical fold or hinge.
+- Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; a translucent gradient automatically takes over when the system disables blur.
+- Keeps the center Home page completely transparent and free of launcher chrome.
+- Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
+- Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
+- Can optionally search contacts in memory after an explicit runtime permission request.
+- Sends an explicitly prefixed question to an installed ChatGPT, Gemini, or Claude app through Android sharing; Launchly contains no AI API key or relay server.
+- Supports keyboard and mouse use on DeX, including page arrows, Ctrl+K, result selection, Enter, Escape, and right-click app actions.
+- Offers disabled-by-default notification dots and media controls through Android's notification-listener access screen.
 
 Shortcut data from other apps is protected by Android. It becomes available only after Launchly is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
 
@@ -63,6 +71,8 @@ Android selects the matching resource automatically. On Android 13 and newer, La
 - `LauncherRepository.kt` — `LauncherApps` calls, callbacks, profiles, shortcuts, and favorites.
 - `WidgetHostController.kt` — the platform `AppWidgetHost` lifecycle and locally persisted widget IDs.
 - `LauncherAccessibilityService.kt` — optional global lock/notification actions; event collection and screen-content access are disabled.
+- `CommandPalette.kt` — local calculator, conversions, contacts, quick settings, and explicit AI-app handoff.
+- `LauncherNotificationService.kt` — optional in-memory notification counts and active media-session controls.
 - `LauncherModels.kt` — lightweight app and shortcut models.
 - `LauncherTheme.kt` — Material 3, dynamic colors, and light/dark fallbacks.
 - `res/values-*/strings.xml` — system-locale translations.
@@ -145,17 +155,27 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 12. Change the Android system language and reopen Launchly to verify automatic localization.
 13. On the wallpaper page, swipe down and verify that notifications open; double-tap and verify that the phone locks.
 14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and two-column Apps/search layouts. Resize the window and confirm it returns to one column below 600 dp.
+15. On Android 15 or newer, configure Private Space, verify its separate Apps container, lock it, and confirm its apps and shortcuts disappear from search.
+16. Search for `18*12`, `10 km to mi`, or `wifi`; verify calculations and conversions stay local and settings open directly.
+17. With a physical keyboard, use Left/Right, Ctrl+K, Up/Down, Enter, and Escape. Right-click an app with a mouse to open its actions.
+18. Search for `notifications`, read the warning, and enable access only if desired. Verify dots and media controls can each remain independently disabled.
+19. Move between Home, Favorites, Apps, and Search. Confirm Home remains clear and other pages use wallpaper blur or the translucent fallback.
 
 ## Privacy
 
-Launchly does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites and selected widget IDs remain in local `SharedPreferences`. App and shortcut information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+Launchly does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+
+Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Launchly saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Launchly never sees the assistant's response.
+
+Notification and media integration is also off by default and requires approval on Android's dedicated notification-access screen. That system permission is sensitive because a notification listener can access notification metadata while enabled. Launchly derives per-app counts and current media metadata in memory, persists no notification content, and exposes independent switches for dots and media controls. Revoking notification access immediately disables both data sources.
 
 ## Prototype limitations
 
 - No folders, cloud backup, widget resizing, or drag-to-reorder support.
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
-- Release `0.3` is debug-signed and intended for development testing.
+- Cross-window blur requires Android 12 or newer and can be disabled by the device at runtime; the UI retains a contrast-safe fallback.
+- Release `0.4` is debug-signed and intended for development testing.
 
 ## Official Android references
 
@@ -167,3 +187,7 @@ Launchly does not request internet access, collect analytics, maintain a databas
 - [Build adaptive apps](https://developer.android.com/develop/ui/compose/build-adaptive-apps)
 - [Make an app fold aware](https://developer.android.com/develop/adaptive-apps/guides/foldables/make-your-app-fold-aware)
 - [AccessibilityService global actions](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService#performGlobalAction(int))
+- [Android 15 Private Space launcher requirements](https://developer.android.com/about/versions/15/behavior-changes-all#private-space)
+- [Window blurs](https://source.android.com/docs/core/display/window-blurs)
+- [NotificationListenerService](https://developer.android.com/reference/android/service/notification/NotificationListenerService)
+- [MediaSessionManager](https://developer.android.com/reference/android/media/session/MediaSessionManager)

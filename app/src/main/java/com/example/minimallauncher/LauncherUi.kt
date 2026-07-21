@@ -15,6 +15,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
@@ -27,6 +28,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -51,8 +53,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
@@ -66,9 +70,23 @@ import androidx.compose.material.icons.automirrored.outlined.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.LockOpen
+import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.SkipNext
+import androidx.compose.material.icons.outlined.SkipPrevious
+import androidx.compose.material.icons.outlined.SmartToy
+import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarOutline
@@ -92,21 +110,34 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -123,6 +154,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.absoluteValue
 
 @Composable
@@ -137,6 +170,15 @@ fun LauncherScreen(
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
     foldingFeature: FoldingFeature?,
+    backdropBlurEnabled: Boolean,
+    privateSpaceExpanded: Boolean,
+    contacts: List<LauncherContact>,
+    hasContactsPermission: Boolean,
+    hasNotificationAccess: Boolean,
+    notificationDotsEnabled: Boolean,
+    mediaControlsEnabled: Boolean,
+    notificationCounts: Map<String, Int>,
+    nowPlaying: NowPlaying?,
     onRequestHomeRole: () -> Unit,
     onGestureCoachSeen: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -146,12 +188,20 @@ fun LauncherScreen(
     onUninstall: (LauncherApp) -> Unit,
     onAddWidget: () -> Unit,
     onRemoveWidget: (Int) -> Unit,
+    onSetPrivateSpaceExpanded: (Boolean) -> Unit,
+    onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
+    onExecuteCommand: (LauncherCommand) -> Unit,
+    onMediaAction: (MediaAction) -> Unit,
     onLockScreen: () -> Unit,
     onOpenNotifications: () -> Unit,
+    onBackdropChanged: (LauncherBackdrop) -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = HOME_PAGE, pageCount = { PAGE_COUNT })
     var searchVisible by remember { mutableStateOf(false) }
+    var initialSearchQuery by remember { mutableStateOf("") }
     var selectedApp by remember { mutableStateOf<LauncherApp?>(null) }
+    val rootFocusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val view = LocalView.current
     val wallpaperManager = remember(context) { WallpaperManager.getInstance(context) }
@@ -177,6 +227,29 @@ fun LauncherScreen(
         animationSpec = tween(120),
         label = "pagerContentAlpha",
     )
+
+    fun openSearch(initialQuery: String = "") {
+        initialSearchQuery = initialQuery
+        onGestureCoachSeen()
+        searchVisible = true
+    }
+
+    LaunchedEffect(searchVisible) {
+        if (!searchVisible) rootFocusRequester.requestFocus()
+    }
+
+    LaunchedEffect(pagerState, searchVisible) {
+        snapshotFlow {
+            when {
+                searchVisible -> LauncherBackdrop.SEARCH
+                pagerState.currentPage == HOME_PAGE &&
+                    pagerState.currentPageOffsetFraction.absoluteValue < 0.04f -> {
+                    LauncherBackdrop.CLEAR
+                }
+                else -> LauncherBackdrop.FROSTED
+            }
+        }.distinctUntilChanged().collect(onBackdropChanged)
+    }
 
     LaunchedEffect(homeRequestId) {
         if (homeRequestId > 0) {
@@ -215,7 +288,55 @@ fun LauncherScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .focusRequester(rootFocusRequester)
+            .focusable()
+            .onPreviewKeyEvent { event ->
+                if (searchVisible || event.type != KeyEventType.KeyDown) {
+                    return@onPreviewKeyEvent false
+                }
+                when {
+                    event.key == Key.DirectionLeft -> {
+                        scope.launch {
+                            pagerState.animateScrollToPage((pagerState.currentPage - 1).coerceAtLeast(0))
+                        }
+                        true
+                    }
+
+                    event.key == Key.DirectionRight -> {
+                        scope.launch {
+                            pagerState.animateScrollToPage(
+                                (pagerState.currentPage + 1).coerceAtMost(PAGE_COUNT - 1),
+                            )
+                        }
+                        true
+                    }
+
+                    event.key == Key.DirectionUp ||
+                        (event.isCtrlPressed && event.key == Key.K) ||
+                        event.key == Key.Slash -> {
+                        openSearch()
+                        true
+                    }
+
+                    !event.isCtrlPressed -> {
+                        val character = event.nativeKeyEvent.unicodeChar
+                            .takeIf { it > 0 }
+                            ?.let { codePoint -> String(Character.toChars(codePoint)) }
+                        if (character?.firstOrNull()?.isLetterOrDigit() == true) {
+                            openSearch(character)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                    else -> false
+                }
+            },
+    ) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -247,10 +368,14 @@ fun LauncherScreen(
                         widgetManager = widgetManager,
                         foldingFeature = foldingFeature,
                         isLoading = isLoading,
+                        backdropBlurEnabled = backdropBlurEnabled,
+                        notificationCounts = notificationCounts,
+                        nowPlaying = nowPlaying,
                         onLaunchApp = onLaunchApp,
                         onLongPress = { selectedApp = it },
                         onAddWidget = onAddWidget,
                         onRemoveWidget = onRemoveWidget,
+                        onMediaAction = onMediaAction,
                     )
 
                     HOME_PAGE -> WallpaperPage(
@@ -258,23 +383,27 @@ fun LauncherScreen(
                         onLockScreen = onLockScreen,
                         onOpenNotifications = onOpenNotifications,
                         onSearch = {
-                            onGestureCoachSeen()
-                            searchVisible = true
+                            openSearch()
                         },
                     )
 
                     APPS_PAGE -> AppsPage(
                         apps = snapshot.apps,
+                        privateSpace = snapshot.privateSpace,
+                        privateSpaceExpanded = privateSpaceExpanded,
                         isLoading = isLoading,
+                        backdropBlurEnabled = backdropBlurEnabled,
                         isHomeRoleHeld = isHomeRoleHeld,
                         hasShortcutPermission = snapshot.hasShortcutPermission,
+                        notificationCounts = notificationCounts,
                         foldingFeature = foldingFeature,
                         onRequestHomeRole = onRequestHomeRole,
                         onLaunchApp = onLaunchApp,
                         onLongPress = { selectedApp = it },
+                        onSetPrivateSpaceExpanded = onSetPrivateSpaceExpanded,
+                        onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
                         onSearch = {
-                            onGestureCoachSeen()
-                            searchVisible = true
+                            openSearch()
                         },
                     )
                 }
@@ -287,10 +416,22 @@ fun LauncherScreen(
             exit = fadeOut(animationSpec = tween(120)),
         ) {
             SearchPage(
-                apps = snapshot.apps,
-                shortcuts = snapshot.shortcuts,
+                initialQuery = initialSearchQuery,
+                apps = snapshot.apps.filterNot { app ->
+                    app.isPrivate && snapshot.privateSpace?.isLocked != false
+                },
+                shortcuts = snapshot.shortcuts.filterNot { shortcut ->
+                    shortcut.owner.isPrivate && snapshot.privateSpace?.isLocked != false
+                },
                 canSearchShortcuts = snapshot.hasShortcutPermission,
+                contacts = contacts,
+                hasContactsPermission = hasContactsPermission,
+                hasNotificationAccess = hasNotificationAccess,
+                notificationDotsEnabled = notificationDotsEnabled,
+                mediaControlsEnabled = mediaControlsEnabled,
+                notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
+                backdropBlurEnabled = backdropBlurEnabled,
                 onClose = { searchVisible = false },
                 onLaunchApp = {
                     searchVisible = false
@@ -300,6 +441,15 @@ fun LauncherScreen(
                 onLaunchShortcut = {
                     searchVisible = false
                     onLaunchShortcut(it)
+                },
+                onExecuteCommand = { command ->
+                    if (
+                        command.action !is LauncherCommandAction.CopyResult &&
+                        command.action !is LauncherCommandAction.RequestContactsPermission
+                    ) {
+                        searchVisible = false
+                    }
+                    onExecuteCommand(command)
                 },
             )
         }
@@ -424,16 +574,20 @@ private fun FavoritesPage(
     widgetManager: AppWidgetManager,
     foldingFeature: FoldingFeature?,
     isLoading: Boolean,
+    backdropBlurEnabled: Boolean,
+    notificationCounts: Map<String, Int>,
+    nowPlaying: NowPlaying?,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onAddWidget: () -> Unit,
     onRemoveWidget: (Int) -> Unit,
+    onMediaAction: (MediaAction) -> Unit,
 ) {
     var editingWidgets by remember { mutableStateOf(false) }
     LaunchedEffect(widgetIds.isEmpty()) {
         if (widgetIds.isEmpty()) editingWidgets = false
     }
-    PageSurface(isLoading = isLoading) {
+    PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
         PageHeader(
             title = stringResource(R.string.favorites),
         )
@@ -451,13 +605,19 @@ private fun FavoritesPage(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
                     ) {
-                        favoriteItems(favorites, onLaunchApp, onLongPress)
+                        favoriteItems(
+                            favorites,
+                            notificationCounts,
+                            onLaunchApp,
+                            onLongPress,
+                        )
                     }
                     Spacer(Modifier.width(paneGap))
                     LazyColumn(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
                     ) {
+                        mediaItem(nowPlaying, onMediaAction)
                         widgetItems(
                             widgetIds = widgetIds,
                             widgetHost = widgetHost,
@@ -474,7 +634,13 @@ private fun FavoritesPage(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
                 ) {
-                    favoriteItems(favorites, onLaunchApp, onLongPress)
+                    favoriteItems(
+                        favorites,
+                        notificationCounts,
+                        onLaunchApp,
+                        onLongPress,
+                    )
+                    mediaItem(nowPlaying, onMediaAction)
                     widgetItems(
                         widgetIds = widgetIds,
                         widgetHost = widgetHost,
@@ -492,6 +658,7 @@ private fun FavoritesPage(
 
 private fun LazyListScope.favoriteItems(
     favorites: List<LauncherApp>,
+    notificationCounts: Map<String, Int>,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
 ) {
@@ -528,9 +695,85 @@ private fun LazyListScope.favoriteItems(
         items(favorites, key = { it.key }) { app ->
             AppTile(
                 app = app,
+                notificationCount = notificationCounts[app.packageName] ?: 0,
                 onClick = { onLaunchApp(app) },
                 onLongPress = { onLongPress(app) },
             )
+        }
+    }
+}
+
+private fun LazyListScope.mediaItem(
+    nowPlaying: NowPlaying?,
+    onMediaAction: (MediaAction) -> Unit,
+) {
+    if (nowPlaying == null) return
+    item(key = "now_playing:${nowPlaying.packageName}") {
+        NowPlayingCard(nowPlaying = nowPlaying, onMediaAction = onMediaAction)
+        Spacer(Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun NowPlayingCard(
+    nowPlaying: NowPlaying,
+    onMediaAction: (MediaAction) -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = Color.Black.copy(alpha = 0.46f),
+        contentColor = Color.White,
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 18.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    nowPlaying.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                nowPlaying.artist?.let { artist ->
+                    Text(
+                        artist,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color.White.copy(alpha = 0.62f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+            if (nowPlaying.canSkipPrevious) {
+                IconButton(onClick = { onMediaAction(MediaAction.PREVIOUS) }) {
+                    Icon(
+                        Icons.Outlined.SkipPrevious,
+                        contentDescription = stringResource(R.string.media_previous),
+                    )
+                }
+            }
+            IconButton(onClick = { onMediaAction(MediaAction.PLAY_PAUSE) }) {
+                Icon(
+                    if (nowPlaying.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
+                    contentDescription = if (nowPlaying.isPlaying) {
+                        stringResource(R.string.media_pause)
+                    } else {
+                        stringResource(R.string.media_play)
+                    },
+                )
+            }
+            if (nowPlaying.canSkipNext) {
+                IconButton(onClick = { onMediaAction(MediaAction.NEXT) }) {
+                    Icon(
+                        Icons.Outlined.SkipNext,
+                        contentDescription = stringResource(R.string.media_next),
+                    )
+                }
+            }
         }
     }
 }
@@ -677,16 +920,22 @@ private fun HostedWidget(
 @Composable
 private fun AppsPage(
     apps: List<LauncherApp>,
+    privateSpace: LauncherProfile?,
+    privateSpaceExpanded: Boolean,
     isLoading: Boolean,
+    backdropBlurEnabled: Boolean,
     isHomeRoleHeld: Boolean,
     hasShortcutPermission: Boolean,
+    notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     onRequestHomeRole: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    onSetPrivateSpaceExpanded: (Boolean) -> Unit,
+    onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
     onSearch: () -> Unit,
 ) {
-    PageSurface(isLoading = isLoading) {
+    PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
         PageHeader(
             title = stringResource(R.string.apps),
             trailing = apps.size.toString(),
@@ -702,8 +951,13 @@ private fun AppsPage(
         Box(Modifier.weight(1f)) {
             AppGrid(
                 apps = apps,
+                privateSpace = privateSpace,
+                privateSpaceExpanded = privateSpaceExpanded,
                 onLaunchApp = onLaunchApp,
                 onLongPress = onLongPress,
+                onSetPrivateSpaceExpanded = onSetPrivateSpaceExpanded,
+                onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
+                notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
                 contentPadding = PaddingValues(
                     start = 12.dp,
@@ -720,12 +974,30 @@ private fun AppsPage(
 @Composable
 private fun PageSurface(
     isLoading: Boolean,
+    backdropBlurEnabled: Boolean,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val backdrop = if (backdropBlurEnabled) {
+        Brush.verticalGradient(
+            listOf(
+                Color.Black.copy(alpha = 0.18f),
+                Color.Black.copy(alpha = 0.25f),
+                Color.Black.copy(alpha = 0.38f),
+            ),
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(
+                Color.Black.copy(alpha = 0.34f),
+                Color.Black.copy(alpha = 0.44f),
+                Color.Black.copy(alpha = 0.58f),
+            ),
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.46f)),
+            .background(backdrop),
     ) {
         CompositionLocalProvider(LocalContentColor provides Color.White) {
             Column(
@@ -830,11 +1102,21 @@ private fun HomeRoleCard(
 @Composable
 private fun AppGrid(
     apps: List<LauncherApp>,
+    privateSpace: LauncherProfile?,
+    privateSpaceExpanded: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    onSetPrivateSpaceExpanded: (Boolean) -> Unit,
+    onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
+    notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
 ) {
+    val regularApps = remember(apps) { apps.filterNot(LauncherApp::isPrivate) }
+    val privateApps = remember(apps) { apps.filter(LauncherApp::isPrivate) }
+    val showPrivateEntryPoint = privateSpace != null && !(
+        privateSpace.isLocked && privateSpace.hideEntryPointWhenLocked
+    )
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val verticalFold = foldingFeature?.takeIf {
             it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
@@ -853,13 +1135,114 @@ private fun AppGrid(
             contentPadding = contentPadding,
             horizontalArrangement = Arrangement.spacedBy(columnGap),
         ) {
-            gridItems(apps, key = { it.key }) { app ->
+            gridItems(regularApps, key = { it.key }) { app ->
                 AppTile(
                     app = app,
+                    notificationCount = notificationCounts[app.packageName] ?: 0,
                     onClick = { onLaunchApp(app) },
                     onLongPress = { onLongPress(app) },
                 )
             }
+            if (showPrivateEntryPoint) {
+                item(
+                    key = "private_space_header",
+                    span = { GridItemSpan(maxLineSpan) },
+                ) {
+                    PrivateSpaceHeader(
+                        profile = privateSpace,
+                        expanded = privateSpaceExpanded,
+                        onSetExpanded = onSetPrivateSpaceExpanded,
+                        onSetLocked = onSetPrivateSpaceLocked,
+                    )
+                }
+                if (privateSpaceExpanded) {
+                    if (privateSpace.isLocked) {
+                        item(
+                            key = "private_space_locked",
+                            span = { GridItemSpan(maxLineSpan) },
+                        ) {
+                            Text(
+                                stringResource(R.string.private_space_locked_message),
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                                color = Color.White.copy(alpha = 0.62f),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    } else {
+                        gridItems(privateApps, key = { "private:${it.key}" }) { app ->
+                            AppTile(
+                                app = app,
+                                notificationCount = notificationCounts[app.packageName] ?: 0,
+                                onClick = { onLaunchApp(app) },
+                                onLongPress = { onLongPress(app) },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PrivateSpaceHeader(
+    profile: LauncherProfile,
+    expanded: Boolean,
+    onSetExpanded: (Boolean) -> Unit,
+    onSetLocked: (LauncherProfile, Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 18.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color.Black.copy(alpha = 0.26f))
+            .animateContentSize()
+            .combinedClickable(onClick = { onSetExpanded(!expanded) })
+            .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            if (profile.isLocked) Icons.Outlined.Lock else Icons.Outlined.LockOpen,
+            contentDescription = null,
+            modifier = Modifier.size(22.dp),
+            tint = Color.White.copy(alpha = 0.82f),
+        )
+        Spacer(Modifier.width(13.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                stringResource(R.string.private_space),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                if (profile.isLocked) {
+                    stringResource(R.string.private_space_locked)
+                } else {
+                    stringResource(R.string.private_space_unlocked)
+                },
+                color = Color.White.copy(alpha = 0.58f),
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+        IconButton(onClick = { onSetLocked(profile, !profile.isLocked) }) {
+            Icon(
+                if (profile.isLocked) Icons.Outlined.LockOpen else Icons.Outlined.Lock,
+                contentDescription = if (profile.isLocked) {
+                    stringResource(R.string.unlock_private_space)
+                } else {
+                    stringResource(R.string.lock_private_space)
+                },
+            )
+        }
+        IconButton(onClick = { onSetExpanded(!expanded) }) {
+            Icon(
+                if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                contentDescription = if (expanded) {
+                    stringResource(R.string.hide_private_space_apps)
+                } else {
+                    stringResource(R.string.show_private_space_apps)
+                },
+            )
         }
     }
 }
@@ -903,6 +1286,7 @@ private fun SearchLauncherBar(
 @Composable
 private fun AppTile(
     app: LauncherApp,
+    notificationCount: Int = 0,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
 ) {
@@ -912,6 +1296,7 @@ private fun AppTile(
             .fillMaxWidth()
             .heightIn(min = 52.dp)
             .clip(RoundedCornerShape(16.dp))
+            .secondaryClickable(onLongPress)
             .combinedClickable(
                 onClick = onClick,
                 onLongClickLabel = appActionsLabel,
@@ -924,9 +1309,19 @@ private fun AppTile(
             text = app.label,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.bodyLarge,
             color = Color.White,
         )
+        if (notificationCount > 0) {
+            Box(
+                Modifier
+                    .padding(start = 10.dp)
+                    .size(7.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.86f)),
+            )
+        }
     }
 }
 
@@ -957,21 +1352,32 @@ private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchPage(
+    initialQuery: String,
     apps: List<LauncherApp>,
     shortcuts: List<LauncherShortcut>,
     canSearchShortcuts: Boolean,
+    contacts: List<LauncherContact>,
+    hasContactsPermission: Boolean,
+    hasNotificationAccess: Boolean,
+    notificationDotsEnabled: Boolean,
+    mediaControlsEnabled: Boolean,
+    notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
+    backdropBlurEnabled: Boolean,
     onClose: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
+    onExecuteCommand: (LauncherCommand) -> Unit,
 ) {
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf(initialQuery) }
+    var selectedResultIndex by remember { mutableIntStateOf(0) }
     var contentVisible by remember { mutableStateOf(false) }
     var dismissDrag by remember { mutableFloatStateOf(0f) }
     var dismissDragging by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
     val dismissThreshold = with(LocalDensity.current) { 76.dp.toPx() }
     val animatedDismissDrag by animateFloatAsState(
         targetValue = dismissDrag,
@@ -983,11 +1389,27 @@ private fun SearchPage(
         label = "searchDismissDrag",
     )
     val normalizedQuery = remember(query) { query.normalizedForSearch() }
-    val rankedResults = remember(apps, shortcuts, normalizedQuery) {
+    val rankedResults = remember(
+        apps,
+        shortcuts,
+        contacts,
+        hasContactsPermission,
+        normalizedQuery,
+    ) {
         if (normalizedQuery.isBlank()) {
             emptyList()
         } else {
             buildList {
+                buildLauncherCommands(
+                    context = context,
+                    query = query,
+                    installedPackages = apps.mapTo(mutableSetOf(), LauncherApp::packageName),
+                    contacts = contacts,
+                    hasContactsPermission = hasContactsPermission,
+                    hasNotificationAccess = hasNotificationAccess,
+                    notificationDotsEnabled = notificationDotsEnabled,
+                    mediaControlsEnabled = mediaControlsEnabled,
+                ).forEach { command -> add(CommandSearchResult(command)) }
                 apps.forEach { app ->
                     relevanceScore(
                         query = normalizedQuery,
@@ -1024,9 +1446,20 @@ private fun SearchPage(
         }
     }
 
+    LaunchedEffect(normalizedQuery) {
+        selectedResultIndex = 0
+    }
+
+    fun moveSelection(delta: Int) {
+        if (rankedResults.isEmpty()) return
+        selectedResultIndex = (selectedResultIndex + delta)
+            .coerceIn(0, rankedResults.lastIndex)
+    }
+
     fun launchBestResult() {
         keyboard?.hide()
-        when (val result = rankedResults.firstOrNull()) {
+        when (val result = rankedResults.getOrNull(selectedResultIndex)) {
+            is CommandSearchResult -> onExecuteCommand(result.command)
             is AppSearchResult -> onLaunchApp(result.app)
             is ShortcutSearchResult -> onLaunchShortcut(result.shortcut)
             null -> Unit
@@ -1043,7 +1476,23 @@ private fun SearchPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.64f)),
+            .background(
+                Brush.verticalGradient(
+                    if (backdropBlurEnabled) {
+                        listOf(
+                            Color.Black.copy(alpha = 0.28f),
+                            Color.Black.copy(alpha = 0.36f),
+                            Color.Black.copy(alpha = 0.5f),
+                        )
+                    } else {
+                        listOf(
+                            Color.Black.copy(alpha = 0.46f),
+                            Color.Black.copy(alpha = 0.56f),
+                            Color.Black.copy(alpha = 0.7f),
+                        )
+                    },
+                ),
+            ),
     ) {
         CompositionLocalProvider(LocalContentColor provides Color.White) {
             Column(
@@ -1123,11 +1572,14 @@ private fun SearchPage(
                             modifier = Modifier.weight(1f),
                             query = query,
                             results = rankedResults,
+                            selectedResultIndex = selectedResultIndex,
                             canSearchShortcuts = canSearchShortcuts,
                             foldingFeature = foldingFeature,
                             onLaunchApp = onLaunchApp,
                             onLongPress = onLongPress,
                             onLaunchShortcut = onLaunchShortcut,
+                            onExecuteCommand = onExecuteCommand,
+                            notificationCounts = notificationCounts,
                         )
                     }
                 }
@@ -1146,6 +1598,8 @@ private fun SearchPage(
                         query = query,
                         onQueryChange = { query = it },
                         onSearch = ::launchBestResult,
+                        onMoveSelection = ::moveSelection,
+                        onClose = onClose,
                         onClear = { query = "" },
                         modifier = Modifier.focusRequester(focusRequester),
                     )
@@ -1160,23 +1614,24 @@ private fun SearchInput(
     query: String,
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
+    onMoveSelection: (Int) -> Unit,
+    onClose: () -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        shape = RoundedCornerShape(22.dp),
-        color = Color.Black.copy(alpha = 0.78f),
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(18.dp),
+        color = Color.Black.copy(alpha = 0.58f),
         contentColor = Color.White,
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.16f)),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .padding(start = 18.dp, end = 8.dp),
+                .heightIn(min = 52.dp)
+                .padding(start = 16.dp, end = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -1189,7 +1644,39 @@ private fun SearchInput(
             BasicTextField(
                 value = query,
                 onValueChange = onQueryChange,
-                modifier = modifier.weight(1f),
+                modifier = modifier
+                    .weight(1f)
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown) {
+                            false
+                        } else {
+                            when {
+                                event.key == Key.DirectionDown ||
+                                    (event.key == Key.Tab && !event.isShiftPressed) -> {
+                                    onMoveSelection(1)
+                                    true
+                                }
+
+                                event.key == Key.DirectionUp ||
+                                    (event.key == Key.Tab && event.isShiftPressed) -> {
+                                    onMoveSelection(-1)
+                                    true
+                                }
+
+                                event.key == Key.Enter -> {
+                                    onSearch()
+                                    true
+                                }
+
+                                event.key == Key.Escape -> {
+                                    onClose()
+                                    true
+                                }
+
+                                else -> false
+                            }
+                        }
+                    },
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
                 cursorBrush = SolidColor(Color.White),
@@ -1227,12 +1714,29 @@ private fun SearchResults(
     modifier: Modifier,
     query: String,
     results: List<LauncherSearchResult>,
+    selectedResultIndex: Int,
     canSearchShortcuts: Boolean,
     foldingFeature: FoldingFeature?,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
+    onExecuteCommand: (LauncherCommand) -> Unit,
+    notificationCounts: Map<String, Int>,
 ) {
+    if (query.isBlank()) {
+        Box(modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.command_palette_hint),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 28.dp, vertical = 22.dp),
+                color = Color.White.copy(alpha = 0.48f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        return
+    }
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val verticalFold = foldingFeature?.takeIf {
             it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
@@ -1251,16 +1755,26 @@ private fun SearchResults(
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(columnGap),
         ) {
-            gridItems(results, key = { it.key }) { result ->
+            gridItemsIndexed(results, key = { _, result -> result.key }) { index, result ->
                 when (result) {
+                    is CommandSearchResult -> CommandSearchRow(
+                        command = result.command,
+                        selected = index == selectedResultIndex,
+                        onExecute = onExecuteCommand,
+                    )
+
                     is AppSearchResult -> AppSearchRow(
                         app = result.app,
+                        notificationCount = notificationCounts[result.app.packageName] ?: 0,
+                        selected = index == selectedResultIndex,
                         onLaunchApp = onLaunchApp,
                         onLongPress = onLongPress,
                     )
 
                     is ShortcutSearchResult -> ShortcutSearchRow(
                         shortcut = result.shortcut,
+                        notificationCount = notificationCounts[result.shortcut.owner.packageName] ?: 0,
+                        selected = index == selectedResultIndex,
                         onLaunchShortcut = onLaunchShortcut,
                         onLongPress = onLongPress,
                     )
@@ -1283,22 +1797,58 @@ private fun SearchResults(
 }
 
 @Composable
+private fun CommandSearchRow(
+    command: LauncherCommand,
+    selected: Boolean,
+    onExecute: (LauncherCommand) -> Unit,
+) {
+    val icon = when (command.icon) {
+        CommandIcon.CALCULATE -> Icons.Outlined.Calculate
+        CommandIcon.CONVERT -> Icons.Outlined.SwapHoriz
+        CommandIcon.SETTINGS -> Icons.Outlined.Settings
+        CommandIcon.CONTACT -> Icons.Outlined.PersonOutline
+        CommandIcon.ASSISTANT -> Icons.Outlined.SmartToy
+        CommandIcon.NOTIFICATIONS -> Icons.Outlined.NotificationsNone
+        CommandIcon.MEDIA -> Icons.Outlined.PlayArrow
+    }
+    ListItem(
+        onClick = { onExecute(command) },
+        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+        colors = minimalListItemColors(selected),
+        supportingContent = {
+            Text(command.subtitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        },
+        leadingContent = { Icon(icon, contentDescription = null) },
+    ) {
+        Text(command.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+@Composable
 private fun AppSearchRow(
     app: LauncherApp,
+    notificationCount: Int,
+    selected: Boolean,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
 ) {
     ListItem(
         onClick = { onLaunchApp(app) },
         onLongClick = { onLongPress(app) },
-        colors = minimalListItemColors(),
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .secondaryClickable { onLongPress(app) },
+        colors = minimalListItemColors(selected),
         leadingContent = { AppIcon(app, Modifier.size(42.dp)) },
+        trailingContent = { NotificationDot(notificationCount) },
     ) { Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) }
 }
 
 @Composable
 private fun ShortcutSearchRow(
     shortcut: LauncherShortcut,
+    notificationCount: Int,
+    selected: Boolean,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
 ) {
@@ -1306,7 +1856,10 @@ private fun ShortcutSearchRow(
         onClick = { onLaunchShortcut(shortcut) },
         onLongClick = { onLongPress(shortcut.owner) },
         enabled = shortcut.info.isEnabled,
-        colors = minimalListItemColors(),
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .secondaryClickable { onLongPress(shortcut.owner) },
+        colors = minimalListItemColors(selected),
         supportingContent = { Text(shortcut.owner.label) },
         leadingContent = {
             Box {
@@ -1324,7 +1877,31 @@ private fun ShortcutSearchRow(
                 )
             }
         },
+        trailingContent = { NotificationDot(notificationCount) },
     ) { Text(shortcut.label, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+}
+
+@Composable
+private fun NotificationDot(count: Int) {
+    if (count <= 0) return
+    Box(
+        Modifier
+            .size(7.dp)
+            .clip(CircleShape)
+            .background(Color.White.copy(alpha = 0.86f)),
+    )
+}
+
+private fun Modifier.secondaryClickable(onClick: () -> Unit): Modifier = pointerInput(onClick) {
+    awaitPointerEventScope {
+        while (true) {
+            val event = awaitPointerEvent()
+            if (event.type == PointerEventType.Press && event.buttons.isSecondaryPressed) {
+                event.changes.forEach { it.consume() }
+                onClick()
+            }
+        }
+    }
 }
 
 @Composable
@@ -1347,8 +1924,8 @@ private fun SearchHint(title: String, description: String) {
 }
 
 @Composable
-private fun minimalListItemColors() = ListItemDefaults.colors(
-    containerColor = Color.Transparent,
+private fun minimalListItemColors(selected: Boolean = false) = ListItemDefaults.colors(
+    containerColor = if (selected) Color.White.copy(alpha = 0.1f) else Color.Transparent,
     headlineColor = Color.White,
     supportingColor = Color.White.copy(alpha = 0.62f),
     leadingIconColor = Color.White,
@@ -1482,6 +2059,16 @@ private data class AppSearchResult(
     override val key: String = "app:${app.key}"
     override val label: String = app.label
     override val typePriority: Int = 1
+    override val publisherRank: Int = 0
+}
+
+private data class CommandSearchResult(
+    val command: LauncherCommand,
+) : LauncherSearchResult {
+    override val score: Int = command.score
+    override val key: String = command.key
+    override val label: String = command.title
+    override val typePriority: Int = 0
     override val publisherRank: Int = 0
 }
 
