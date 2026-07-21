@@ -2,6 +2,13 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.7.2 — 2026-07-21
+
+### Fixed
+
+- Open Gesture access directly on the Barely gestures service detail page when the device permits it.
+- On Samsung devices that protect the detail intent, open the Installed apps accessibility list with Barely gestures selected; other devices fall back to Accessibility with Barely gestures highlighted.
+
 ## 0.7.1 — 2026-07-21
 
 ### Changed
