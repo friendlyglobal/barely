@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -107,6 +108,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -532,7 +534,7 @@ fun LauncherScreen(
     }
 
     if (settingsVisible) {
-        LauncherSettingsSheet(
+        LauncherSettingsPage(
             settings = launcherSettings,
             isHomeRoleHeld = isHomeRoleHeld,
             hasGestureAccess = hasGestureAccess,
@@ -547,6 +549,8 @@ fun LauncherScreen(
             onClearLocalHistory = onClearLocalHistory,
         )
     }
+
+    BackHandler(enabled = settingsVisible) { settingsVisible = false }
 
     if (widgetPickerVisible) {
         WidgetPickerSheet(
@@ -2471,7 +2475,7 @@ private fun resourcesQuantityString(id: Int, quantity: Int, vararg formatArgs: A
     LocalContext.current.resources.getQuantityString(id, quantity, *formatArgs)
 
 @Composable
-private fun LauncherSettingsSheet(
+private fun LauncherSettingsPage(
     settings: LauncherSettings,
     isHomeRoleHeld: Boolean,
     hasGestureAccess: Boolean,
@@ -2485,22 +2489,32 @@ private fun LauncherSettingsSheet(
     onConfigureContacts: () -> Unit,
     onClearLocalHistory: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding(),
             contentPadding = PaddingValues(bottom = 28.dp),
         ) {
             item(key = "settings_header") {
                 Row(
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 4.dp, bottom = 14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 24.dp, top = 8.dp, bottom = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        Icons.Outlined.Settings,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp),
-                    )
-                    Spacer(Modifier.width(16.dp))
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.navigate_back),
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
                     Column {
                         Text(
                             stringResource(R.string.launcher_settings),
@@ -2544,6 +2558,16 @@ private fun LauncherSettingsSheet(
             item(key = "settings_appearance_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_appearance))
             }
+            item(key = "frosted_wallpaper") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_frosted_wallpaper),
+                    summary = stringResource(R.string.settings_frosted_wallpaper_summary),
+                    checked = settings.frostedWallpaper,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(frostedWallpaper = enabled))
+                    },
+                )
+            }
 
             item(key = "settings_search_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_search))
@@ -2576,17 +2600,6 @@ private fun LauncherSettingsSheet(
                     onClick = onClearLocalHistory,
                 )
             }
-            item(key = "frosted_wallpaper") {
-                SettingsSwitchItem(
-                    title = stringResource(R.string.settings_frosted_wallpaper),
-                    summary = stringResource(R.string.settings_frosted_wallpaper_summary),
-                    checked = settings.frostedWallpaper,
-                    onCheckedChange = { enabled ->
-                        onSettingsChanged(settings.copy(frostedWallpaper = enabled))
-                    },
-                )
-            }
-
             item(key = "settings_optional_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_optional_modules))
             }
@@ -2742,78 +2755,119 @@ private fun AppActionsSheet(
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
-        Row(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f),
+            contentPadding = PaddingValues(bottom = 24.dp),
         ) {
-            AppIcon(app, Modifier.size(58.dp))
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Text(app.label, style = MaterialTheme.typography.headlineSmall)
-                Text(
-                    stringResource(R.string.app_actions),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-
-        Spacer(Modifier.height(10.dp))
-        when {
-            shortcuts.isNotEmpty() -> {
-                Text(
-                    stringResource(R.string.shortcuts),
+            item(key = "app_header") {
+                Row(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                shortcuts.forEach { shortcut ->
-                    ListItem(
-                        onClick = { onLaunchShortcut(shortcut) },
-                        enabled = shortcut.info.isEnabled,
-                        supportingContent = {
-                            shortcut.description
-                                ?.takeIf { it != shortcut.label }
-                                ?.let { Text(it) }
-                        },
-                        leadingContent = { Icon(Icons.Outlined.Bolt, contentDescription = null) },
-                    ) { Text(shortcut.label) }
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AppIcon(app, Modifier.size(58.dp))
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            app.label,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.app_actions),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
+            item(key = "favorite_action") {
+                ActionItem(
+                    icon = if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                    label = if (isFavorite) {
+                        stringResource(R.string.remove_from_favorites)
+                    } else {
+                        stringResource(R.string.add_to_favorites)
+                    },
+                    onClick = onToggleFavorite,
+                )
+            }
+            item(key = "info_action") {
+                ActionItem(Icons.Outlined.Info, stringResource(R.string.app_info), onAppInfo)
+            }
+            item(key = "uninstall_action") {
+                ActionItem(
+                    icon = Icons.Outlined.DeleteOutline,
+                    label = stringResource(R.string.uninstall),
+                    onClick = onUninstall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            item(key = "shortcut_divider") {
+                HorizontalDivider(Modifier.padding(vertical = 10.dp))
+            }
+            when {
+                shortcuts.isNotEmpty() -> {
+                    item(key = "shortcut_header") {
+                        Text(
+                            stringResource(R.string.shortcuts),
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                    items(
+                        items = shortcuts,
+                        key = { shortcut ->
+                            "shortcut_${shortcut.owner.key}_${shortcut.info.id}"
+                        },
+                    ) { shortcut ->
+                        ListItem(
+                            onClick = { onLaunchShortcut(shortcut) },
+                            enabled = shortcut.info.isEnabled,
+                            supportingContent = {
+                                shortcut.description
+                                    ?.takeIf { it != shortcut.label }
+                                    ?.let { Text(it) }
+                            },
+                            leadingContent = {
+                                Icon(Icons.Outlined.Bolt, contentDescription = null)
+                            },
+                        ) {
+                            Text(
+                                shortcut.label,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
 
-            !canReadShortcuts -> Text(
-                stringResource(R.string.set_default_to_view_shortcuts),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                !canReadShortcuts -> item(key = "shortcut_permission") {
+                    Text(
+                        stringResource(R.string.set_default_to_view_shortcuts),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
 
-            else -> Text(
-                stringResource(R.string.app_has_no_shortcuts),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                else -> item(key = "no_shortcuts") {
+                    Text(
+                        stringResource(R.string.app_has_no_shortcuts),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
-
-        HorizontalDivider(Modifier.padding(vertical = 10.dp))
-        ActionItem(
-            icon = if (isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
-            label = if (isFavorite) {
-                stringResource(R.string.remove_from_favorites)
-            } else {
-                stringResource(R.string.add_to_favorites)
-            },
-            onClick = onToggleFavorite,
-        )
-        ActionItem(Icons.Outlined.Info, stringResource(R.string.app_info), onAppInfo)
-        ActionItem(
-            icon = Icons.Outlined.DeleteOutline,
-            label = stringResource(R.string.uninstall),
-            onClick = onUninstall,
-            color = MaterialTheme.colorScheme.error,
-        )
-        Spacer(Modifier.height(18.dp))
     }
 }
 

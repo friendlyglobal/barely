@@ -44,6 +44,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Sends an explicitly prefixed question to an installed ChatGPT, Gemini, or Claude app through Android sharing; Barely contains no AI API key or relay server.
 - Supports keyboard and mouse use on DeX, including page arrows, Ctrl+K, result selection, Enter, Escape, and right-click app actions.
 - Offers disabled-by-default notification dots and media controls through Android's notification-listener access screen.
+- Opens launcher settings as a full-screen scrollable page and keeps app actions reachable even when an app publishes a long shortcut list.
 
 Shortcut data from other apps is protected by Android. It becomes available only after Barely is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
 

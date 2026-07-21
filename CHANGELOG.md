@@ -13,12 +13,13 @@ All notable changes to Barely are documented in this file.
 - Added a capsule-shaped bottom search surface, a dismissible command hint, and a pull-down transition that returns directly to the wallpaper Home page.
 - Added private, local-only app recommendations and successful recent app searches without requesting Usage Access or persisting shortcut/contact queries.
 - Replaced the platform's flat widget list with a searchable catalog grouped by app, including provider previews, grid dimensions, and graceful icon fallbacks.
-- Added native English and Brazilian Portuguese copy for all new 0.5 surfaces; the remaining supported locales currently use the English fallback for new settings and widget-catalog copy.
+- Localized every new 0.5 settings, search, and widget-catalog surface across all thirteen supported system languages.
+- Promoted launcher settings from a partial bottom sheet to a full-screen, independently scrollable page.
+- Made app actions fully expanded and internally scrollable, with Favorite, App info, and Uninstall kept before long shortcut lists.
 
 ### Planned before release
 
 - Prioritized the production signing strategy before broader adoption.
-- Complete human-reviewed translations for the remaining eleven supported locales.
 - Continue the 0.5 delivery with manual ordering, hidden apps, aliases, and system-backed commands.
 
 ## 0.4 — 2026-07-21

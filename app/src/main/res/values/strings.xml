@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+<resources>
     <string name="app_name">Barely</string>
     <string name="home_content_description">Home screen. Swipe up to search.</string>
     <string name="favorites">Favorites</string>
@@ -14,6 +14,7 @@
     <string name="set_default">Set</string>
     <string name="actions_for_app">Actions for %1$s</string>
     <string name="close_search">Close search</string>
+    <string name="navigate_back">Back</string>
     <string name="apps_and_shortcuts">Apps and shortcuts</string>
     <string name="clear_search">Clear</string>
     <string name="shortcuts">Shortcuts</string>

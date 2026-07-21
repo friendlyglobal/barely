@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_back">戻る</string>
+    <string name="choose_widget">ウィジェットを選択</string>
+    <string name="widget_picker_summary">アプリ別に整理し、利用可能な場合は実際のプレビューを表示します</string>
+    <string name="widget_apps">ウィジェットのアプリ</string>
+    <string name="search_widgets">ウィジェットを検索</string>
+    <string name="no_widgets_found">ウィジェットが見つかりません</string>
+    <string name="widget_dimensions">%1$d × %2$d</string>
+    <plurals name="widget_count"><item quantity="other">%1$d 個のウィジェット</item></plurals>
+    <string name="launcher_settings">Barely の設定</string>
+    <string name="barely_tagline">ほとんど見えない。いつでも使える。</string>
+    <string name="settings_gestures">ジェスチャー</string>
+    <string name="settings_double_tap_lock">ダブルタップでロック</string>
+    <string name="settings_double_tap_lock_summary">空のホーム画面をダブルタップして画面をロックします。</string>
+    <string name="settings_swipe_notifications">下にスワイプして通知を表示</string>
+    <string name="settings_swipe_notifications_summary">空のホーム画面を下に引いて通知を開きます。</string>
+    <string name="settings_appearance">外観</string>
+    <string name="settings_frosted_wallpaper">壁紙をぼかす</string>
+    <string name="settings_frosted_wallpaper_summary">Android が対応している場合、よく使う項目、アプリ、検索の背景をぼかします。</string>
+    <string name="settings_optional_modules">オプション機能</string>
+    <string name="settings_notification_dots">通知ドット</string>
+    <string name="settings_media_controls">メディア操作</string>
+    <string name="settings_system_access">システムアクセス</string>
+    <string name="settings_default_home">標準のホームアプリ</string>
+    <string name="settings_gesture_access">ジェスチャーのアクセス</string>
+    <string name="settings_gesture_access_summary">画面のロックと通知を開くためだけに使用します。画面の内容は読み取りません。</string>
+    <string name="settings_notification_access">通知とメディアへのアクセス</string>
+    <string name="settings_contact_search">連絡先の検索</string>
+    <string name="settings_active">有効</string>
+    <string name="settings_allowed">許可済み</string>
+    <string name="settings_set_up">設定</string>
+    <string name="settings_optional">任意</string>
+    <string name="settings_privacy_note">Barely にはインターネット権限がありません。任意のアクセスは Android の設定でいつでも取り消せます。</string>
+    <string name="settings_search">検索</string>
+    <string name="settings_local_suggestions">端末内の候補</string>
+    <string name="settings_local_suggestions_summary">Barely から開いたアプリを提案し、アプリを開いた最近の検索を表示します。</string>
+    <string name="settings_show_search_hint">検索のヒント</string>
+    <string name="settings_show_search_hint_summary">検索欄の上に短いコマンドのヒントを表示します。</string>
+    <string name="settings_clear_local_history">端末内の履歴を消去</string>
+    <string name="settings_clear_local_history_summary">この端末からアプリの起動スコアと最近の検索を削除します。</string>
+    <string name="settings_history_cleared">端末内の履歴を消去しました</string>
+    <string name="recommended_apps">おすすめ</string>
+    <string name="recent_searches">最近の検索</string>
+    <string name="dismiss_search_hint">検索のヒントを非表示</string>
+</resources>
