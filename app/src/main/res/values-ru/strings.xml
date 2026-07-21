@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">Главный экран. Вверх — поиск, вниз — уведомления, двойное касание — блокировка.</string>
     <string name="favorites">Избранное</string>
     <string name="search">Поиск</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">Удалить виджет</string>
     <string name="widgets_empty_message">Добавьте виджеты, которые хотите быстро просматривать.</string>
     <string name="error_add_widget">Не удалось добавить этот виджет</string>
-    <string name="accessibility_service_label">Жесты Launchly</string>
+    <string name="accessibility_service_label">Жесты Barely</string>
     <string name="accessibility_service_description">Предоставляет только необязательные жесты главного экрана для блокировки экрана и открытия уведомлений. Не считывает содержимое экрана.</string>
-    <string name="enable_accessibility_gestures">Включите жесты Launchly в настройках специальных возможностей.</string>
+    <string name="enable_accessibility_gestures">Включите жесты Barely в настройках специальных возможностей.</string>
     <string name="private_space">Личное пространство</string>
     <string name="private_space_locked">Заблокировано</string>
     <string name="private_space_unlocked">Разблокировано</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Открыть настройку Android</string>
     <string name="command_ask_assistant">Спросить %1$s</string>
     <string name="command_enable_contacts">Включить поиск контактов</string>
-    <string name="command_contacts_private">Необязательно. Контакты остаются в памяти и никогда не сохраняются Launchly.</string>
+    <string name="command_contacts_private">Необязательно. Контакты остаются в памяти и никогда не сохраняются Barely.</string>
     <string name="command_internet">Управление интернетом</string>
     <string name="command_bluetooth">Настройки Bluetooth</string>
     <string name="command_display">Настройки экрана</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">Скопировано</string>
     <string name="error_command">Не удалось выполнить это действие</string>
     <string name="contacts_permission_denied">Поиск контактов остаётся выключенным. Его можно включить позже через поиск контактов.</string>
-    <string name="notification_service_label">Дополнительные уведомления и медиа Launchly</string>
+    <string name="notification_service_label">Дополнительные уведомления и медиа Barely</string>
     <string name="command_enable_notification_access">Включить доступ к уведомлениям и медиа</string>
     <string name="command_manage_notification_access">Управлять доступом к уведомлениям</string>
-    <string name="command_notification_access_warning">Необязательный конфиденциальный доступ. Launchly может видеть метаданные уведомлений, пока он включён.</string>
+    <string name="command_notification_access_warning">Необязательный конфиденциальный доступ. Barely может видеть метаданные уведомлений, пока он включён.</string>
     <string name="command_enable_notification_dots">Показывать точки уведомлений</string>
     <string name="command_disable_notification_dots">Скрыть точки уведомлений</string>
     <string name="command_notification_dots_subtitle">В памяти хранятся только количества по приложениям.</string>

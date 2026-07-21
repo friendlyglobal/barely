@@ -1,13 +1,13 @@
-# Launchly roadmap
+# Barely roadmap
 
-Launchly should become more useful without becoming visually busy. The empty wallpaper Home page, local-first behavior, and three-surface navigation remain product constraints rather than temporary limitations.
+Barely should become more useful without becoming visually busy. The empty wallpaper Home page, local-first behavior, and three-surface navigation remain product constraints rather than temporary limitations.
 
 ## Product rules
 
 - Home stays empty by default. New information belongs in Favorites, Apps, Search, or an optional module.
 - Features work offline whenever Android exposes a local API for them.
 - Sensitive permissions remain optional, narrowly explained, and independently revocable.
-- No analytics, advertising SDK, account system, AI proxy, or Launchly backend.
+- No analytics, advertising SDK, account system, AI proxy, or Barely backend.
 - Prefer Android system pickers, roles, panels, and intents over recreating system UI.
 - Add no permanent top-level page beyond Favorites, Home, and Apps.
 - Every visible feature needs a clear daily-use case and a way to turn it off.
@@ -18,18 +18,25 @@ Goal: make the first second of using the launcher faster while settling the app 
 
 ### Release identity — priority zero
 
-- Choose the permanent application ID. The current `com.example.minimallauncher` identifier must not reach 1.0.
+- Use the permanent `app.usefriendly.barely` application ID beginning with 0.5.
 - Add a production signing configuration that reads secrets from the local environment and never commits a keystore or passwords.
-- Document the one-time migration consequence: changing the application ID makes Android treat Launchly as a different app, so the default launcher role and widgets must be configured again.
+- Document the one-time migration consequence: Android treats Barely as a different app from the Launchly prototype, so the default launcher role and widgets must be configured again.
 - Keep the debug build available for contributors while producing a separately signed release artifact.
 
 ### Zero-query search
 
-- Show at most five useful items before typing: recent Launchly launches, favorites, and relevant local commands.
-- Learn only from launches initiated inside Launchly. Do not request Android Usage Access.
-- Use a small decayed score so recent behavior matters without permanently fixing old habits.
-- Provide visible controls to disable and clear local launch history.
-- Never include locked Private Space content.
+- [x] Show useful recent launches and successful app searches before typing.
+- [x] Learn only from launches initiated inside Barely. Do not request Android Usage Access.
+- [x] Use a small decayed score so recent behavior matters without permanently fixing old habits.
+- [x] Provide visible controls to disable and clear local launch history.
+- [x] Never include locked Private Space content.
+
+### Widget catalog
+
+- [x] Group installed widgets by publisher instead of exposing a flat provider list.
+- [x] Search by app or widget name and display published previews with proportional grid sizes.
+- [x] Use Android 15 generated previews, Android 12 scalable preview layouts, static preview images, and icon fallbacks progressively.
+- [ ] Add accessible manual ordering and resize controls to the hosted Favorites stack.
 
 ### Lightweight organization
 
@@ -109,7 +116,7 @@ Goal: ship a launcher that can be trusted as the daily Home app.
 
 ## Deliberately out of scope
 
-- A built-in online AI client, bundled API keys, or a Launchly server.
+- A built-in online AI client, bundled API keys, or a Barely server.
 - News feeds, social feeds, ads, analytics, or engagement notifications.
 - Notification-content search or permanent notification history.
 - Pretending that hidden apps are secure; Android Private Space is the security boundary.

@@ -1,14 +1,25 @@
 # Changelog
 
-All notable changes to Launchly are documented in this file.
+All notable changes to Barely are documented in this file.
 
 ## 0.5 — Unreleased
 
-### Started
+### Added
 
 - Established the local-first roadmap through 1.0.
-- Prioritized the permanent application ID and production signing strategy before broader adoption.
-- Defined the first 0.5 delivery around optional zero-query suggestions, manual ordering, hidden apps, aliases, and system-backed commands.
+- Renamed Launchly to Barely and adopted `app.usefriendly.barely` as the permanent application ID and Kotlin namespace.
+- Added a launcher settings entry point beside the app count for gestures, appearance, optional modules, and system access.
+- Made double-tap lock, swipe-down notifications, frosted wallpaper, notification dots, and media controls independently configurable.
+- Added a capsule-shaped bottom search surface, a dismissible command hint, and a pull-down transition that returns directly to the wallpaper Home page.
+- Added private, local-only app recommendations and successful recent app searches without requesting Usage Access or persisting shortcut/contact queries.
+- Replaced the platform's flat widget list with a searchable catalog grouped by app, including provider previews, grid dimensions, and graceful icon fallbacks.
+- Added native English and Brazilian Portuguese copy for all new 0.5 surfaces; the remaining supported locales currently use the English fallback for new settings and widget-catalog copy.
+
+### Planned before release
+
+- Prioritized the production signing strategy before broader adoption.
+- Complete human-reviewed translations for the remaining eleven supported locales.
+- Continue the 0.5 delivery with manual ordering, hidden apps, aliases, and system-backed commands.
 
 ## 0.4 — 2026-07-21
 
@@ -17,7 +28,7 @@ All notable changes to Launchly are documented in this file.
 - Added an Android 15 Private Space container with lock, unlock, collapse, profile callbacks, and correct exclusion of locked private apps and shortcuts from search.
 - Added a fully local command palette for calculations, common unit conversions, and Android quick settings.
 - Added optional in-memory contact search, requested only when the user explicitly enables it.
-- Added explicit handoff of questions to installed ChatGPT, Gemini, or Claude apps without an API key, Launchly server, or internet permission.
+- Added explicit handoff of questions to installed ChatGPT, Gemini, or Claude apps without an API key, Barely server, or internet permission.
 - Added full keyboard navigation for DeX, tablets, foldables, and external keyboards, including page navigation, search selection, Enter, Escape, and Ctrl+K.
 - Added right-click app actions for mouse and trackpad use.
 - Added optional notification dots and active-media controls backed by a disabled-by-default `NotificationListenerService`.

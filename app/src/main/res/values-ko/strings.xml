@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">홈 화면입니다. 위로 밀어 검색하고 아래로 밀어 알림을 열거나 두 번 눌러 잠그세요.</string>
     <string name="favorites">즐겨찾기</string>
     <string name="search">검색</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">위젯 삭제</string>
     <string name="widgets_empty_message">한눈에 보고 싶은 위젯을 추가하세요.</string>
     <string name="error_add_widget">이 위젯을 추가할 수 없습니다</string>
-    <string name="accessibility_service_label">Launchly 제스처</string>
+    <string name="accessibility_service_label">Barely 제스처</string>
     <string name="accessibility_service_description">화면 잠금과 알림 열기를 위한 선택적 홈 화면 제스처만 제공합니다. 화면 콘텐츠를 읽지 않습니다.</string>
-    <string name="enable_accessibility_gestures">이 동작을 사용하려면 접근성에서 Launchly 제스처를 사용 설정하세요.</string>
+    <string name="enable_accessibility_gestures">이 동작을 사용하려면 접근성에서 Barely 제스처를 사용 설정하세요.</string>
     <string name="private_space">비공개 공간</string>
     <string name="private_space_locked">잠김</string>
     <string name="private_space_unlocked">잠금 해제됨</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Android 설정 열기</string>
     <string name="command_ask_assistant">%1$s에게 질문</string>
     <string name="command_enable_contacts">연락처 검색 사용</string>
-    <string name="command_contacts_private">선택사항입니다. 연락처는 메모리에만 유지되며 Launchly가 저장하지 않습니다.</string>
+    <string name="command_contacts_private">선택사항입니다. 연락처는 메모리에만 유지되며 Barely가 저장하지 않습니다.</string>
     <string name="command_internet">인터넷 제어</string>
     <string name="command_bluetooth">블루투스 설정</string>
     <string name="command_display">디스플레이 설정</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">복사됨</string>
     <string name="error_command">이 작업을 완료할 수 없습니다</string>
     <string name="contacts_permission_denied">연락처 검색이 꺼진 상태로 유지됩니다. 나중에 연락처를 검색하여 켤 수 있습니다.</string>
-    <string name="notification_service_label">Launchly 선택적 알림 및 미디어</string>
+    <string name="notification_service_label">Barely 선택적 알림 및 미디어</string>
     <string name="command_enable_notification_access">알림 및 미디어 접근 사용</string>
     <string name="command_manage_notification_access">알림 접근 관리</string>
-    <string name="command_notification_access_warning">선택적 민감 권한입니다. 사용 중 Launchly가 알림 메타데이터를 볼 수 있습니다.</string>
+    <string name="command_notification_access_warning">선택적 민감 권한입니다. 사용 중 Barely가 알림 메타데이터를 볼 수 있습니다.</string>
     <string name="command_enable_notification_dots">알림 점 표시</string>
     <string name="command_disable_notification_dots">알림 점 숨기기</string>
     <string name="command_notification_dots_subtitle">앱별 개수만 메모리에 유지됩니다.</string>

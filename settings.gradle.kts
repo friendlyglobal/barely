@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Launchly"
+rootProject.name = "Barely"
 include(":app")

@@ -1,8 +1,11 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
+import android.os.Build
+import android.os.Process
 
 class WidgetHostController(context: Context) {
     val manager: AppWidgetManager = AppWidgetManager.getInstance(context)
@@ -21,6 +24,24 @@ class WidgetHostController(context: Context) {
     }
 
     fun allocateWidgetId(): Int = host.allocateAppWidgetId()
+
+    fun availableProviders(): List<AppWidgetProviderInfo> = manager
+        .getInstalledProvidersForProfile(Process.myUserHandle())
+        .filter { provider ->
+            val supportsHome = provider.widgetCategory == 0 ||
+                provider.widgetCategory.and(AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN) != 0
+            val hidden = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                provider.widgetFeatures.and(AppWidgetProviderInfo.WIDGET_FEATURE_HIDE_FROM_PICKER) != 0
+            supportsHome && !hidden
+        }
+
+    fun bindWidget(widgetId: Int, provider: AppWidgetProviderInfo): Boolean =
+        manager.bindAppWidgetIdIfAllowed(
+            widgetId,
+            provider.profile,
+            provider.provider,
+            null,
+        )
 
     fun addWidget(widgetId: Int): List<Int> {
         val updated = (savedWidgetIds() + widgetId).distinct()
@@ -51,7 +72,7 @@ class WidgetHostController(context: Context) {
 
     private companion object {
         const val HOST_ID = 0x4C59
-        const val PREFERENCES = "launchly_widgets"
+        const val PREFERENCES = "barely_widgets"
         const val WIDGET_IDS = "widget_ids"
     }
 }

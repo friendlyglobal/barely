@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">الشاشة الرئيسية. اسحب لأعلى للبحث ولأسفل للإشعارات أو انقر مرتين للقفل.</string>
     <string name="favorites">المفضلة</string>
     <string name="search">بحث</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">إزالة الأداة</string>
     <string name="widgets_empty_message">أضف الأدوات التي تريد رؤيتها بلمحة سريعة.</string>
     <string name="error_add_widget">تعذرت إضافة هذه الأداة</string>
-    <string name="accessibility_service_label">إيماءات Launchly</string>
+    <string name="accessibility_service_label">إيماءات Barely</string>
     <string name="accessibility_service_description">يوفّر فقط إيماءات الشاشة الرئيسية الاختيارية لقفل الشاشة وفتح الإشعارات، ولا يقرأ محتوى الشاشة.</string>
-    <string name="enable_accessibility_gestures">فعّل إيماءات Launchly ضمن تسهيلات الاستخدام لاستعمال هذا الإجراء.</string>
+    <string name="enable_accessibility_gestures">فعّل إيماءات Barely ضمن تسهيلات الاستخدام لاستعمال هذا الإجراء.</string>
     <string name="private_space">المساحة الخاصة</string>
     <string name="private_space_locked">مقفلة</string>
     <string name="private_space_unlocked">غير مقفلة</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">فتح إعداد Android</string>
     <string name="command_ask_assistant">اسأل %1$s</string>
     <string name="command_enable_contacts">تفعيل البحث في جهات الاتصال</string>
-    <string name="command_contacts_private">اختياري. تبقى جهات الاتصال في الذاكرة ولا يحفظها Launchly أبداً.</string>
+    <string name="command_contacts_private">اختياري. تبقى جهات الاتصال في الذاكرة ولا يحفظها Barely أبداً.</string>
     <string name="command_internet">عناصر تحكم الإنترنت</string>
     <string name="command_bluetooth">إعدادات البلوتوث</string>
     <string name="command_display">إعدادات الشاشة</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">تم النسخ</string>
     <string name="error_command">تعذّر إكمال هذا الإجراء</string>
     <string name="contacts_permission_denied">سيظل البحث في جهات الاتصال متوقفاً. يمكنك تفعيله لاحقاً عبر البحث عن جهات الاتصال.</string>
-    <string name="notification_service_label">إشعارات ووسائط Launchly الاختيارية</string>
+    <string name="notification_service_label">إشعارات ووسائط Barely الاختيارية</string>
     <string name="command_enable_notification_access">تفعيل الوصول إلى الإشعارات والوسائط</string>
     <string name="command_manage_notification_access">إدارة الوصول إلى الإشعارات</string>
-    <string name="command_notification_access_warning">وصول حساس اختياري. يمكن لـ Launchly رؤية بيانات الإشعارات الوصفية أثناء تفعيله.</string>
+    <string name="command_notification_access_warning">وصول حساس اختياري. يمكن لـ Barely رؤية بيانات الإشعارات الوصفية أثناء تفعيله.</string>
     <string name="command_enable_notification_dots">إظهار نقاط الإشعارات</string>
     <string name="command_disable_notification_dots">إخفاء نقاط الإشعارات</string>
     <string name="command_notification_dots_subtitle">تُحفظ أعداد كل تطبيق في الذاكرة فقط.</string>

@@ -1,6 +1,6 @@
-# Launchly
+# Barely
 
-Launchly is a minimal, wallpaper-first Android launcher built with Kotlin and Jetpack Compose. It uses Android launcher APIs directly and intentionally avoids databases, dependency injection, and unnecessary architecture.
+Barely is a minimal, wallpaper-first Android launcher built with Kotlin and Jetpack Compose. It uses Android launcher APIs directly and intentionally avoids databases, dependency injection, and unnecessary architecture.
 
 ## Download
 
@@ -16,11 +16,13 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Keeps the system wallpaper visible on every page, including live wallpapers, through `FLAG_SHOW_WALLPAPER`.
 - Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
 - Opens full-screen search with an upward swipe from the center page.
-- Dismisses search by pulling down from its top handle, pressing Back, or tapping the back arrow.
+- Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
 - Combines apps and shortcuts into one relevance-ranked list without flooding app-name searches with unrelated conversations.
 - Tolerates small typos, transposed characters, initials, word prefixes, case, and accents with an on-device fuzzy matcher.
 - Provides a one-handed search entry point at the bottom of the all-apps page.
+- Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
+- Learns recommendations only from app launches made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the history.
 - Uses short, restrained transitions for page changes and search instead of moving the whole screen as one sheet.
 - Launches the best result when the keyboard Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
@@ -28,7 +30,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
 - Persists favorites with `SharedPreferences`; no database is used.
 - Hosts user-selected Android widgets in a vertical glanceable stack below favorites.
-- Uses Android's widget picker and each provider's configuration screen; widget IDs are the only widget data Launchly persists.
+- Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; widget IDs are the only widget data Barely persists.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
 - Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
@@ -39,15 +41,15 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
 - Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
 - Can optionally search contacts in memory after an explicit runtime permission request.
-- Sends an explicitly prefixed question to an installed ChatGPT, Gemini, or Claude app through Android sharing; Launchly contains no AI API key or relay server.
+- Sends an explicitly prefixed question to an installed ChatGPT, Gemini, or Claude app through Android sharing; Barely contains no AI API key or relay server.
 - Supports keyboard and mouse use on DeX, including page arrows, Ctrl+K, result selection, Enter, Escape, and right-click app actions.
 - Offers disabled-by-default notification dots and media controls through Android's notification-listener access screen.
 
-Shortcut data from other apps is protected by Android. It becomes available only after Launchly is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
+Shortcut data from other apps is protected by Android. It becomes available only after Barely is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
 
 ## Languages
 
-Launchly automatically follows the Android system language. English is the fallback language, with localized resources for:
+Barely automatically follows the Android system language. English is the fallback language, with localized resources for:
 
 - Arabic
 - Chinese, Simplified
@@ -62,11 +64,13 @@ Launchly automatically follows the Android system language. English is the fallb
 - Russian
 - Spanish
 
-Android selects the matching resource automatically. On Android 13 and newer, Launchly also exposes these languages in the system’s per-app language settings through an auto-generated `LocaleConfig`. Arabic uses Android’s right-to-left layout support.
+Android selects the matching resource automatically. On Android 13 and newer, Barely also exposes these languages in the system’s per-app language settings through an auto-generated `LocaleConfig`. Arabic uses Android’s right-to-left layout support.
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for the intentionally scoped plan from 0.5 through 1.0. The roadmap keeps Home wallpaper-first, makes sensitive modules optional, and rejects features that require a Launchly backend or private OEM APIs.
+See [ROADMAP.md](ROADMAP.md) for the intentionally scoped plan from 0.5 through 1.0. The roadmap keeps Home wallpaper-first, makes sensitive modules optional, and rejects features that require a Barely backend or private OEM APIs.
+
+Version 0.5 adopts the permanent `app.usefriendly.barely` application ID. Android treats it as a different app from the Launchly 0.4 prototype, so testers must select Barely as Home again and re-add widgets after installing it.
 
 ## Project structure
 
@@ -126,20 +130,20 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ## Set as the default launcher
 
-1. Open Launchly and swipe left to the **Apps** page.
+1. Open Barely and swipe left to the **Apps** page.
 2. Tap **Set** in the default home card and approve the Android role dialog.
 3. On Samsung devices, the same setting is available under **Settings > Apps > Choose default apps > Home app**.
-4. Select **Launchly**.
+4. Select **Barely**.
 
-To return to Samsung’s launcher, select **One UI Home** from the same system page before uninstalling Launchly.
+To return to Samsung’s launcher, select **One UI Home** from the same system page before uninstalling Barely.
 
 ## Enable the optional home gestures
 
 The clean home page works without Accessibility. This one optional service is needed only because Android does not let an ordinary third-party launcher lock the screen or open notifications directly.
 
-1. On Launchly’s wallpaper page, double-tap or swipe down once.
-2. Android opens **Settings > Accessibility**. Select **Launchly gestures** and enable it.
-3. If Samsung blocks the switch for a sideloaded APK, open **Settings > Apps > Launchly**, use the three-dot menu, choose **Allow restricted settings**, then return to Accessibility.
+1. On Barely’s wallpaper page, double-tap or swipe down once.
+2. Android opens **Settings > Accessibility**. Select **Barely gestures** and enable it.
+3. If Samsung blocks the switch for a sideloaded APK, open **Settings > Apps > Barely**, use the three-dot menu, choose **Allow restricted settings**, then return to Accessibility.
 
 The service declares `canRetrieveWindowContent=false` and disables accessibility event collection when connected. It performs only Android’s global **Lock screen** and **Notifications** actions. Disabling the service removes both gestures without affecting the launcher.
 
@@ -151,12 +155,12 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 4. Pull down from the handle at the top of search and confirm that the content follows the gesture and closes.
 5. Tap an app name to launch it.
 6. Long-press an app and verify its shortcuts, favorite action, app info, and uninstall action.
-7. Add a favorite and confirm that it persists after restarting Launchly.
+7. Add a favorite and confirm that it persists after restarting Barely.
 8. On the Favorites page, tap the plus button beside **Widgets**, choose a provider, and finish its configuration when requested.
-9. Interact with the hosted widget, restart Launchly to verify persistence, then remove it with its close button.
+9. Interact with the hosted widget, restart Barely to verify persistence, then remove it with its close button.
 10. Search for a shortcut published by an installed app and confirm that a direct label match appears above apps.
 11. Press the keyboard Search action and confirm that the top result opens directly.
-12. Change the Android system language and reopen Launchly to verify automatic localization.
+12. Change the Android system language and reopen Barely to verify automatic localization.
 13. On the wallpaper page, swipe down and verify that notifications open; double-tap and verify that the phone locks.
 14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and two-column Apps/search layouts. Resize the window and confirm it returns to one column below 600 dp.
 15. On Android 15 or newer, configure Private Space, verify its separate Apps container, lock it, and confirm its apps and shortcuts disappear from search.
@@ -167,11 +171,11 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 
 ## Privacy
 
-Launchly does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
 
-Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Launchly saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Launchly never sees the assistant's response.
+Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Barely saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Barely never sees the assistant's response.
 
-Notification and media integration is also off by default and requires approval on Android's dedicated notification-access screen. That system permission is sensitive because a notification listener can access notification metadata while enabled. Launchly derives per-app counts and current media metadata in memory, persists no notification content, and exposes independent switches for dots and media controls. Revoking notification access immediately disables both data sources.
+Notification and media integration is also off by default and requires approval on Android's dedicated notification-access screen. That system permission is sensitive because a notification listener can access notification metadata while enabled. Barely derives per-app counts and current media metadata in memory, persists no notification content, and exposes independent switches for dots and media controls. Revoking notification access immediately disables both data sources.
 
 ## Prototype limitations
 

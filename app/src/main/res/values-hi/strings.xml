@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Launchly</string>
+    <string name="app_name">Barely</string>
     <string name="home_content_description">होम स्क्रीन। खोजने के लिए ऊपर, नोटिफ़िकेशन के लिए नीचे स्वाइप करें या लॉक करने के लिए दो बार टैप करें।</string>
     <string name="favorites">पसंदीदा</string>
     <string name="search">खोजें</string>
@@ -39,9 +39,9 @@
     <string name="remove_widget">विजेट हटाएं</string>
     <string name="widgets_empty_message">वे विजेट जोड़ें जिन्हें आप एक नज़र में देखना चाहते हैं।</string>
     <string name="error_add_widget">यह विजेट नहीं जोड़ा जा सका</string>
-    <string name="accessibility_service_label">Launchly जेस्चर</string>
+    <string name="accessibility_service_label">Barely जेस्चर</string>
     <string name="accessibility_service_description">यह केवल स्क्रीन लॉक करने और नोटिफ़िकेशन खोलने के वैकल्पिक होम स्क्रीन जेस्चर देता है। यह स्क्रीन की सामग्री नहीं पढ़ता।</string>
-    <string name="enable_accessibility_gestures">इस क्रिया के लिए Accessibility में Launchly जेस्चर चालू करें।</string>
+    <string name="enable_accessibility_gestures">इस क्रिया के लिए Accessibility में Barely जेस्चर चालू करें।</string>
     <string name="private_space">निजी स्पेस</string>
     <string name="private_space_locked">लॉक है</string>
     <string name="private_space_unlocked">अनलॉक है</string>
@@ -56,7 +56,7 @@
     <string name="command_quick_setting_subtitle">Android सेटिंग खोलें</string>
     <string name="command_ask_assistant">%1$s से पूछें</string>
     <string name="command_enable_contacts">संपर्क खोज चालू करें</string>
-    <string name="command_contacts_private">वैकल्पिक। संपर्क मेमोरी में रहते हैं और Launchly उन्हें कभी सेव नहीं करता।</string>
+    <string name="command_contacts_private">वैकल्पिक। संपर्क मेमोरी में रहते हैं और Barely उन्हें कभी सेव नहीं करता।</string>
     <string name="command_internet">इंटरनेट कंट्रोल</string>
     <string name="command_bluetooth">ब्लूटूथ सेटिंग</string>
     <string name="command_display">डिस्प्ले सेटिंग</string>
@@ -67,10 +67,10 @@
     <string name="command_copied">कॉपी हो गया</string>
     <string name="error_command">यह कार्रवाई पूरी नहीं हो सकी</string>
     <string name="contacts_permission_denied">संपर्क खोज बंद रहेगी। आप बाद में संपर्क खोजकर इसे चालू कर सकते हैं।</string>
-    <string name="notification_service_label">Launchly की वैकल्पिक सूचनाएँ और मीडिया</string>
+    <string name="notification_service_label">Barely की वैकल्पिक सूचनाएँ और मीडिया</string>
     <string name="command_enable_notification_access">सूचना और मीडिया एक्सेस चालू करें</string>
     <string name="command_manage_notification_access">सूचना एक्सेस प्रबंधित करें</string>
-    <string name="command_notification_access_warning">वैकल्पिक संवेदनशील एक्सेस। चालू रहने पर Launchly सूचना मेटाडेटा देख सकता है।</string>
+    <string name="command_notification_access_warning">वैकल्पिक संवेदनशील एक्सेस। चालू रहने पर Barely सूचना मेटाडेटा देख सकता है।</string>
     <string name="command_enable_notification_dots">सूचना बिंदु दिखाएँ</string>
     <string name="command_disable_notification_dots">सूचना बिंदु छिपाएँ</string>
     <string name="command_notification_dots_subtitle">सिर्फ हर ऐप की गिनती मेमोरी में रहती है।</string>

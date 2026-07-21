@@ -1,4 +1,4 @@
-package com.example.minimallauncher
+package app.usefriendly.barely
 
 import android.app.Notification
 import android.content.ComponentName
