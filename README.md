@@ -64,6 +64,10 @@ Launchly automatically follows the Android system language. English is the fallb
 
 Android selects the matching resource automatically. On Android 13 and newer, Launchly also exposes these languages in the system’s per-app language settings through an auto-generated `LocaleConfig`. Arabic uses Android’s right-to-left layout support.
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the intentionally scoped plan from 0.5 through 1.0. The roadmap keeps Home wallpaper-first, makes sensitive modules optional, and rejects features that require a Launchly backend or private OEM APIs.
+
 ## Project structure
 
 - `MainActivity.kt` — small state holder, wallpaper window setup, `ROLE_HOME`, and widget picker results.

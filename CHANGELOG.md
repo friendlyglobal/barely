@@ -2,6 +2,14 @@
 
 All notable changes to Launchly are documented in this file.
 
+## 0.5 — Unreleased
+
+### Started
+
+- Established the local-first roadmap through 1.0.
+- Prioritized the permanent application ID and production signing strategy before broader adoption.
+- Defined the first 0.5 delivery around optional zero-query suggestions, manual ordering, hidden apps, aliases, and system-backed commands.
+
 ## 0.4 — 2026-07-21
 
 ### Added
