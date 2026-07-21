@@ -15,10 +15,10 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Opens apps with `LauncherApps.startMainActivity`.
 - Keeps the system wallpaper visible on every page, including live wallpapers, through `FLAG_SHOW_WALLPAPER`.
 - Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
-- Offers an optional Terminal Home during onboarding and in settings for people who prefer opening apps deliberately by typing.
-- Keeps Terminal search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
-- Provides explicit `:apps`, `:settings`, and `:classic` exits so Terminal mode never traps the user.
-- Lets Terminal users choose a background tint and opacity from solid color to a completely transparent wallpaper, tune the shared prompt/top-action corner radius from 0–32 dp, and restore either an individual control or the complete appearance preset; the preferences never leave the device.
+- Offers an optional Command Home during onboarding and in settings for people who prefer opening apps deliberately by typing.
+- Keeps Command search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
+- Provides explicit `:apps`, `:settings`, and `:classic` exits so Command mode never traps the user.
+- Lets Command users choose a background tint and opacity from solid color to a completely transparent wallpaper, tune the shared prompt/top-action corner radius from 0–32 dp, and optionally enable Terminal aesthetics; the preferences never leave the device.
 - Opens full-screen search with an upward swipe from the center page.
 - Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
@@ -176,18 +176,18 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 17. With a physical keyboard, use Left/Right, Ctrl+K, Up/Down, Enter, and Escape. Right-click an app with a mouse to open its actions.
 18. Search for `notifications`, read the warning, and enable access only if desired. Verify dots and media controls can each remain independently disabled.
 19. Move between Home, Favorites, Apps, and Search. Confirm Home remains clear and other pages use wallpaper blur or the translucent fallback.
-20. Select **Terminal** in Barely settings, type an app and a published shortcut, and verify that at most three local results appear. Test `:apps`, `:settings`, and `:classic`.
-21. Change the Terminal background color, opacity, and search/command radius. Verify that the prompt and optional top-action capsule update together. Test the local resets, then use the section Reset and confirm black, 42%, 12 dp, and top contrast off are restored.
-22. Swipe up in Terminal, confirm that successful app/shortcut searches appear as a terminal-style history log, open an entry, and verify that it moves to the most recent position. Use `:clearhistory` to remove it.
+20. Select **Command** in Barely settings, type an app and a published shortcut, and verify that at most three local results appear. Test `:apps`, `:settings`, and `:classic`.
+21. Change the Command background color, opacity, and search/command radius. Verify that the prompt, All apps search entry, full Search input, and optional top-action capsule update together. Enable Terminal aesthetics and confirm the `>` prompts, arrows, and monospace type return; disable it and confirm the clean style. Test the local resets, then use the section Reset and confirm black, 42%, 12 dp, top contrast off, and Terminal aesthetics off are restored.
+22. Drag up in Command and verify that the history page follows the finger continuously before snapping open or closed. Confirm that successful app/shortcut searches appear as a command-line-style history log, open an entry, and verify that it moves to the most recent position. Use `:clearhistory` to remove it.
 23. Enter widget edit mode, drag the right and bottom handles, and confirm that the preview follows the gesture, the size persists, and the page does not swipe away.
 24. Resize two compatible widgets to half width, leave edit mode, and confirm that they share one row without overlapping.
 25. Enable TalkBack and verify that top commands, settings choices, widget editing controls, and resize actions receive a clear focus target and label.
-26. Set the system font to 150% and use an RTL language. Confirm that localized content follows RTL while Terminal syntax still reads `:command`, `>_`, and `>`.
+26. Set the system font to 150% and use an RTL language. Enable Terminal aesthetics and confirm that localized content follows RTL while Command syntax still reads `:command`, `>_`, and `>`.
 27. Disable Android animator scales and repeat Home, Apps, Search, and back navigation; every state change must remain usable without relying on motion.
 
 ## Privacy
 
-Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, Terminal appearance, successful local app/shortcut query associations, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. Disabling local suggestions stops new ranking/history writes and hides the saved suggestions; clearing local history removes them. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, Command appearance, successful local app/shortcut query associations, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. Disabling local suggestions stops new ranking/history writes and hides the saved suggestions; clearing local history removes them. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
 
 Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Barely saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Barely never sees the assistant's response.
 

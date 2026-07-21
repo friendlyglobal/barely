@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Weiter</string>
     <string name="home_mode_classic">Klassisch</string>
     <string name="home_mode_classic_summary">Hintergrund-Home mit Favoriten und Apps nur eine Wischbewegung entfernt.</string>
-    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal">Befehlsmodus</string>
     <string name="home_mode_terminal_summary">Öffne Apps bewusst, indem du ihren Namen oder einen Befehl eingibst.</string>
     <string name="terminal_prompt_hint">App oder Befehl eingeben</string>
     <string name="terminal_app_result">App</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">Zum klassischen Home wechseln</string>
     <string name="terminal_command_classic_summary">Zum Hintergrund-Home mit Favoriten- und Apps-Seiten zurückkehren</string>
     <string name="settings_home_mode">Home-Stil</string>
-    <string name="settings_home_mode_summary">Wähle die klassischen Seiten oder die bewusste Terminal-Eingabe.</string>
-    <string name="settings_terminal_background">Terminal-Hintergrund</string>
+    <string name="settings_home_mode_summary">Wähle die klassischen Seiten oder die bewusste Eingabe im Befehlsmodus.</string>
+    <string name="settings_terminal_background">Hintergrund des Befehlsmodus</string>
     <string name="settings_terminal_background_summary">Wähle eine Farbe und wie stark das Hintergrundbild sichtbar bleibt. Alles bleibt auf diesem Gerät.</string>
-    <string name="settings_terminal_color">Terminal-Hintergrundfarbe</string>
+    <string name="settings_terminal_color">Hintergrundfarbe des Befehlsmodus</string>
     <string name="settings_terminal_color_option">Hintergrundfarbe %1$d von %2$d</string>
     <string name="settings_terminal_opacity">Deckkraft</string>
     <string name="settings_terminal_wallpaper">Hintergrundbild</string>
     <string name="settings_terminal_solid">Volltonfarbe</string>
     <string name="settings_terminal_action_backdrop">Kontrast der oberen Aktionen</string>
-    <string name="settings_terminal_action_backdrop_summary">Fügt hinter :apps und :settings eine dezente Kapsel für unruhige Hintergründe ein.</string>
+    <string name="settings_terminal_action_backdrop_summary">Fügt hinter den App- und Einstellungssymbolen eine dezente Kapsel für unruhige Hintergründe ein.</string>
+    <string name="settings_terminal_aesthetic">Terminal-Optik</string>
+    <string name="settings_terminal_aesthetic_summary">Zeigt &gt;-Eingaben, Pfeile und nichtproportionale Schrift im Befehlsmodus. Befehle funktionieren in beiden Varianten.</string>
     <string name="settings_terminal_corner_radius">Radius für Suche und Befehle</string>
     <string name="settings_terminal_reset">Zurücksetzen</string>
-    <string name="terminal_history_empty">Apps, die über die Terminal-Suche geöffnet wurden, erscheinen hier.</string>
+    <string name="terminal_history_empty">Apps, die über die Suche im Befehlsmodus geöffnet wurden, erscheinen hier.</string>
 </resources>

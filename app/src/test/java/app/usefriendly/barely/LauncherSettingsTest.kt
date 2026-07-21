@@ -9,6 +9,7 @@ class LauncherSettingsTest {
     fun terminalAppearanceUsesTheDocumentedRestrainedDefaults() {
         val settings = LauncherSettings()
 
+        assertEquals(LauncherHomeMode.TERMINAL, settings.homeMode)
         assertEquals(BarelyDefaults.TERMINAL_BACKGROUND_COLOR, settings.terminalBackgroundColor)
         assertEquals(
             BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
@@ -16,6 +17,7 @@ class LauncherSettingsTest {
             0f,
         )
         assertFalse(settings.terminalTopActionBackdrop)
+        assertFalse(settings.terminalAesthetic)
         assertEquals(12, settings.terminalCornerRadius)
     }
 }

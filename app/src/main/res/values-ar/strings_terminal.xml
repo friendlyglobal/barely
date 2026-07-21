@@ -6,7 +6,7 @@
     <string name="onboarding_continue">متابعة</string>
     <string name="home_mode_classic">كلاسيكي</string>
     <string name="home_mode_classic_summary">شاشة خلفية مع المفضلة والتطبيقات على بُعد تمريرة.</string>
-    <string name="home_mode_terminal">الطرفية</string>
+    <string name="home_mode_terminal">وضع الأوامر</string>
     <string name="home_mode_terminal_summary">افتح التطبيقات بقصد عبر كتابة اسمها أو أمر.</string>
     <string name="terminal_prompt_hint">اكتب تطبيقًا أو أمرًا</string>
     <string name="terminal_app_result">تطبيق</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">التبديل إلى الشاشة الكلاسيكية</string>
     <string name="terminal_command_classic_summary">العودة إلى الخلفية وصفحتي المفضلة والتطبيقات</string>
     <string name="settings_home_mode">نمط الشاشة الرئيسية</string>
-    <string name="settings_home_mode_summary">اختر الصفحات الكلاسيكية أو موجه الطرفية المقصود.</string>
-    <string name="settings_terminal_background">خلفية الوضع الطرفي</string>
+    <string name="settings_home_mode_summary">اختر الصفحات الكلاسيكية أو موجه وضع الأوامر المقصود.</string>
+    <string name="settings_terminal_background">خلفية وضع الأوامر</string>
     <string name="settings_terminal_background_summary">اختر لونًا ودرجة ظهور خلفية الشاشة. تبقى جميع الإعدادات على هذا الجهاز.</string>
-    <string name="settings_terminal_color">لون خلفية الوضع الطرفي</string>
+    <string name="settings_terminal_color">لون خلفية وضع الأوامر</string>
     <string name="settings_terminal_color_option">لون الخلفية %1$d من %2$d</string>
     <string name="settings_terminal_opacity">التعتيم</string>
     <string name="settings_terminal_wallpaper">خلفية الشاشة</string>
     <string name="settings_terminal_solid">لون خالص</string>
     <string name="settings_terminal_action_backdrop">تباين الإجراءات العلوية</string>
-    <string name="settings_terminal_action_backdrop_summary">أضف كبسولة خفيفة خلف :apps و:settings عند استخدام خلفيات مزدحمة.</string>
+    <string name="settings_terminal_action_backdrop_summary">أضف كبسولة خفيفة خلف أيقونتي التطبيقات والإعدادات عند استخدام خلفيات مزدحمة.</string>
+    <string name="settings_terminal_aesthetic">مظهر الطرفية</string>
+    <string name="settings_terminal_aesthetic_summary">اعرض مؤشرات &gt; والأسهم والنص أحادي المسافة في وضع الأوامر. تعمل الأوامر في الحالتين.</string>
     <string name="settings_terminal_corner_radius">نصف قطر البحث والأوامر</string>
     <string name="settings_terminal_reset">إعادة الضبط</string>
-    <string name="terminal_history_empty">ستظهر هنا التطبيقات التي فتحتها من بحث الطرفية.</string>
+    <string name="terminal_history_empty">ستظهر هنا التطبيقات التي فتحتها من بحث وضع الأوامر.</string>
 </resources>

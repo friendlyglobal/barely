@@ -21,14 +21,16 @@ internal object BarelyDefaults {
     const val TERMINAL_BACKGROUND_OPACITY: Float = 0.42f
     const val TERMINAL_TOP_ACTION_BACKDROP: Boolean = false
     const val TERMINAL_CORNER_RADIUS: Int = 12
+    const val TERMINAL_AESTHETIC: Boolean = false
 }
 
 data class LauncherSettings(
-    val homeMode: LauncherHomeMode = LauncherHomeMode.CLASSIC,
+    val homeMode: LauncherHomeMode = LauncherHomeMode.TERMINAL,
     val terminalBackgroundColor: Int = BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
     val terminalBackgroundOpacity: Float = BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
     val terminalTopActionBackdrop: Boolean = BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
     val terminalCornerRadius: Int = BarelyDefaults.TERMINAL_CORNER_RADIUS,
+    val terminalAesthetic: Boolean = BarelyDefaults.TERMINAL_AESTHETIC,
     val doubleTapToLock: Boolean = true,
     val swipeDownForNotifications: Boolean = true,
     val frostedWallpaper: Boolean = true,

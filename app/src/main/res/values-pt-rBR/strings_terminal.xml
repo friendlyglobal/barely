@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Continuar</string>
     <string name="home_mode_classic">Clássico</string>
     <string name="home_mode_classic_summary">Home com wallpaper, Favoritos e Apps a um gesto de distância.</string>
-    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal">Modo Comando</string>
     <string name="home_mode_terminal_summary">Abra apps de propósito digitando o nome ou um comando.</string>
     <string name="terminal_prompt_hint">digite um app ou comando</string>
     <string name="terminal_app_result">App</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">Mudar para a Home Clássica</string>
     <string name="terminal_command_classic_summary">Volte para o wallpaper com as páginas de Favoritos e Apps</string>
     <string name="settings_home_mode">Estilo da Home</string>
-    <string name="settings_home_mode_summary">Escolha entre as páginas Clássicas ou o prompt intencional do Terminal.</string>
-    <string name="settings_terminal_background">Fundo do Terminal</string>
+    <string name="settings_home_mode_summary">Escolha entre as páginas Clássicas ou o prompt intencional do Modo Comando.</string>
+    <string name="settings_terminal_background">Fundo do Modo Comando</string>
     <string name="settings_terminal_background_summary">Escolha uma cor e quanto do wallpaper fica visível. Tudo permanece neste aparelho.</string>
-    <string name="settings_terminal_color">Cor de fundo do Terminal</string>
+    <string name="settings_terminal_color">Cor de fundo do Modo Comando</string>
     <string name="settings_terminal_color_option">Cor de fundo %1$d de %2$d</string>
     <string name="settings_terminal_opacity">Opacidade</string>
     <string name="settings_terminal_wallpaper">Wallpaper</string>
     <string name="settings_terminal_solid">Cor sólida</string>
     <string name="settings_terminal_action_backdrop">Contraste das ações superiores</string>
-    <string name="settings_terminal_action_backdrop_summary">Adicione uma cápsula discreta atrás de :apps e :settings em wallpapers mais carregados.</string>
+    <string name="settings_terminal_action_backdrop_summary">Adicione uma cápsula discreta atrás dos ícones de apps e configurações em wallpapers mais carregados.</string>
+    <string name="settings_terminal_aesthetic">Estética de terminal</string>
+    <string name="settings_terminal_aesthetic_summary">Mostre prompts &gt;, setas e texto monoespaçado no Modo Comando. Os comandos funcionam de qualquer jeito.</string>
     <string name="settings_terminal_corner_radius">Raio da busca e dos comandos</string>
     <string name="settings_terminal_reset">Redefinir</string>
-    <string name="terminal_history_empty">Os apps abertos por buscas no Terminal aparecerão aqui.</string>
+    <string name="terminal_history_empty">Os apps abertos por buscas no Modo Comando aparecerão aqui.</string>
 </resources>

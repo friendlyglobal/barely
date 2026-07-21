@@ -37,9 +37,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -80,6 +83,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Calculate
@@ -134,6 +138,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -147,11 +152,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -227,12 +232,9 @@ fun BarelyOnboarding(
                 ),
         ) {
             Text(
-                text = "> barely_",
+                text = "barely",
                 color = Color.White.copy(alpha = BarelyVisualTokens.contentHigh),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    textDirection = TextDirection.Ltr,
-                ),
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(Modifier.weight(1f))
             Text(
@@ -316,14 +318,15 @@ private fun HomeModeChoice(
             ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                if (mode == LauncherHomeMode.TERMINAL) ">_" else "○",
+            Icon(
+                if (mode == LauncherHomeMode.TERMINAL) {
+                    Icons.Outlined.Bolt
+                } else {
+                    Icons.Outlined.StarOutline
+                },
+                contentDescription = null,
                 modifier = Modifier.width(42.dp),
-                color = Color.White.copy(alpha = if (selected) 1f else 0.62f),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    textDirection = TextDirection.Ltr,
-                ),
+                tint = Color.White.copy(alpha = if (selected) 1f else 0.62f),
             )
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
@@ -637,6 +640,7 @@ fun LauncherScreen(
                         hasShortcutPermission = snapshot.hasShortcutPermission,
                         notificationCounts = notificationCounts,
                         foldingFeature = foldingFeature,
+                        searchCornerRadius = launcherSettings.terminalCornerRadius,
                         onRequestHomeRole = onRequestHomeRole,
                         onLaunchApp = onLaunchApp,
                         onLongPress = { selectedApp = it },
@@ -678,6 +682,7 @@ fun LauncherScreen(
                 notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
                 backdropBlurEnabled = backdropBlurEnabled,
+                searchCornerRadius = launcherSettings.terminalCornerRadius,
                 onClose = { searchVisible = false },
                 onDismissToHome = {
                     searchVisible = false
@@ -749,6 +754,7 @@ fun LauncherScreen(
                     backgroundOpacity = launcherSettings.terminalBackgroundOpacity,
                     topActionBackdrop = launcherSettings.terminalTopActionBackdrop,
                     cornerRadius = launcherSettings.terminalCornerRadius,
+                    terminalAesthetic = launcherSettings.terminalAesthetic,
                     doubleTapToLock = launcherSettings.doubleTapToLock,
                     swipeDownForNotifications = launcherSettings.swipeDownForNotifications,
                     onLaunchApp = onLaunchApp,
@@ -787,6 +793,7 @@ fun LauncherScreen(
                     backdropBlurEnabled = backdropBlurEnabled,
                     notificationCounts = notificationCounts,
                     foldingFeature = foldingFeature,
+                    searchCornerRadius = launcherSettings.terminalCornerRadius,
                     onBack = { terminalAppsVisible = false },
                     onLaunchApp = onLaunchApp,
                     onLongPress = { selectedApp = it },
@@ -966,6 +973,7 @@ private fun TerminalHomePage(
     backgroundOpacity: Float,
     topActionBackdrop: Boolean,
     cornerRadius: Int,
+    terminalAesthetic: Boolean,
     doubleTapToLock: Boolean,
     swipeDownForNotifications: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -983,13 +991,31 @@ private fun TerminalHomePage(
 ) {
     var query by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableIntStateOf(0) }
-    var homeDrag by remember { mutableFloatStateOf(0f) }
-    var historyVisible by remember { mutableStateOf(false) }
+    var notificationDrag by remember { mutableFloatStateOf(0f) }
+    var historyTargetOpen by remember { mutableStateOf(false) }
+    var historyDragProgress by remember { mutableFloatStateOf(0f) }
+    var historyDragging by remember { mutableStateOf(false) }
     val rootFocusRequester = remember { FocusRequester() }
     val inputFocusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val dragThreshold = with(LocalDensity.current) { 76.dp.toPx() }
+    val historyFlingThreshold = with(LocalDensity.current) { 900.dp.toPx() }
+    val animatedHistoryProgress by animateFloatAsState(
+        targetValue = if (historyDragging) {
+            historyDragProgress
+        } else if (historyTargetOpen) {
+            1f
+        } else {
+            0f
+        },
+        animationSpec = if (historyDragging) {
+            snap()
+        } else {
+            spring(dampingRatio = 0.84f, stiffness = Spring.StiffnessMediumLow)
+        },
+        label = "terminalHistoryProgress",
+    )
     val historyEntries = remember(apps, shortcuts, launcherSearchLearning) {
         launcherSearchLearning
             .sortedByDescending(LauncherSearchLearning::lastSelectedAt)
@@ -1037,7 +1063,9 @@ private fun TerminalHomePage(
     LaunchedEffect(query) { selectedIndex = 0 }
     LaunchedEffect(homeRequestId) {
         query = ""
-        historyVisible = false
+        historyTargetOpen = false
+        historyDragging = false
+        historyDragProgress = 0f
         keyboard?.hide()
         delay(40)
         rootFocusRequester.requestFocus()
@@ -1069,13 +1097,13 @@ private fun TerminalHomePage(
                 TerminalBuiltInAction.SHOW_HISTORY -> {
                     query = ""
                     keyboard?.hide()
-                    historyVisible = true
+                    historyTargetOpen = true
                 }
                 TerminalBuiltInAction.CLEAR_HISTORY -> {
                     query = ""
                     keyboard?.hide()
                     onClearLocalHistory()
-                    historyVisible = true
+                    historyTargetOpen = true
                 }
             }
             is TerminalSuggestion.SearchResult -> when (val result = suggestion.result) {
@@ -1102,12 +1130,14 @@ private fun TerminalHomePage(
         }
     }
 
-    BackHandler(enabled = historyVisible) {
-        historyVisible = false
+    BackHandler(enabled = historyTargetOpen || animatedHistoryProgress > 0.01f) {
+        historyTargetOpen = false
+        historyDragging = false
+        historyDragProgress = 0f
         rootFocusRequester.requestFocus()
     }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .focusRequester(rootFocusRequester)
@@ -1158,6 +1188,46 @@ private fun TerminalHomePage(
                 }
             },
     ) {
+        val historyTravelPx = constraints.maxHeight.toFloat().coerceAtLeast(1f)
+
+        fun beginHistoryDrag() {
+            if (!historyDragging) {
+                historyDragProgress = animatedHistoryProgress
+                historyDragging = true
+            }
+        }
+
+        fun dragHistory(delta: Float) {
+            beginHistoryDrag()
+            historyDragProgress = terminalHistoryProgressAfterDrag(
+                currentProgress = historyDragProgress,
+                delta = delta,
+                travelDistance = historyTravelPx,
+            )
+        }
+
+        fun settleHistory(velocity: Float) {
+            val open = shouldOpenTerminalHistory(
+                progress = historyDragProgress,
+                velocity = velocity,
+                flingThreshold = historyFlingThreshold,
+            )
+            historyDragging = false
+            historyTargetOpen = open
+            historyDragProgress = if (open) 1f else 0f
+        }
+
+        val homeDragState = rememberDraggableState { delta ->
+            if (
+                query.isBlank() &&
+                (delta < 0f || historyTargetOpen || historyDragProgress > 0f)
+            ) {
+                dragHistory(delta)
+            } else if (delta > 0f) {
+                notificationDrag += delta
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -1167,35 +1237,35 @@ private fun TerminalHomePage(
                         onDoubleTap = { if (doubleTapToLock) onLockScreen() },
                     )
                 }
-                .pointerInput(swipeDownForNotifications, dragThreshold) {
-                    detectVerticalDragGestures(
-                        onVerticalDrag = { change, amount ->
-                            homeDrag += amount
-                            change.consume()
-                        },
-                        onDragEnd = {
-                            when {
-                                homeDrag < -dragThreshold && query.isBlank() -> {
-                                    keyboard?.hide()
-                                    historyVisible = true
-                                }
-                                homeDrag > dragThreshold && swipeDownForNotifications -> {
-                                    onOpenNotifications()
-                                }
-                            }
-                            homeDrag = 0f
-                        },
-                        onDragCancel = { homeDrag = 0f },
-                    )
-                },
+                .draggable(
+                    state = homeDragState,
+                    orientation = Orientation.Vertical,
+                    onDragStarted = { notificationDrag = 0f },
+                    onDragStopped = { velocity ->
+                        if (historyDragging) {
+                            keyboard?.hide()
+                            settleHistory(velocity)
+                        } else if (
+                            notificationDrag > dragThreshold &&
+                            swipeDownForNotifications
+                        ) {
+                            onOpenNotifications()
+                        }
+                        notificationDrag = 0f
+                    },
+                ),
         )
 
         AnimatedVisibility(
-            visible = !historyVisible,
+            visible = animatedHistoryProgress < 0.999f,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .statusBarsPadding()
-                .padding(top = 12.dp, end = 18.dp),
+                .padding(top = 12.dp, end = 18.dp)
+                .graphicsLayer {
+                    translationY = -animatedHistoryProgress * historyTravelPx * 0.06f
+                    alpha = 1f - animatedHistoryProgress
+                },
         ) {
             Surface(
                 shape = RoundedCornerShape(cornerRadius.dp),
@@ -1222,7 +1292,7 @@ private fun TerminalHomePage(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     TerminalTopCommand(
-                        command = ":apps",
+                        icon = Icons.Outlined.Apps,
                         contentDescription = stringResource(R.string.apps),
                         onClick = {
                             query = ""
@@ -1231,7 +1301,7 @@ private fun TerminalHomePage(
                         },
                     )
                     TerminalTopCommand(
-                        command = ":settings",
+                        icon = Icons.Outlined.Settings,
                         contentDescription = stringResource(R.string.launcher_settings),
                         onClick = {
                             query = ""
@@ -1244,8 +1314,13 @@ private fun TerminalHomePage(
         }
 
         AnimatedVisibility(
-            visible = !historyVisible,
-            modifier = Modifier.align(Alignment.BottomCenter),
+            visible = animatedHistoryProgress < 0.999f,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .graphicsLayer {
+                    translationY = -animatedHistoryProgress * historyTravelPx * 0.06f
+                    alpha = 1f - animatedHistoryProgress
+                },
             enter = fadeIn(tween(BarelyMotionTokens.standard)) +
                 slideInVertically(tween(BarelyMotionTokens.deliberate)) { it / 4 },
             exit = fadeOut(tween(BarelyMotionTokens.quick)) +
@@ -1274,6 +1349,7 @@ private fun TerminalHomePage(
                         TerminalSuggestionRow(
                             suggestion = suggestion,
                             selected = index == selectedIndex,
+                            terminalAesthetic = terminalAesthetic,
                             onClick = { executeSuggestion(suggestion) },
                             onLongPress = {
                                 val result = (suggestion as? TerminalSuggestion.SearchResult)?.result
@@ -1300,15 +1376,17 @@ private fun TerminalHomePage(
                         .padding(horizontal = 17.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        ">",
-                        color = Color.White.copy(alpha = 0.72f),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                            textDirection = TextDirection.Ltr,
-                        ),
-                    )
-                    Spacer(Modifier.width(10.dp))
+                    if (terminalAesthetic) {
+                        Text(
+                            ">",
+                            color = Color.White.copy(alpha = 0.72f),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                textDirection = TextDirection.Ltr,
+                            ),
+                        )
+                        Spacer(Modifier.width(10.dp))
+                    }
                     BasicTextField(
                         value = query,
                         onValueChange = { query = it.take(MAX_TERMINAL_QUERY_LENGTH) },
@@ -1318,7 +1396,11 @@ private fun TerminalHomePage(
                         singleLine = true,
                         textStyle = MaterialTheme.typography.titleMedium.copy(
                             color = Color.White,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            fontFamily = if (terminalAesthetic) {
+                                androidx.compose.ui.text.font.FontFamily.Monospace
+                            } else {
+                                androidx.compose.ui.text.font.FontFamily.Default
+                            },
                             fontWeight = FontWeight.Normal,
                         ),
                         cursorBrush = SolidColor(Color.White),
@@ -1337,7 +1419,11 @@ private fun TerminalHomePage(
                                             alpha = BarelyVisualTokens.contentFaint,
                                         ),
                                         style = MaterialTheme.typography.titleMedium.copy(
-                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                            fontFamily = if (terminalAesthetic) {
+                                                androidx.compose.ui.text.font.FontFamily.Monospace
+                                            } else {
+                                                androidx.compose.ui.text.font.FontFamily.Default
+                                            },
                                             fontWeight = FontWeight.Normal,
                                         ),
                                     )
@@ -1364,22 +1450,22 @@ private fun TerminalHomePage(
             }
         }
 
-        AnimatedVisibility(
-            visible = historyVisible,
-            modifier = Modifier.fillMaxSize(),
-            enter = fadeIn(tween(BarelyMotionTokens.standard)) +
-                slideInVertically(tween(BarelyMotionTokens.reveal)) { it },
-            exit = fadeOut(tween(BarelyMotionTokens.fast)) +
-                slideOutVertically(tween(BarelyMotionTokens.deliberate)) { it },
+        if (
+            historyTargetOpen ||
+            historyDragging ||
+            animatedHistoryProgress > 0.001f
         ) {
             TerminalHistoryDrawer(
                 entries = historyEntries,
                 backgroundColor = backgroundColor,
                 backgroundOpacity = backgroundOpacity,
-                onClose = {
-                    historyVisible = false
-                    rootFocusRequester.requestFocus()
-                },
+                progress = animatedHistoryProgress,
+                terminalAesthetic = terminalAesthetic,
+                transitionDistancePx = historyTravelPx,
+                flingThreshold = historyFlingThreshold,
+                onDragStarted = ::beginHistoryDrag,
+                onDrag = ::dragHistory,
+                onDragStopped = ::settleHistory,
                 onClear = onClearLocalHistory,
                 onOpen = { entry ->
                     when (val result = entry.result) {
@@ -1401,7 +1487,7 @@ private fun TerminalHomePage(
 
 @Composable
 private fun TerminalTopCommand(
-    command: String,
+    icon: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
 ) {
@@ -1414,13 +1500,10 @@ private fun TerminalTopCommand(
             .padding(horizontal = 11.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            command,
-            style = MaterialTheme.typography.labelLarge.copy(
-                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                fontWeight = FontWeight.Normal,
-                textDirection = TextDirection.Ltr,
-            ),
+        Icon(
+            icon,
+            contentDescription = null,
+            modifier = Modifier.size(21.dp),
         )
     }
 }
@@ -1429,6 +1512,7 @@ private fun TerminalTopCommand(
 private fun TerminalSuggestionRow(
     suggestion: TerminalSuggestion,
     selected: Boolean,
+    terminalAesthetic: Boolean,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
 ) {
@@ -1466,22 +1550,28 @@ private fun TerminalSuggestionRow(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                if (selected) ">" else " ",
-                modifier = Modifier.width(22.dp),
-                color = Color.White.copy(alpha = 0.72f),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    textDirection = TextDirection.Ltr,
-                ),
-            )
+            if (terminalAesthetic) {
+                Text(
+                    if (selected) ">" else " ",
+                    modifier = Modifier.width(22.dp),
+                    color = Color.White.copy(alpha = 0.72f),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        textDirection = TextDirection.Ltr,
+                    ),
+                )
+            }
             Column(Modifier.weight(1f)) {
                 Text(
                     title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        fontFamily = if (terminalAesthetic) {
+                            androidx.compose.ui.text.font.FontFamily.Monospace
+                        } else {
+                            androidx.compose.ui.text.font.FontFamily.Default
+                        },
                     ),
                 )
                 if (subtitle.isNotBlank()) {
@@ -1503,32 +1593,39 @@ private fun TerminalHistoryDrawer(
     entries: List<TerminalHistoryEntry>,
     backgroundColor: Color,
     backgroundOpacity: Float,
-    onClose: () -> Unit,
+    progress: Float,
+    terminalAesthetic: Boolean,
+    transitionDistancePx: Float,
+    flingThreshold: Float,
+    onDragStarted: () -> Unit,
+    onDrag: (Float) -> Unit,
+    onDragStopped: (Float) -> Unit,
     onClear: () -> Unit,
     onOpen: (TerminalHistoryEntry) -> Unit,
 ) {
-    var closeDrag by remember { mutableFloatStateOf(0f) }
-    var closeDragging by remember { mutableStateOf(false) }
-    val closeThreshold = with(LocalDensity.current) { 72.dp.toPx() }
-    val maximumCloseDrag = with(LocalDensity.current) { 180.dp.toPx() }
     val listState = rememberLazyListState()
-    val animatedCloseDrag by animateFloatAsState(
-        targetValue = closeDrag,
-        animationSpec = if (closeDragging) snap() else spring(
-            dampingRatio = 0.82f,
-            stiffness = Spring.StiffnessMedium,
-        ),
-        label = "terminalHistoryCloseDrag",
-    )
-    val closeConnection = remember(closeThreshold, maximumCloseDrag, listState, onClose) {
+    val currentProgress by rememberUpdatedState(progress)
+    val currentTransitionDistance by rememberUpdatedState(transitionDistancePx)
+    val currentFlingThreshold by rememberUpdatedState(flingThreshold)
+    val currentOnDragStarted by rememberUpdatedState(onDragStarted)
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragStopped by rememberUpdatedState(onDragStopped)
+    val historyDragState = rememberDraggableState { delta -> currentOnDrag(delta) }
+    val closeConnection = remember(listState) {
         object : NestedScrollConnection {
             override fun onPreScroll(
                 available: Offset,
                 source: NestedScrollSource,
             ): Offset {
-                if (source == NestedScrollSource.UserInput && available.y < 0f) {
-                    closeDragging = false
-                    closeDrag = 0f
+                if (
+                    source == NestedScrollSource.UserInput &&
+                    available.y < 0f &&
+                    currentProgress < 1f &&
+                    !listState.canScrollBackward
+                ) {
+                    currentOnDragStarted()
+                    currentOnDrag(available.y)
+                    return Offset(0f, available.y)
                 }
                 return Offset.Zero
             }
@@ -1543,19 +1640,20 @@ private fun TerminalHistoryDrawer(
                     available.y > 0f &&
                     !listState.canScrollBackward
                 ) {
-                    closeDragging = true
-                    closeDrag = (closeDrag + available.y).coerceAtMost(maximumCloseDrag)
+                    currentOnDragStarted()
+                    currentOnDrag(available.y)
                     return Offset(0f, available.y)
                 }
                 return Offset.Zero
             }
 
             override suspend fun onPreFling(available: Velocity): Velocity {
-                if (closeDrag > 0f) {
-                    val shouldClose = closeDrag >= closeThreshold
-                    closeDragging = false
-                    closeDrag = 0f
-                    if (shouldClose) onClose()
+                if (
+                    !listState.canScrollBackward &&
+                    (currentProgress < 1f || available.y >= currentFlingThreshold)
+                ) {
+                    currentOnDragStopped(available.y)
+                    return available
                 }
                 return Velocity.Zero
             }
@@ -1565,6 +1663,9 @@ private fun TerminalHistoryDrawer(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(closeConnection)
+            .graphicsLayer {
+                translationY = (1f - progress.coerceIn(0f, 1f)) * currentTransitionDistance
+            }
             .background(backgroundColor.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)))
             .background(
                 Brush.verticalGradient(
@@ -1585,39 +1686,17 @@ private fun TerminalHistoryDrawer(
                 .padding(
                     horizontal = BarelyVisualTokens.paneHorizontalPadding,
                     vertical = 20.dp,
-                )
-                .graphicsLayer {
-                    translationY = animatedCloseDrag * 0.72f
-                    alpha = 1f - (
-                        animatedCloseDrag / (maximumCloseDrag * 3f)
-                    ).coerceIn(0f, 0.18f)
-                },
+                ),
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .pointerInput(closeThreshold) {
-                        detectVerticalDragGestures(
-                            onDragStart = {
-                                closeDragging = true
-                                closeDrag = 0f
-                            },
-                            onVerticalDrag = { change, amount ->
-                                closeDrag = (closeDrag + amount).coerceIn(0f, maximumCloseDrag)
-                                change.consume()
-                            },
-                            onDragEnd = {
-                                val shouldClose = closeDrag > closeThreshold
-                                closeDragging = false
-                                closeDrag = 0f
-                                if (shouldClose) onClose()
-                            },
-                            onDragCancel = {
-                                closeDragging = false
-                                closeDrag = 0f
-                            },
-                        )
-                    },
+                    .draggable(
+                        state = historyDragState,
+                        orientation = Orientation.Vertical,
+                        onDragStarted = { currentOnDragStarted() },
+                        onDragStopped = { velocity -> currentOnDragStopped(velocity) },
+                    ),
                 shape = BarelyVisualTokens.controlShape,
                 color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceRaised),
                 contentColor = Color.White,
@@ -1630,16 +1709,24 @@ private fun TerminalHistoryDrawer(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        "> ${stringResource(R.string.recent_searches)}",
+                        if (terminalAesthetic) {
+                            "> ${stringResource(R.string.recent_searches)}"
+                        } else {
+                            stringResource(R.string.recent_searches)
+                        },
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            fontFamily = if (terminalAesthetic) {
+                                androidx.compose.ui.text.font.FontFamily.Monospace
+                            } else {
+                                androidx.compose.ui.text.font.FontFamily.Default
+                            },
                             fontWeight = FontWeight.Normal,
                         ),
                     )
                     if (entries.isNotEmpty()) {
                         TerminalTopCommand(
-                            command = ":clear",
+                            icon = Icons.Outlined.DeleteOutline,
                             contentDescription = stringResource(
                                 R.string.settings_clear_local_history,
                             ),
@@ -1687,21 +1774,33 @@ private fun TerminalHistoryDrawer(
                         ) {
                             Column(Modifier.weight(1f)) {
                                 Text(
-                                    "> ${entry.query}",
+                                    if (terminalAesthetic) "> ${entry.query}" else entry.query,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     color = Color.White,
                                     style = MaterialTheme.typography.bodyLarge.copy(
-                                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                        fontFamily = if (terminalAesthetic) {
+                                            androidx.compose.ui.text.font.FontFamily.Monospace
+                                        } else {
+                                            androidx.compose.ui.text.font.FontFamily.Default
+                                        },
                                     ),
                                 )
                                 Text(
-                                    "  ↳ ${entry.result.label}",
+                                    if (terminalAesthetic) {
+                                        "  ↳ ${entry.result.label}"
+                                    } else {
+                                        entry.result.label
+                                    },
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     color = Color.White.copy(alpha = 0.52f),
                                     style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                        fontFamily = if (terminalAesthetic) {
+                                            androidx.compose.ui.text.font.FontFamily.Monospace
+                                        } else {
+                                            androidx.compose.ui.text.font.FontFamily.Default
+                                        },
                                     ),
                                 )
                             }
@@ -1722,6 +1821,7 @@ private fun TerminalAppsPage(
     backdropBlurEnabled: Boolean,
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
+    searchCornerRadius: Int,
     onBack: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
@@ -1766,7 +1866,10 @@ private fun TerminalAppsPage(
                 foldingFeature = foldingFeature,
             )
         }
-        SearchLauncherBar(onClick = onSearch)
+        SearchLauncherBar(
+            onClick = onSearch,
+            cornerRadius = searchCornerRadius,
+        )
     }
 }
 
@@ -2653,6 +2756,7 @@ private fun AppsPage(
     hasShortcutPermission: Boolean,
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
+    searchCornerRadius: Int,
     onRequestHomeRole: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
@@ -2694,7 +2798,10 @@ private fun AppsPage(
                 ),
             )
         }
-        SearchLauncherBar(onClick = onSearch)
+        SearchLauncherBar(
+            onClick = onSearch,
+            cornerRadius = searchCornerRadius,
+        )
     }
 }
 
@@ -2998,6 +3105,7 @@ private fun PrivateSpaceHeader(
 @Composable
 private fun SearchLauncherBar(
     onClick: () -> Unit,
+    cornerRadius: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -3014,7 +3122,7 @@ private fun SearchLauncherBar(
                 .fillMaxWidth()
                 .height(56.dp)
                 .combinedClickable(onClick = onClick),
-            shape = CircleShape,
+            shape = RoundedCornerShape(cornerRadius.dp),
             color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceSelected),
             contentColor = Color.White,
             border = BorderStroke(
@@ -3201,6 +3309,7 @@ private fun SearchPage(
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
+    searchCornerRadius: Int,
     onClose: () -> Unit,
     onDismissToHome: () -> Unit,
     recommendedApps: List<LauncherApp>,
@@ -3436,6 +3545,7 @@ private fun SearchPage(
                         onMoveSelection = ::moveSelection,
                         onClose = onClose,
                         onClear = { query = "" },
+                        cornerRadius = searchCornerRadius,
                         modifier = Modifier.focusRequester(focusRequester),
                     )
                 }
@@ -3452,6 +3562,7 @@ private fun SearchInput(
     onMoveSelection: (Int) -> Unit,
     onClose: () -> Unit,
     onClear: () -> Unit,
+    cornerRadius: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -3466,7 +3577,7 @@ private fun SearchInput(
                     horizontal = BarelyVisualTokens.contentHorizontalPadding,
                     vertical = 8.dp,
                 ),
-            shape = CircleShape,
+            shape = RoundedCornerShape(cornerRadius.dp),
             color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceControl),
             contentColor = Color.White,
         ) {
@@ -4340,6 +4451,8 @@ private fun LauncherSettingsPage(
                                         BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
                                     terminalCornerRadius =
                                         BarelyDefaults.TERMINAL_CORNER_RADIUS,
+                                    terminalAesthetic =
+                                        BarelyDefaults.TERMINAL_AESTHETIC,
                                 ),
                             )
                         },
@@ -4356,6 +4469,18 @@ private fun LauncherSettingsPage(
                             onSettingsChanged(
                                 settings.copy(terminalTopActionBackdrop = enabled),
                             )
+                        },
+                    )
+                }
+                item(key = "terminal_aesthetic") {
+                    SettingsSwitchItem(
+                        title = stringResource(R.string.settings_terminal_aesthetic),
+                        summary = stringResource(
+                            R.string.settings_terminal_aesthetic_summary,
+                        ),
+                        checked = settings.terminalAesthetic,
+                        onCheckedChange = { enabled ->
+                            onSettingsChanged(settings.copy(terminalAesthetic = enabled))
                         },
                     )
                 }
@@ -4512,14 +4637,14 @@ private fun HomeModeSettingsPicker(
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             HomeModeSettingOption(
                 modifier = Modifier.weight(1f),
-                glyph = "○",
+                icon = Icons.Outlined.StarOutline,
                 title = stringResource(R.string.home_mode_classic),
                 selected = selectedMode == LauncherHomeMode.CLASSIC,
                 onClick = { onModeSelected(LauncherHomeMode.CLASSIC) },
             )
             HomeModeSettingOption(
                 modifier = Modifier.weight(1f),
-                glyph = ">_",
+                icon = Icons.Outlined.Bolt,
                 title = stringResource(R.string.home_mode_terminal),
                 selected = selectedMode == LauncherHomeMode.TERMINAL,
                 onClick = { onModeSelected(LauncherHomeMode.TERMINAL) },
@@ -4531,7 +4656,7 @@ private fun HomeModeSettingsPicker(
 @Composable
 private fun HomeModeSettingOption(
     modifier: Modifier,
-    glyph: String,
+    icon: ImageVector,
     title: String,
     selected: Boolean,
     onClick: () -> Unit,
@@ -4557,12 +4682,10 @@ private fun HomeModeSettingOption(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                glyph,
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    textDirection = TextDirection.Ltr,
-                ),
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
             )
             Spacer(Modifier.width(9.dp))
             Text(
@@ -5157,6 +5280,24 @@ private sealed interface LauncherSearchResult {
     val label: String
     val typePriority: Int
     val publisherRank: Int
+}
+
+internal fun terminalHistoryProgressAfterDrag(
+    currentProgress: Float,
+    delta: Float,
+    travelDistance: Float,
+): Float = (
+    currentProgress - delta / travelDistance.coerceAtLeast(1f)
+).coerceIn(0f, 1f)
+
+internal fun shouldOpenTerminalHistory(
+    progress: Float,
+    velocity: Float,
+    flingThreshold: Float,
+): Boolean = when {
+    velocity <= -flingThreshold -> true
+    velocity >= flingThreshold -> false
+    else -> progress >= 0.42f
 }
 
 private data class AppSearchResult(

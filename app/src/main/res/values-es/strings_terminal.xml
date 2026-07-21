@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Continuar</string>
     <string name="home_mode_classic">Clásico</string>
     <string name="home_mode_classic_summary">Inicio con fondo, Favoritos y Apps a un gesto de distancia.</string>
-    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal">Modo Comando</string>
     <string name="home_mode_terminal_summary">Abre apps de forma intencional escribiendo su nombre o un comando.</string>
     <string name="terminal_prompt_hint">escribe una app o un comando</string>
     <string name="terminal_app_result">App</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">Cambiar al Inicio clásico</string>
     <string name="terminal_command_classic_summary">Vuelve al fondo con las páginas de Favoritos y Apps</string>
     <string name="settings_home_mode">Estilo de Inicio</string>
-    <string name="settings_home_mode_summary">Elige las páginas clásicas o el indicador intencional de Terminal.</string>
-    <string name="settings_terminal_background">Fondo del Terminal</string>
+    <string name="settings_home_mode_summary">Elige las páginas clásicas o el indicador intencional del Modo Comando.</string>
+    <string name="settings_terminal_background">Fondo del Modo Comando</string>
     <string name="settings_terminal_background_summary">Elige un color y cuánto se ve el fondo de pantalla. Todo permanece en este dispositivo.</string>
-    <string name="settings_terminal_color">Color de fondo del Terminal</string>
+    <string name="settings_terminal_color">Color de fondo del Modo Comando</string>
     <string name="settings_terminal_color_option">Color de fondo %1$d de %2$d</string>
     <string name="settings_terminal_opacity">Opacidad</string>
     <string name="settings_terminal_wallpaper">Fondo de pantalla</string>
     <string name="settings_terminal_solid">Color sólido</string>
     <string name="settings_terminal_action_backdrop">Contraste de acciones superiores</string>
-    <string name="settings_terminal_action_backdrop_summary">Añade una cápsula sutil detrás de :apps y :settings para fondos recargados.</string>
+    <string name="settings_terminal_action_backdrop_summary">Añade una cápsula sutil detrás de los iconos de apps y ajustes para fondos recargados.</string>
+    <string name="settings_terminal_aesthetic">Estética de terminal</string>
+    <string name="settings_terminal_aesthetic_summary">Muestra indicadores &gt;, flechas y texto monoespaciado en el Modo Comando. Los comandos funcionan de ambas formas.</string>
     <string name="settings_terminal_corner_radius">Radio de búsqueda y comandos</string>
     <string name="settings_terminal_reset">Restablecer</string>
-    <string name="terminal_history_empty">Las apps abiertas desde búsquedas de Terminal aparecerán aquí.</string>
+    <string name="terminal_history_empty">Las apps abiertas desde búsquedas del Modo Comando aparecerán aquí.</string>
 </resources>
