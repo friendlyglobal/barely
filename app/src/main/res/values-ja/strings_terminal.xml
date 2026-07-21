@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">スマートフォンをどれだけ静かにするか選びます。</string>
+    <string name="onboarding_summary">どちらもプライベートで壁紙を中心にしたモードです。違いは、アプリを開くまでに必要な意識の量です。</string>
+    <string name="onboarding_change_later">モードはBarelyの設定からいつでも変更できます。</string>
+    <string name="onboarding_continue">続行</string>
+    <string name="home_mode_classic">クラシック</string>
+    <string name="home_mode_classic_summary">壁紙ホームからお気に入りとアプリへ1回のスワイプで移動します。</string>
+    <string name="home_mode_terminal">ターミナル</string>
+    <string name="home_mode_terminal_summary">名前やコマンドを入力し、意図してアプリを開きます。</string>
+    <string name="terminal_prompt_hint">アプリまたはコマンドを入力</string>
+    <string name="terminal_app_result">アプリ</string>
+    <string name="terminal_all_apps">すべてのアプリ</string>
+    <string name="terminal_command_apps">すべてのアプリを開く</string>
+    <string name="terminal_command_apps_summary">完全なアプリ一覧への一時的な入口</string>
+    <string name="terminal_command_settings">Barelyの設定を開く</string>
+    <string name="terminal_command_settings_summary">ホーム、ジェスチャー、プライバシー、オプション機能を変更します</string>
+    <string name="terminal_command_classic">クラシックホームに切り替える</string>
+    <string name="terminal_command_classic_summary">お気に入りとアプリのある壁紙ホームに戻ります</string>
+    <string name="settings_home_mode">ホームのスタイル</string>
+    <string name="settings_home_mode_summary">クラシックページまたは意図的なターミナル入力を選びます。</string>
+    <string name="settings_terminal_background">ターミナルの背景</string>
+    <string name="settings_terminal_background_summary">色と壁紙の見え方を選びます。設定はすべてこの端末内に保存されます。</string>
+    <string name="settings_terminal_color">ターミナルの背景色</string>
+    <string name="settings_terminal_opacity">不透明度</string>
+    <string name="settings_terminal_wallpaper">壁紙</string>
+    <string name="settings_terminal_solid">単色</string>
+</resources>

@@ -58,6 +58,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -93,7 +94,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.NotificationsNone
-import androidx.compose.material.icons.outlined.OpenInFull
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
@@ -117,6 +117,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -145,6 +146,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -164,6 +166,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -179,6 +182,145 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+
+@Composable
+fun BarelyOnboarding(
+    initialMode: LauncherHomeMode,
+    onComplete: (LauncherHomeMode) -> Unit,
+) {
+    var selectedMode by remember { mutableStateOf(initialMode) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.Black.copy(alpha = 0.32f),
+                        Color.Black.copy(alpha = 0.5f),
+                        Color.Black.copy(alpha = 0.72f),
+                    ),
+                ),
+            )
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 22.dp),
+        ) {
+            Text(
+                text = "> barely_",
+                color = Color.White.copy(alpha = 0.82f),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                ),
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                stringResource(R.string.onboarding_title),
+                color = Color.White,
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                stringResource(R.string.onboarding_summary),
+                color = Color.White.copy(alpha = 0.68f),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(Modifier.height(24.dp))
+            HomeModeChoice(
+                mode = LauncherHomeMode.CLASSIC,
+                title = stringResource(R.string.home_mode_classic),
+                summary = stringResource(R.string.home_mode_classic_summary),
+                selected = selectedMode == LauncherHomeMode.CLASSIC,
+                onClick = { selectedMode = LauncherHomeMode.CLASSIC },
+            )
+            Spacer(Modifier.height(12.dp))
+            HomeModeChoice(
+                mode = LauncherHomeMode.TERMINAL,
+                title = stringResource(R.string.home_mode_terminal),
+                summary = stringResource(R.string.home_mode_terminal_summary),
+                selected = selectedMode == LauncherHomeMode.TERMINAL,
+                onClick = { selectedMode = LauncherHomeMode.TERMINAL },
+            )
+            Spacer(Modifier.height(18.dp))
+            Text(
+                stringResource(R.string.onboarding_change_later),
+                color = Color.White.copy(alpha = 0.56f),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Spacer(Modifier.height(18.dp))
+            FilledTonalButton(
+                onClick = { onComplete(selectedMode) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+            ) {
+                Text(stringResource(R.string.onboarding_continue))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeModeChoice(
+    mode: LauncherHomeMode,
+    title: String,
+    summary: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(24.dp)
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .combinedClickable(onClick = onClick),
+        shape = shape,
+        color = if (selected) {
+            Color.White.copy(alpha = 0.16f)
+        } else {
+            Color.Black.copy(alpha = 0.38f)
+        },
+        contentColor = Color.White,
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (selected) Color.White.copy(alpha = 0.72f)
+            else Color.White.copy(alpha = 0.14f),
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 17.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                if (mode == LauncherHomeMode.TERMINAL) ">_" else "○",
+                modifier = Modifier.width(42.dp),
+                color = Color.White.copy(alpha = if (selected) 1f else 0.62f),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                ),
+            )
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    summary,
+                    color = Color.White.copy(alpha = 0.64f),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            if (selected) {
+                Icon(
+                    Icons.Outlined.Done,
+                    contentDescription = null,
+                    tint = Color.White,
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun LauncherScreen(
@@ -235,6 +377,8 @@ fun LauncherScreen(
     var selectedApp by remember { mutableStateOf<LauncherApp?>(null) }
     var settingsVisible by remember { mutableStateOf(false) }
     var widgetPickerVisible by remember { mutableStateOf(false) }
+    var terminalAppsVisible by remember { mutableStateOf(false) }
+    var editingWidgets by remember { mutableStateOf(false) }
     val rootFocusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -263,8 +407,8 @@ fun LauncherScreen(
         ),
     )
     val pagerContentAlpha by animateFloatAsState(
-        targetValue = if (searchVisible) 0f else 1f,
-        animationSpec = tween(120),
+        targetValue = if (searchVisible) 0.84f else 1f,
+        animationSpec = tween(240),
         label = "pagerContentAlpha",
     )
 
@@ -274,13 +418,18 @@ fun LauncherScreen(
         searchVisible = true
     }
 
-    LaunchedEffect(searchVisible) {
-        if (!searchVisible) rootFocusRequester.requestFocus()
+    LaunchedEffect(searchVisible, launcherSettings.homeMode) {
+        if (!searchVisible && launcherSettings.homeMode == LauncherHomeMode.CLASSIC) {
+            rootFocusRequester.requestFocus()
+        }
     }
 
-    LaunchedEffect(pagerState, searchVisible) {
+    LaunchedEffect(pagerState, searchVisible, launcherSettings.homeMode, terminalAppsVisible) {
         snapshotFlow {
             when {
+                launcherSettings.homeMode == LauncherHomeMode.TERMINAL -> {
+                    if (terminalAppsVisible) LauncherBackdrop.FROSTED else LauncherBackdrop.CLEAR
+                }
                 searchVisible -> LauncherBackdrop.SEARCH
                 pagerState.currentPage == HOME_PAGE &&
                     pagerState.currentPageOffsetFraction.absoluteValue < 0.04f -> {
@@ -297,11 +446,14 @@ fun LauncherScreen(
             selectedApp = null
             settingsVisible = false
             widgetPickerVisible = false
+            terminalAppsVisible = false
+            editingWidgets = false
             pagerState.scrollToPage(HOME_PAGE)
         }
     }
 
     LaunchedEffect(pagerState.settledPage, showGestureCoach) {
+        if (pagerState.settledPage != FAVORITES_PAGE) editingWidgets = false
         if (showGestureCoach && pagerState.settledPage != HOME_PAGE) {
             onGestureCoachSeen()
         }
@@ -317,7 +469,16 @@ fun LauncherScreen(
         onDispose { wallpaperManager.removeOnColorsChangedListener(listener) }
     }
 
-    val darkSystemBarIcons = if (pagerState.settledPage == HOME_PAGE && !searchVisible) {
+    val terminalBackgroundColor = Color(launcherSettings.terminalBackgroundColor)
+    val darkSystemBarIcons = if (
+        launcherSettings.homeMode == LauncherHomeMode.TERMINAL && !terminalAppsVisible
+    ) {
+        if (launcherSettings.terminalBackgroundOpacity < 0.3f) {
+            wallpaperSupportsDarkText
+        } else {
+            terminalBackgroundColor.luminance() > 0.58f
+        }
+    } else if (pagerState.settledPage == HOME_PAGE && !searchVisible) {
         wallpaperSupportsDarkText
     } else {
         false
@@ -336,7 +497,11 @@ fun LauncherScreen(
             .focusRequester(rootFocusRequester)
             .focusable()
             .onPreviewKeyEvent { event ->
-                if (searchVisible || event.type != KeyEventType.KeyDown) {
+                if (
+                    launcherSettings.homeMode == LauncherHomeMode.TERMINAL ||
+                    searchVisible ||
+                    event.type != KeyEventType.KeyDown
+                ) {
                     return@onPreviewKeyEvent false
                 }
                 when {
@@ -379,13 +544,15 @@ fun LauncherScreen(
                 }
             },
     ) {
-        HorizontalPager(
+        if (launcherSettings.homeMode == LauncherHomeMode.CLASSIC) {
+            HorizontalPager(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { alpha = pagerContentAlpha },
             beyondViewportPageCount = 1,
             flingBehavior = pagerFlingBehavior,
+            userScrollEnabled = !editingWidgets,
             key = { it },
         ) { page ->
             Box(
@@ -420,6 +587,8 @@ fun LauncherScreen(
                         onUpdateWidget = onUpdateWidget,
                         onMoveWidget = onMoveWidget,
                         onMediaAction = onMediaAction,
+                        editingWidgets = editingWidgets,
+                        onEditingWidgetsChanged = { editingWidgets = it },
                     )
 
                     HOME_PAGE -> WallpaperPage(
@@ -457,12 +626,17 @@ fun LauncherScreen(
             }
         }
 
-        AnimatedVisibility(
-            visible = searchVisible,
-            enter = fadeIn(animationSpec = tween(150)),
-            exit = fadeOut(animationSpec = tween(120)),
-        ) {
-            SearchPage(
+            AnimatedVisibility(
+                visible = searchVisible,
+                enter = fadeIn(animationSpec = tween(220)) +
+                    scaleIn(
+                        animationSpec = tween(260),
+                        initialScale = 0.985f,
+                        transformOrigin = TransformOrigin(0.5f, 1f),
+                    ),
+                exit = fadeOut(animationSpec = tween(180)),
+            ) {
+                SearchPage(
                 initialQuery = initialSearchQuery,
                 apps = snapshot.apps.filterNot { app ->
                     app.isPrivate && snapshot.privateSpace?.isLocked != false
@@ -513,11 +687,70 @@ fun LauncherScreen(
                     }
                     onExecuteCommand(command)
                 },
+                )
+            }
+        } else {
+            TerminalHomePage(
+                apps = snapshot.apps.filterNot { app ->
+                    app.isPrivate && snapshot.privateSpace?.isLocked != false
+                },
+                shortcuts = snapshot.shortcuts.filterNot { shortcut ->
+                    shortcut.owner.isPrivate && snapshot.privateSpace?.isLocked != false
+                },
+                contacts = contacts,
+                hasContactsPermission = hasContactsPermission,
+                hasNotificationAccess = hasNotificationAccess,
+                notificationDotsEnabled = launcherSettings.notificationDots,
+                mediaControlsEnabled = launcherSettings.mediaControls,
+                homeRequestId = homeRequestId,
+                backgroundColor = terminalBackgroundColor,
+                backgroundOpacity = launcherSettings.terminalBackgroundOpacity,
+                doubleTapToLock = launcherSettings.doubleTapToLock,
+                swipeDownForNotifications = launcherSettings.swipeDownForNotifications,
+                onLaunchApp = onLaunchApp,
+                onLongPress = { selectedApp = it },
+                onLaunchShortcut = onLaunchShortcut,
+                onExecuteCommand = onExecuteCommand,
+                onAppSearchCommitted = onAppSearchCommitted,
+                onOpenApps = { terminalAppsVisible = true },
+                onOpenSettings = { settingsVisible = true },
+                onSwitchToClassic = {
+                    onSettingsChanged(launcherSettings.copy(homeMode = LauncherHomeMode.CLASSIC))
+                },
+                onLockScreen = onLockScreen,
+                onOpenNotifications = onOpenNotifications,
             )
+            AnimatedVisibility(
+                visible = terminalAppsVisible,
+                enter = fadeIn(tween(200)) +
+                    scaleIn(
+                        animationSpec = tween(240),
+                        initialScale = 0.985f,
+                        transformOrigin = TransformOrigin(0.5f, 1f),
+                    ),
+                exit = fadeOut(tween(160)),
+            ) {
+                TerminalAppsPage(
+                    apps = snapshot.apps,
+                    privateSpace = snapshot.privateSpace,
+                    privateSpaceExpanded = privateSpaceExpanded,
+                    isLoading = isLoading,
+                    backdropBlurEnabled = backdropBlurEnabled,
+                    notificationCounts = notificationCounts,
+                    foldingFeature = foldingFeature,
+                    onBack = { terminalAppsVisible = false },
+                    onLaunchApp = onLaunchApp,
+                    onLongPress = { selectedApp = it },
+                    onSetPrivateSpaceExpanded = onSetPrivateSpaceExpanded,
+                    onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
+                    onSearch = { terminalAppsVisible = false },
+                )
+            }
         }
     }
 
     BackHandler(enabled = searchVisible) { searchVisible = false }
+    BackHandler(enabled = terminalAppsVisible) { terminalAppsVisible = false }
 
     selectedApp?.let { app ->
         AppActionsSheet(
@@ -670,6 +903,463 @@ private fun GestureLabel(label: String, arrow: String) {
 }
 
 @Composable
+private fun TerminalHomePage(
+    apps: List<LauncherApp>,
+    shortcuts: List<LauncherShortcut>,
+    contacts: List<LauncherContact>,
+    hasContactsPermission: Boolean,
+    hasNotificationAccess: Boolean,
+    notificationDotsEnabled: Boolean,
+    mediaControlsEnabled: Boolean,
+    homeRequestId: Int,
+    backgroundColor: Color,
+    backgroundOpacity: Float,
+    doubleTapToLock: Boolean,
+    swipeDownForNotifications: Boolean,
+    onLaunchApp: (LauncherApp) -> Unit,
+    onLongPress: (LauncherApp) -> Unit,
+    onLaunchShortcut: (LauncherShortcut) -> Unit,
+    onExecuteCommand: (LauncherCommand) -> Unit,
+    onAppSearchCommitted: (String) -> Unit,
+    onOpenApps: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onSwitchToClassic: () -> Unit,
+    onLockScreen: () -> Unit,
+    onOpenNotifications: () -> Unit,
+) {
+    var query by remember { mutableStateOf("") }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    var homeDrag by remember { mutableFloatStateOf(0f) }
+    val rootFocusRequester = remember { FocusRequester() }
+    val inputFocusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+    val dragThreshold = with(LocalDensity.current) { 76.dp.toPx() }
+    val suggestions = remember(
+        query,
+        apps,
+        shortcuts,
+        contacts,
+        hasContactsPermission,
+        hasNotificationAccess,
+        notificationDotsEnabled,
+        mediaControlsEnabled,
+    ) {
+        if (query.trimStart().startsWith(':')) {
+            terminalBuiltInSuggestions(context, query)
+        } else {
+            buildRankedLauncherResults(
+                context = context,
+                query = query,
+                apps = apps,
+                shortcuts = shortcuts,
+                contacts = contacts,
+                hasContactsPermission = hasContactsPermission,
+                hasNotificationAccess = hasNotificationAccess,
+                notificationDotsEnabled = notificationDotsEnabled,
+                mediaControlsEnabled = mediaControlsEnabled,
+                limit = MAX_TERMINAL_RESULTS,
+            ).map(TerminalSuggestion::SearchResult)
+        }
+    }.take(MAX_TERMINAL_RESULTS)
+
+    LaunchedEffect(query) { selectedIndex = 0 }
+    LaunchedEffect(homeRequestId) {
+        query = ""
+        keyboard?.hide()
+        delay(40)
+        rootFocusRequester.requestFocus()
+    }
+
+    fun moveSelection(delta: Int) {
+        if (suggestions.isEmpty()) return
+        selectedIndex = (selectedIndex + delta).coerceIn(0, suggestions.lastIndex)
+    }
+
+    fun executeSuggestion(suggestion: TerminalSuggestion?) {
+        when (suggestion) {
+            is TerminalSuggestion.BuiltIn -> when (suggestion.action) {
+                TerminalBuiltInAction.OPEN_APPS -> {
+                    query = ""
+                    keyboard?.hide()
+                    onOpenApps()
+                }
+                TerminalBuiltInAction.OPEN_SETTINGS -> {
+                    query = ""
+                    keyboard?.hide()
+                    onOpenSettings()
+                }
+                TerminalBuiltInAction.SWITCH_TO_CLASSIC -> {
+                    query = ""
+                    keyboard?.hide()
+                    onSwitchToClassic()
+                }
+            }
+            is TerminalSuggestion.SearchResult -> when (val result = suggestion.result) {
+                is AppSearchResult -> {
+                    onAppSearchCommitted(query)
+                    onLaunchApp(result.app)
+                }
+                is ShortcutSearchResult -> onLaunchShortcut(result.shortcut)
+                is CommandSearchResult -> {
+                    onExecuteCommand(result.command)
+                    if (
+                        result.command.action !is LauncherCommandAction.CopyResult &&
+                        result.command.action !is LauncherCommandAction.RequestContactsPermission
+                    ) {
+                        query = ""
+                        keyboard?.hide()
+                    }
+                }
+            }
+            null -> Unit
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .focusRequester(rootFocusRequester)
+            .focusable()
+            .onPreviewKeyEvent { event ->
+                if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+                when {
+                    event.key == Key.DirectionUp -> {
+                        moveSelection(-1)
+                        true
+                    }
+                    event.key == Key.DirectionDown -> {
+                        moveSelection(1)
+                        true
+                    }
+                    event.key == Key.Enter -> {
+                        executeSuggestion(suggestions.getOrNull(selectedIndex))
+                        true
+                    }
+                    event.key == Key.Escape -> {
+                        query = ""
+                        keyboard?.hide()
+                        rootFocusRequester.requestFocus()
+                        true
+                    }
+                    event.key == Key.Backspace && query.isNotEmpty() -> {
+                        query = query.dropLast(1)
+                        true
+                    }
+                    event.isCtrlPressed && event.key == Key.K -> {
+                        query = ""
+                        inputFocusRequester.requestFocus()
+                        true
+                    }
+                    !event.isCtrlPressed -> {
+                        val character = event.nativeKeyEvent.unicodeChar
+                            .takeIf { it > 0 }
+                            ?.let { codePoint -> String(Character.toChars(codePoint)) }
+                        if (!character.isNullOrEmpty() && !character.first().isISOControl()) {
+                            query += character
+                            inputFocusRequester.requestFocus()
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                    else -> false
+                }
+            },
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)))
+                .pointerInput(doubleTapToLock) {
+                    detectTapGestures(
+                        onDoubleTap = { if (doubleTapToLock) onLockScreen() },
+                    )
+                }
+                .pointerInput(swipeDownForNotifications, dragThreshold) {
+                    detectVerticalDragGestures(
+                        onVerticalDrag = { change, amount ->
+                            homeDrag += amount
+                            change.consume()
+                        },
+                        onDragEnd = {
+                            if (homeDrag > dragThreshold && swipeDownForNotifications) {
+                                onOpenNotifications()
+                            }
+                            homeDrag = 0f
+                        },
+                        onDragCancel = { homeDrag = 0f },
+                    )
+                },
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .widthIn(max = 760.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .imePadding()
+                .padding(horizontal = 22.dp, vertical = 20.dp),
+        ) {
+            AnimatedVisibility(
+                visible = suggestions.isNotEmpty(),
+                enter = fadeIn(tween(140)) + slideInVertically(tween(180)) { it / 5 },
+                exit = fadeOut(tween(100)),
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    suggestions.forEachIndexed { index, suggestion ->
+                        TerminalSuggestionRow(
+                            suggestion = suggestion,
+                            selected = index == selectedIndex,
+                            onClick = { executeSuggestion(suggestion) },
+                            onLongPress = {
+                                val result = (suggestion as? TerminalSuggestion.SearchResult)?.result
+                                if (result is AppSearchResult) onLongPress(result.app)
+                            },
+                        )
+                    }
+                }
+            }
+            if (suggestions.isNotEmpty()) Spacer(Modifier.height(10.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Black.copy(alpha = 0.68f),
+                contentColor = Color.White,
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f)),
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 17.dp, vertical = 15.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        ">",
+                        color = Color.White.copy(alpha = 0.72f),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        ),
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    BasicTextField(
+                        value = query,
+                        onValueChange = { query = it.take(MAX_TERMINAL_QUERY_LENGTH) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .focusRequester(inputFocusRequester),
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.titleMedium.copy(
+                            color = Color.White,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            fontWeight = FontWeight.Normal,
+                        ),
+                        cursorBrush = SolidColor(Color.White),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                executeSuggestion(suggestions.getOrNull(selectedIndex))
+                            },
+                        ),
+                        decorationBox = { innerTextField ->
+                            Box {
+                                if (query.isEmpty()) {
+                                    Text(
+                                        stringResource(R.string.terminal_prompt_hint),
+                                        color = Color.White.copy(alpha = 0.48f),
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                            fontWeight = FontWeight.Normal,
+                                        ),
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        },
+                    )
+                    if (query.isNotEmpty()) {
+                        IconButton(
+                            onClick = { query = "" },
+                            modifier = Modifier.size(34.dp),
+                        ) {
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = stringResource(R.string.clear_search),
+                                modifier = Modifier.size(17.dp),
+                                tint = Color.White.copy(alpha = 0.7f),
+                            )
+                        }
+                    }
+                }
+            }
+            AnimatedVisibility(visible = query.isEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    TerminalQuickCommand(
+                        command = ":apps",
+                        onClick = onOpenApps,
+                    )
+                    TerminalQuickCommand(
+                        command = ":settings",
+                        onClick = onOpenSettings,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TerminalSuggestionRow(
+    suggestion: TerminalSuggestion,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onLongPress: () -> Unit,
+) {
+    val title = when (suggestion) {
+        is TerminalSuggestion.BuiltIn -> suggestion.title
+        is TerminalSuggestion.SearchResult -> suggestion.result.label
+    }
+    val subtitle = when (suggestion) {
+        is TerminalSuggestion.BuiltIn -> suggestion.subtitle
+        is TerminalSuggestion.SearchResult -> when (val result = suggestion.result) {
+            is AppSearchResult -> stringResource(R.string.terminal_app_result)
+            is ShortcutSearchResult -> result.shortcut.owner.label
+            is CommandSearchResult -> result.command.subtitle
+        }
+    }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .combinedClickable(onClick = onClick, onLongClick = onLongPress),
+        shape = RoundedCornerShape(14.dp),
+        color = if (selected) Color.Black.copy(alpha = 0.62f)
+        else Color.Black.copy(alpha = 0.38f),
+        contentColor = Color.White,
+        border = if (selected) {
+            BorderStroke(1.dp, Color.White.copy(alpha = 0.14f))
+        } else {
+            null
+        },
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                if (selected) ">" else " ",
+                modifier = Modifier.width(22.dp),
+                color = Color.White.copy(alpha = 0.72f),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                ),
+            )
+            Column(Modifier.weight(1f)) {
+                Text(
+                    title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    ),
+                )
+                if (subtitle.isNotBlank()) {
+                    Text(
+                        subtitle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color.White.copy(alpha = 0.52f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TerminalQuickCommand(command: String, onClick: () -> Unit) {
+    Surface(
+        modifier = Modifier
+            .clip(CircleShape)
+            .combinedClickable(onClick = onClick),
+        shape = CircleShape,
+        color = Color.Black.copy(alpha = 0.42f),
+        contentColor = Color.White.copy(alpha = 0.62f),
+    ) {
+        Text(
+            command,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun TerminalAppsPage(
+    apps: List<LauncherApp>,
+    privateSpace: LauncherProfile?,
+    privateSpaceExpanded: Boolean,
+    isLoading: Boolean,
+    backdropBlurEnabled: Boolean,
+    notificationCounts: Map<String, Int>,
+    foldingFeature: FoldingFeature?,
+    onBack: () -> Unit,
+    onLaunchApp: (LauncherApp) -> Unit,
+    onLongPress: (LauncherApp) -> Unit,
+    onSetPrivateSpaceExpanded: (Boolean) -> Unit,
+    onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
+    onSearch: () -> Unit,
+) {
+    PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
+        Row(
+            modifier = Modifier.padding(start = 8.dp, end = 24.dp, top = 14.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.AutoMirrored.Outlined.ArrowBack,
+                    contentDescription = stringResource(R.string.navigate_back),
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                stringResource(R.string.terminal_all_apps),
+                modifier = Modifier.weight(1f),
+                color = Color.White,
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Text(
+                apps.size.toString(),
+                color = Color.White.copy(alpha = 0.56f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        Box(Modifier.weight(1f)) {
+            AppGrid(
+                apps = apps,
+                privateSpace = privateSpace,
+                privateSpaceExpanded = privateSpaceExpanded,
+                onLaunchApp = onLaunchApp,
+                onLongPress = onLongPress,
+                onSetPrivateSpaceExpanded = onSetPrivateSpaceExpanded,
+                onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
+                notificationCounts = notificationCounts,
+                foldingFeature = foldingFeature,
+            )
+        }
+        SearchLauncherBar(onClick = onSearch)
+    }
+}
+
+@Composable
 private fun FavoritesPage(
     favorites: List<LauncherApp>,
     widgets: List<WidgetPlacement>,
@@ -687,10 +1377,11 @@ private fun FavoritesPage(
     onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
     onMoveWidget: (Int, Int) -> Unit,
     onMediaAction: (MediaAction) -> Unit,
+    editingWidgets: Boolean,
+    onEditingWidgetsChanged: (Boolean) -> Unit,
 ) {
-    var editingWidgets by remember { mutableStateOf(false) }
     LaunchedEffect(widgets.isEmpty()) {
-        if (widgets.isEmpty()) editingWidgets = false
+        if (widgets.isEmpty()) onEditingWidgetsChanged(false)
     }
     PageSurface(isLoading = isLoading, backdropBlurEnabled = backdropBlurEnabled) {
         PageHeader(
@@ -728,7 +1419,9 @@ private fun FavoritesPage(
                             widgetHost = widgetHost,
                             widgetManager = widgetManager,
                             editingWidgets = editingWidgets,
-                            onToggleEditing = { editingWidgets = !editingWidgets },
+                            onToggleEditing = {
+                                onEditingWidgetsChanged(!editingWidgets)
+                            },
                             onAddWidget = onAddWidget,
                             onRemoveWidget = onRemoveWidget,
                             onUpdateWidget = onUpdateWidget,
@@ -753,7 +1446,9 @@ private fun FavoritesPage(
                         widgetHost = widgetHost,
                         widgetManager = widgetManager,
                         editingWidgets = editingWidgets,
-                        onToggleEditing = { editingWidgets = !editingWidgets },
+                        onToggleEditing = {
+                            onEditingWidgetsChanged(!editingWidgets)
+                        },
                         onAddWidget = onAddWidget,
                         onRemoveWidget = onRemoveWidget,
                         onUpdateWidget = onUpdateWidget,
@@ -971,23 +1666,93 @@ private fun LazyListScope.widgetItems(
                 }
             }
         }
-        items(widgets, key = { "widget_${it.widgetId}" }) { widget ->
-            val widgetIndex = widgets.indexOfFirst { it.widgetId == widget.widgetId }
-            HostedWidget(
-                placement = widget,
-                widgetHost = widgetHost,
-                widgetManager = widgetManager,
-                editing = editingWidgets,
-                canMoveUp = widgetIndex > 0,
-                canMoveDown = widgetIndex in 0 until widgets.lastIndex,
-                onRemove = { onRemoveWidget(widget.widgetId) },
-                onMove = { direction -> onMoveWidget(widget.widgetId, direction) },
-                onUpdate = { widthSpan, heightDp, position ->
-                    onUpdateWidget(widget.widgetId, widthSpan, heightDp, position)
-                },
-            )
-            Spacer(Modifier.height(14.dp))
+        if (editingWidgets) {
+            items(widgets, key = { "widget_edit_${it.widgetId}" }) { widget ->
+                val widgetIndex = widgets.indexOfFirst { it.widgetId == widget.widgetId }
+                HostedWidget(
+                    placement = widget,
+                    widgetHost = widgetHost,
+                    widgetManager = widgetManager,
+                    editing = true,
+                    canMoveUp = widgetIndex > 0,
+                    canMoveDown = widgetIndex in 0 until widgets.lastIndex,
+                    onRemove = { onRemoveWidget(widget.widgetId) },
+                    onMove = { direction -> onMoveWidget(widget.widgetId, direction) },
+                    onUpdate = { widthSpan, heightDp, position ->
+                        onUpdateWidget(widget.widgetId, widthSpan, heightDp, position)
+                    },
+                )
+                Spacer(Modifier.height(14.dp))
+            }
+        } else {
+            val rows = packWidgetRows(widgets)
+            items(rows, key = { row ->
+                "widget_row_${row.joinToString("_") { it.widgetId.toString() }}"
+            }) { row ->
+                PackedWidgetRow(
+                    widgets = row,
+                    widgetHost = widgetHost,
+                    widgetManager = widgetManager,
+                )
+                Spacer(Modifier.height(14.dp))
+            }
         }
+    }
+}
+
+@Composable
+private fun PackedWidgetRow(
+    widgets: List<WidgetPlacement>,
+    widgetHost: AppWidgetHost,
+    widgetManager: AppWidgetManager,
+) {
+    val occupiedSpans = widgets.sumOf { widget ->
+        widget.widthSpan.coerceIn(
+            WidgetPlacement.MIN_WIDGET_SPAN,
+            WidgetPlacement.MAX_WIDGET_SPAN,
+        )
+    }.coerceAtMost(WidgetPlacement.MAX_WIDGET_SPAN)
+    val remainingSpans = WidgetPlacement.MAX_WIDGET_SPAN - occupiedSpans
+    val rowPosition = widgets.singleOrNull()?.horizontalPosition
+        ?: WidgetHorizontalPosition.CENTER
+    val leadingSpans = when (rowPosition) {
+        WidgetHorizontalPosition.START -> 0f
+        WidgetHorizontalPosition.CENTER -> remainingSpans / 2f
+        WidgetHorizontalPosition.END -> remainingSpans.toFloat()
+    }
+    val trailingSpans = remainingSpans - leadingSpans
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        if (leadingSpans > 0f) Spacer(Modifier.weight(leadingSpans))
+        widgets.forEach { widget ->
+            Box(
+                modifier = Modifier.weight(
+                    widget.widthSpan.coerceIn(
+                        WidgetPlacement.MIN_WIDGET_SPAN,
+                        WidgetPlacement.MAX_WIDGET_SPAN,
+                    ).toFloat(),
+                ),
+            ) {
+                HostedWidget(
+                    placement = widget,
+                    widgetHost = widgetHost,
+                    widgetManager = widgetManager,
+                    editing = false,
+                    fillContainer = true,
+                    canMoveUp = false,
+                    canMoveDown = false,
+                    onRemove = {},
+                    onMove = { _ -> },
+                    onUpdate = { _, _, _ -> },
+                )
+            }
+        }
+        if (trailingSpans > 0f) Spacer(Modifier.weight(trailingSpans))
     }
 }
 
@@ -997,6 +1762,7 @@ private fun HostedWidget(
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
     editing: Boolean,
+    fillContainer: Boolean = false,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onRemove: () -> Unit,
@@ -1006,12 +1772,12 @@ private fun HostedWidget(
     val context = LocalContext.current
     val density = LocalDensity.current
     val widgetId = placement.widgetId
-    val info = remember(widgetId) { widgetManager.getAppWidgetInfo(widgetId) }
-    if (info == null) return
-
+    val info = remember(widgetId) { widgetManager.getAppWidgetInfo(widgetId) } ?: return
     val hostView = remember(widgetId, info) {
         widgetHost.createView(context, widgetId, info)
     }
+    val resizeWidgetDescription = stringResource(R.string.resize_widget)
+
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
@@ -1027,109 +1793,287 @@ private fun HostedWidget(
             (info.minResizeWidth.takeIf { it > 0 } ?: info.minWidth).toDp()
         }.coerceAtLeast(1.dp)
         val minimumWidthSpan = if (supportsHorizontalResize) {
-            ceil(providerMinWidth.value / cellWidth.value)
-                .toInt()
-                .coerceIn(
-                    WidgetPlacement.MIN_WIDGET_SPAN,
-                    WidgetPlacement.MAX_WIDGET_SPAN,
-                )
+            ceil(providerMinWidth.value / cellWidth.value).toInt().coerceIn(
+                WidgetPlacement.MIN_WIDGET_SPAN,
+                WidgetPlacement.MAX_WIDGET_SPAN,
+            )
         } else {
             WidgetPlacement.MAX_WIDGET_SPAN
         }
-        val widthSpan = placement.widthSpan.coerceIn(
-            minimumWidthSpan,
-            WidgetPlacement.MAX_WIDGET_SPAN,
-        )
         val providerMinHeight = with(density) {
             (info.minResizeHeight.takeIf { it > 0 } ?: info.minHeight).toDp()
         }.coerceIn(MIN_WIDGET_HEIGHT_DP.dp, MAX_WIDGET_HEIGHT_DP.dp)
         val preferredHeight = with(density) { info.minHeight.toDp() }
             .coerceIn(providerMinHeight, MAX_WIDGET_HEIGHT_DP.dp)
-        val widgetHeight = if (
-            supportsVerticalResize && placement.heightDp != WidgetPlacement.AUTO_WIDGET_HEIGHT
+        var previewWidthDp by remember(
+            widgetId,
+            placement.widthSpan,
+            maxWidth.value,
+            minimumWidthSpan,
         ) {
-            placement.heightDp.dp.coerceIn(providerMinHeight, MAX_WIDGET_HEIGHT_DP.dp)
+            mutableFloatStateOf(
+                if (fillContainer) {
+                    maxWidth.value
+                } else {
+                    cellWidth.value * placement.widthSpan.coerceIn(
+                        minimumWidthSpan,
+                        WidgetPlacement.MAX_WIDGET_SPAN,
+                    )
+                },
+            )
+        }
+        var previewHeightDp by remember(
+            widgetId,
+            placement.heightDp,
+            preferredHeight.value,
+        ) {
+            mutableFloatStateOf(
+                if (
+                    supportsVerticalResize &&
+                    placement.heightDp != WidgetPlacement.AUTO_WIDGET_HEIGHT
+                ) {
+                    placement.heightDp.toFloat()
+                } else {
+                    preferredHeight.value
+                },
+            )
+        }
+        val widthSpan = (previewWidthDp / cellWidth.value).roundToInt().coerceIn(
+            minimumWidthSpan,
+            WidgetPlacement.MAX_WIDGET_SPAN,
+        )
+        val widgetWidth = if (fillContainer) {
+            maxWidth
+        } else {
+            previewWidthDp.dp.coerceIn(cellWidth * minimumWidthSpan, maxWidth)
+        }
+        val widgetHeight = if (supportsVerticalResize) {
+            previewHeightDp.dp.coerceIn(providerMinHeight, MAX_WIDGET_HEIGHT_DP.dp)
         } else {
             preferredHeight
         }
-        val widgetWidth = maxWidth * (widthSpan / WidgetPlacement.MAX_WIDGET_SPAN.toFloat())
+        val availableWidthDp = maxWidth.value
         val alignment = when (placement.horizontalPosition) {
             WidgetHorizontalPosition.START -> Alignment.CenterStart
             WidgetHorizontalPosition.CENTER -> Alignment.Center
             WidgetHorizontalPosition.END -> Alignment.CenterEnd
         }
-        val shape = RoundedCornerShape(28.dp)
+        val shape = RoundedCornerShape(24.dp)
         val widthDp = widgetWidth.value.coerceAtLeast(1f)
         val heightDp = widgetHeight.value.coerceAtLeast(1f)
-        val cellWidthPx = with(density) { cellWidth.toPx() }
-        val resizeStepPx = with(density) { WIDGET_HEIGHT_STEP_DP.dp.toPx() }
         val reorderThresholdPx = with(density) { 36.dp.toPx() }
         var reorderDrag by remember(widgetId) { mutableFloatStateOf(0f) }
-        var resizeDrag by remember(widgetId) { mutableStateOf(Offset.Zero) }
 
-        Box(
-            modifier = Modifier
-                .width(widgetWidth)
-                .height(widgetHeight)
-                .align(alignment)
-                .clip(shape)
-                .then(
-                    if (editing) {
-                        Modifier.border(1.5.dp, Color.White.copy(alpha = 0.72f), shape)
-                    } else {
-                        Modifier
-                    },
-                ),
-        ) {
-            AndroidView(
-                factory = { hostView },
-                modifier = Modifier.fillMaxSize(),
-                update = { view ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        view.updateAppWidgetSize(Bundle.EMPTY, listOf(SizeF(widthDp, heightDp)))
-                    } else {
-                        @Suppress("DEPRECATION")
-                        view.updateAppWidgetSize(
-                            null,
-                            widthDp.roundToInt(),
-                            heightDp.roundToInt(),
-                            widthDp.roundToInt(),
-                            heightDp.roundToInt(),
-                        )
+        Column(Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(widgetHeight),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(widgetWidth)
+                        .height(widgetHeight)
+                        .align(alignment)
+                        .clip(shape)
+                        .then(
+                            if (editing) {
+                                Modifier.border(
+                                    1.dp,
+                                    Color.White.copy(alpha = 0.62f),
+                                    shape,
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ),
+                ) {
+                    AndroidView(
+                        factory = { hostView },
+                        modifier = Modifier.fillMaxSize(),
+                        update = { view ->
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                view.updateAppWidgetSize(
+                                    Bundle.EMPTY,
+                                    listOf(SizeF(widthDp, heightDp)),
+                                )
+                            } else {
+                                @Suppress("DEPRECATION")
+                                view.updateAppWidgetSize(
+                                    null,
+                                    widthDp.roundToInt(),
+                                    heightDp.roundToInt(),
+                                    widthDp.roundToInt(),
+                                    heightDp.roundToInt(),
+                                )
+                            }
+                        },
+                    )
+
+                    if (editing && supportsHorizontalResize) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .fillMaxHeight()
+                                .width(24.dp)
+                                .padding(bottom = 18.dp)
+                                .semantics { contentDescription = resizeWidgetDescription }
+                                .pointerInput(
+                                    widgetId,
+                                    placement.widthSpan,
+                                    availableWidthDp,
+                                ) {
+                                    var startWidthDp = 0f
+                                    var dragDistancePx = 0f
+                                    detectDragGestures(
+                                        onDragStart = {
+                                            startWidthDp = previewWidthDp
+                                            dragDistancePx = 0f
+                                        },
+                                        onDrag = { change, amount ->
+                                            change.consume()
+                                            dragDistancePx += amount.x
+                                            previewWidthDp = (
+                                                startWidthDp + dragDistancePx / density.density
+                                            ).coerceIn(
+                                                cellWidth.value * minimumWidthSpan,
+                                                availableWidthDp,
+                                            )
+                                        },
+                                        onDragEnd = {
+                                            val resizedSpan = (
+                                                previewWidthDp / cellWidth.value
+                                            ).roundToInt().coerceIn(
+                                                minimumWidthSpan,
+                                                WidgetPlacement.MAX_WIDGET_SPAN,
+                                            )
+                                            previewWidthDp = cellWidth.value * resizedSpan
+                                            onUpdate(
+                                                resizedSpan,
+                                                previewHeightDp.roundToInt(),
+                                                placement.horizontalPosition,
+                                            )
+                                        },
+                                        onDragCancel = {
+                                            previewWidthDp = cellWidth.value *
+                                                placement.widthSpan.coerceIn(
+                                                    minimumWidthSpan,
+                                                    WidgetPlacement.MAX_WIDGET_SPAN,
+                                                )
+                                        },
+                                    )
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Box(
+                                Modifier
+                                    .size(width = 4.dp, height = 48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.9f)),
+                            )
+                        }
                     }
-                },
-            )
+
+                    if (editing && supportsVerticalResize) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(end = 18.dp)
+                                .semantics { contentDescription = resizeWidgetDescription }
+                                .pointerInput(
+                                    widgetId,
+                                    placement.heightDp,
+                                    providerMinHeight.value,
+                                ) {
+                                    var startHeightDp = 0f
+                                    var dragDistancePx = 0f
+                                    detectDragGestures(
+                                        onDragStart = {
+                                            startHeightDp = previewHeightDp
+                                            dragDistancePx = 0f
+                                        },
+                                        onDrag = { change, amount ->
+                                            change.consume()
+                                            dragDistancePx += amount.y
+                                            previewHeightDp = (
+                                                startHeightDp + dragDistancePx / density.density
+                                            ).coerceIn(
+                                                providerMinHeight.value,
+                                                MAX_WIDGET_HEIGHT_DP.toFloat(),
+                                            )
+                                        },
+                                        onDragEnd = {
+                                            onUpdate(
+                                                widthSpan,
+                                                previewHeightDp.roundToInt(),
+                                                placement.horizontalPosition,
+                                            )
+                                        },
+                                        onDragCancel = {
+                                            previewHeightDp = if (
+                                                placement.heightDp !=
+                                                WidgetPlacement.AUTO_WIDGET_HEIGHT
+                                            ) {
+                                                placement.heightDp.toFloat()
+                                            } else {
+                                                preferredHeight.value
+                                            }
+                                        },
+                                    )
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Box(
+                                Modifier
+                                    .size(width = 48.dp, height = 4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.9f)),
+                            )
+                        }
+                    }
+                }
+            }
 
             AnimatedVisibility(
                 visible = editing,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(7.dp),
-                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
+                enter = fadeIn(tween(140)) + slideInVertically(tween(180)) { -it / 3 },
                 exit = fadeOut(tween(100)),
             ) {
                 Surface(
-                    shape = CircleShape,
-                    color = Color.Black.copy(alpha = 0.76f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    shape = RoundedCornerShape(22.dp),
+                    color = Color.Black.copy(alpha = 0.58f),
                     contentColor = Color.White,
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 48.dp)
+                            .padding(horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         IconButton(
                             onClick = { onMove(-1) },
                             enabled = canMoveUp,
-                            modifier = Modifier.size(34.dp),
+                            modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
                                 Icons.Outlined.ExpandLess,
                                 contentDescription = stringResource(R.string.move_widget_up),
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(19.dp),
                             )
                         }
                         Icon(
                             Icons.Outlined.DragHandle,
                             contentDescription = stringResource(R.string.move_widget),
                             modifier = Modifier
-                                .size(30.dp)
+                                .size(38.dp)
+                                .padding(9.dp)
                                 .pointerInput(widgetId, canMoveUp, canMoveDown) {
                                     detectVerticalDragGestures(
                                         onVerticalDrag = { change, amount ->
@@ -1150,163 +2094,52 @@ private fun HostedWidget(
                         IconButton(
                             onClick = { onMove(1) },
                             enabled = canMoveDown,
-                            modifier = Modifier.size(34.dp),
+                            modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
                                 Icons.Outlined.ExpandMore,
                                 contentDescription = stringResource(R.string.move_widget_down),
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(19.dp),
                             )
                         }
-                    }
-                }
-            }
-
-            AnimatedVisibility(
-                visible = editing,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(7.dp),
-                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
-                exit = fadeOut(tween(100)),
-            ) {
-                IconButton(
-                    onClick = onRemove,
-                    modifier = Modifier
-                        .size(34.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.76f)),
-                ) {
-                    Icon(
-                        Icons.Outlined.Close,
-                        contentDescription = stringResource(R.string.remove_widget),
-                        modifier = Modifier.size(18.dp),
-                        tint = Color.White,
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = editing,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(7.dp),
-                enter = fadeIn(tween(120)),
-                exit = fadeOut(tween(100)),
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = Color.Black.copy(alpha = 0.76f),
-                    contentColor = Color.White,
-                ) {
-                    Text(
-                        stringResource(
-                            R.string.widget_dimensions,
-                            widthSpan,
-                            ceil(widgetHeight.value / WIDGET_HEIGHT_STEP_DP).toInt(),
-                        ),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = editing && (
-                    supportsHorizontalResize || supportsVerticalResize || widthSpan < WidgetPlacement.MAX_WIDGET_SPAN
-                ),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(7.dp),
-                enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
-                exit = fadeOut(tween(100)),
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = Color.Black.copy(alpha = 0.76f),
-                    contentColor = Color.White,
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (widthSpan < WidgetPlacement.MAX_WIDGET_SPAN) {
-                            IconButton(
-                                onClick = {
-                                    onUpdate(
-                                        widthSpan,
-                                        placement.heightDp,
-                                        placement.horizontalPosition.next(),
-                                    )
-                                },
-                                modifier = Modifier.size(36.dp),
-                            ) {
-                                Icon(
-                                    Icons.Outlined.SwapHoriz,
-                                    contentDescription = stringResource(R.string.position_widget),
-                                    modifier = Modifier.size(18.dp),
+                        Text(
+                            stringResource(
+                                R.string.widget_dimensions,
+                                widthSpan,
+                                ceil(widgetHeight.value / WIDGET_HEIGHT_STEP_DP).toInt(),
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 6.dp),
+                            color = Color.White.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                        IconButton(
+                            onClick = {
+                                onUpdate(
+                                    widthSpan,
+                                    placement.heightDp,
+                                    placement.horizontalPosition.next(),
                                 )
-                            }
-                        }
-                        if (supportsHorizontalResize || supportsVerticalResize) {
+                            },
+                            enabled = widthSpan < WidgetPlacement.MAX_WIDGET_SPAN,
+                            modifier = Modifier.size(38.dp),
+                        ) {
                             Icon(
-                                Icons.Outlined.OpenInFull,
-                                contentDescription = stringResource(R.string.resize_widget),
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .padding(8.dp)
-                                    .pointerInput(
-                                        widgetId,
-                                        widthSpan,
-                                        widgetHeight,
-                                        supportsHorizontalResize,
-                                        supportsVerticalResize,
-                                    ) {
-                                        detectDragGestures(
-                                            onDrag = { change, amount ->
-                                                change.consume()
-                                                resizeDrag += amount
-                                            },
-                                            onDragEnd = {
-                                                val spanDelta = if (supportsHorizontalResize) {
-                                                    (resizeDrag.x / cellWidthPx).roundToInt()
-                                                } else {
-                                                    0
-                                                }
-                                                val heightDelta = if (supportsVerticalResize) {
-                                                    (resizeDrag.y / resizeStepPx).roundToInt()
-                                                } else {
-                                                    0
-                                                }
-                                                val resizedSpan = (widthSpan + spanDelta).coerceIn(
-                                                    minimumWidthSpan,
-                                                    WidgetPlacement.MAX_WIDGET_SPAN,
-                                                )
-                                                val resizedHeight = if (
-                                                    supportsVerticalResize && heightDelta != 0
-                                                ) {
-                                                    (
-                                                        widgetHeight.value.roundToInt() +
-                                                            heightDelta * WIDGET_HEIGHT_STEP_DP
-                                                    ).coerceIn(
-                                                        providerMinHeight.value.roundToInt(),
-                                                        MAX_WIDGET_HEIGHT_DP,
-                                                    )
-                                                } else {
-                                                    placement.heightDp
-                                                }
-                                                if (
-                                                    resizedSpan != placement.widthSpan ||
-                                                    resizedHeight != placement.heightDp
-                                                ) {
-                                                    onUpdate(
-                                                        resizedSpan,
-                                                        resizedHeight,
-                                                        placement.horizontalPosition,
-                                                    )
-                                                }
-                                                resizeDrag = Offset.Zero
-                                            },
-                                            onDragCancel = { resizeDrag = Offset.Zero },
-                                        )
-                                    },
+                                Icons.Outlined.SwapHoriz,
+                                contentDescription = stringResource(R.string.position_widget),
+                                modifier = Modifier.size(19.dp),
+                            )
+                        }
+                        IconButton(
+                            onClick = onRemove,
+                            modifier = Modifier.size(38.dp),
+                        ) {
+                            Icon(
+                                Icons.Outlined.DeleteOutline,
+                                contentDescription = stringResource(R.string.remove_widget),
+                                modifier = Modifier.size(19.dp),
                             )
                         }
                     }
@@ -1381,17 +2214,17 @@ private fun PageSurface(
     val backdrop = if (backdropBlurEnabled) {
         Brush.verticalGradient(
             listOf(
-                Color.Black.copy(alpha = 0.18f),
-                Color.Black.copy(alpha = 0.25f),
-                Color.Black.copy(alpha = 0.38f),
+                Color.Black.copy(alpha = 0.08f),
+                Color.Black.copy(alpha = 0.16f),
+                Color.Black.copy(alpha = 0.3f),
             ),
         )
     } else {
         Brush.verticalGradient(
             listOf(
-                Color.Black.copy(alpha = 0.34f),
-                Color.Black.copy(alpha = 0.44f),
-                Color.Black.copy(alpha = 0.58f),
+                Color.Black.copy(alpha = 0.16f),
+                Color.Black.copy(alpha = 0.28f),
+                Color.Black.copy(alpha = 0.46f),
             ),
         )
     }
@@ -1766,6 +2599,66 @@ private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
     }
 }
 
+private fun buildRankedLauncherResults(
+    context: android.content.Context,
+    query: String,
+    apps: List<LauncherApp>,
+    shortcuts: List<LauncherShortcut>,
+    contacts: List<LauncherContact>,
+    hasContactsPermission: Boolean,
+    hasNotificationAccess: Boolean,
+    notificationDotsEnabled: Boolean,
+    mediaControlsEnabled: Boolean,
+    limit: Int,
+): List<LauncherSearchResult> {
+    val normalizedQuery = query.normalizedForSearch()
+    if (normalizedQuery.isBlank()) return emptyList()
+    return buildList {
+        buildLauncherCommands(
+            context = context,
+            query = query,
+            installedPackages = apps.mapTo(mutableSetOf(), LauncherApp::packageName),
+            contacts = contacts,
+            hasContactsPermission = hasContactsPermission,
+            hasNotificationAccess = hasNotificationAccess,
+            notificationDotsEnabled = notificationDotsEnabled,
+            mediaControlsEnabled = mediaControlsEnabled,
+        ).forEach { command -> add(CommandSearchResult(command)) }
+        apps.forEach { app ->
+            relevanceScore(
+                query = normalizedQuery,
+                terms = listOf(
+                    SearchTerm(app.label),
+                    SearchTerm(
+                        app.packageName,
+                        PACKAGE_MATCH_PENALTY,
+                        allowFuzzy = false,
+                    ),
+                ),
+            )?.let { score -> add(AppSearchResult(app, score)) }
+        }
+        shortcuts.forEach { shortcut ->
+            relevanceScore(
+                query = normalizedQuery,
+                terms = listOf(
+                    SearchTerm(shortcut.label),
+                    SearchTerm(shortcut.description.orEmpty(), DESCRIPTION_MATCH_PENALTY),
+                    SearchTerm(
+                        shortcut.info.id,
+                        SHORTCUT_ID_MATCH_PENALTY,
+                        allowFuzzy = false,
+                    ),
+                ),
+            )?.let { score -> add(ShortcutSearchResult(shortcut, score)) }
+        }
+    }.sortedWith(
+        compareBy<LauncherSearchResult> { it.score }
+            .thenBy { it.typePriority }
+            .thenBy { it.publisherRank }
+            .thenBy { it.label },
+    ).take(limit)
+}
+
 @Composable
 private fun SearchPage(
     initialQuery: String,
@@ -1817,56 +2710,23 @@ private fun SearchPage(
         shortcuts,
         contacts,
         hasContactsPermission,
+        hasNotificationAccess,
+        notificationDotsEnabled,
+        mediaControlsEnabled,
         normalizedQuery,
     ) {
-        if (normalizedQuery.isBlank()) {
-            emptyList()
-        } else {
-            buildList {
-                buildLauncherCommands(
-                    context = context,
-                    query = query,
-                    installedPackages = apps.mapTo(mutableSetOf(), LauncherApp::packageName),
-                    contacts = contacts,
-                    hasContactsPermission = hasContactsPermission,
-                    hasNotificationAccess = hasNotificationAccess,
-                    notificationDotsEnabled = notificationDotsEnabled,
-                    mediaControlsEnabled = mediaControlsEnabled,
-                ).forEach { command -> add(CommandSearchResult(command)) }
-                apps.forEach { app ->
-                    relevanceScore(
-                        query = normalizedQuery,
-                        terms = listOf(
-                            SearchTerm(app.label),
-                            SearchTerm(
-                                app.packageName,
-                                PACKAGE_MATCH_PENALTY,
-                                allowFuzzy = false,
-                            ),
-                        ),
-                    )?.let { score -> add(AppSearchResult(app, score)) }
-                }
-                shortcuts.forEach { shortcut ->
-                    relevanceScore(
-                        query = normalizedQuery,
-                        terms = listOf(
-                            SearchTerm(shortcut.label),
-                            SearchTerm(shortcut.description.orEmpty(), DESCRIPTION_MATCH_PENALTY),
-                            SearchTerm(
-                                shortcut.info.id,
-                                SHORTCUT_ID_MATCH_PENALTY,
-                                allowFuzzy = false,
-                            ),
-                        ),
-                    )?.let { score -> add(ShortcutSearchResult(shortcut, score)) }
-                }
-            }.sortedWith(
-                compareBy<LauncherSearchResult> { it.score }
-                    .thenBy { it.typePriority }
-                    .thenBy { it.publisherRank }
-                    .thenBy { it.label },
-            ).take(MAX_SEARCH_RESULTS)
-        }
+        buildRankedLauncherResults(
+            context = context,
+            query = query,
+            apps = apps,
+            shortcuts = shortcuts,
+            contacts = contacts,
+            hasContactsPermission = hasContactsPermission,
+            hasNotificationAccess = hasNotificationAccess,
+            notificationDotsEnabled = notificationDotsEnabled,
+            mediaControlsEnabled = mediaControlsEnabled,
+            limit = MAX_SEARCH_RESULTS,
+        )
     }
 
     LaunchedEffect(normalizedQuery) {
@@ -1894,7 +2754,7 @@ private fun SearchPage(
 
     LaunchedEffect(Unit) {
         contentVisible = true
-        delay(90)
+        delay(35)
         focusRequester.requestFocus()
         keyboard?.show()
     }
@@ -1912,9 +2772,9 @@ private fun SearchPage(
                         )
                     } else {
                         listOf(
-                            Color.Black.copy(alpha = 0.46f),
+                            Color.Black.copy(alpha = 0.2f),
+                            Color.Black.copy(alpha = 0.34f),
                             Color.Black.copy(alpha = 0.56f),
-                            Color.Black.copy(alpha = 0.7f),
                         )
                     },
                 ),
@@ -2087,13 +2947,13 @@ private fun SearchInput(
                             false
                         } else {
                             when {
-                                event.key == Key.DirectionDown ||
+                                event.key == Key.DirectionUp ||
                                     (event.key == Key.Tab && !event.isShiftPressed) -> {
                                     onMoveSelection(1)
                                     true
                                 }
 
-                                event.key == Key.DirectionUp ||
+                                event.key == Key.DirectionDown ||
                                     (event.key == Key.Tab && event.isShiftPressed) -> {
                                     onMoveSelection(-1)
                                     true
@@ -2276,8 +3136,10 @@ private fun SearchResults(
         LazyVerticalGrid(
             columns = GridCells.Fixed(columnCount),
             modifier = Modifier.fillMaxSize(),
+            reverseLayout = true,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(columnGap),
+            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
         ) {
             gridItemsIndexed(results, key = { _, result -> result.key }) { index, result ->
                 when (result) {
@@ -2868,6 +3730,32 @@ private fun LauncherSettingsPage(
             item(key = "settings_appearance_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_appearance))
             }
+            item(key = "home_mode") {
+                HomeModeSettingsPicker(
+                    selectedMode = settings.homeMode,
+                    onModeSelected = { homeMode ->
+                        onSettingsChanged(settings.copy(homeMode = homeMode))
+                    },
+                )
+            }
+            if (settings.homeMode == LauncherHomeMode.TERMINAL) {
+                item(key = "terminal_background") {
+                    TerminalBackgroundSettings(
+                        color = settings.terminalBackgroundColor,
+                        opacity = settings.terminalBackgroundOpacity,
+                        onColorChanged = { selectedColor ->
+                            onSettingsChanged(
+                                settings.copy(terminalBackgroundColor = selectedColor),
+                            )
+                        },
+                        onOpacityChanged = { selectedOpacity ->
+                            onSettingsChanged(
+                                settings.copy(terminalBackgroundOpacity = selectedOpacity),
+                            )
+                        },
+                    )
+                }
+            }
             item(key = "frosted_wallpaper") {
                 SettingsSwitchItem(
                     title = stringResource(R.string.settings_frosted_wallpaper),
@@ -2987,6 +3875,195 @@ private fun LauncherSettingsPage(
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun HomeModeSettingsPicker(
+    selectedMode: LauncherHomeMode,
+    onModeSelected: (LauncherHomeMode) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_home_mode),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_home_mode_summary),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            HomeModeSettingOption(
+                modifier = Modifier.weight(1f),
+                glyph = "○",
+                title = stringResource(R.string.home_mode_classic),
+                selected = selectedMode == LauncherHomeMode.CLASSIC,
+                onClick = { onModeSelected(LauncherHomeMode.CLASSIC) },
+            )
+            HomeModeSettingOption(
+                modifier = Modifier.weight(1f),
+                glyph = ">_",
+                title = stringResource(R.string.home_mode_terminal),
+                selected = selectedMode == LauncherHomeMode.TERMINAL,
+                onClick = { onModeSelected(LauncherHomeMode.TERMINAL) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeModeSettingOption(
+    modifier: Modifier,
+    glyph: String,
+    title: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(18.dp)
+    Surface(
+        modifier = modifier
+            .clip(shape)
+            .combinedClickable(onClick = onClick),
+        shape = shape,
+        color = if (selected) MaterialTheme.colorScheme.secondaryContainer
+        else MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+        else MaterialTheme.colorScheme.onSurfaceVariant,
+        border = BorderStroke(
+            1.dp,
+            if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.54f)
+            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                glyph,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                ),
+            )
+            Spacer(Modifier.width(9.dp))
+            Text(
+                title,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            if (selected) {
+                Icon(
+                    Icons.Outlined.Done,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TerminalBackgroundSettings(
+    color: Int,
+    opacity: Float,
+    onColorChanged: (Int) -> Unit,
+    onOpacityChanged: (Float) -> Unit,
+) {
+    val colorDescription = stringResource(R.string.settings_terminal_color)
+    var previewOpacity by remember(opacity) { mutableFloatStateOf(opacity) }
+    val palette = remember {
+        listOf(
+            0xFF000000.toInt(),
+            0xFF17191F.toInt(),
+            0xFF17233A.toInt(),
+            0xFF18332D.toInt(),
+            0xFF3A2028.toInt(),
+            0xFFF3EFE7.toInt(),
+        )
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 10.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_terminal_background),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_terminal_background_summary),
+            modifier = Modifier.padding(top = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Row(
+            modifier = Modifier.padding(top = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            palette.forEach { swatch ->
+                val selected = swatch == color
+                Surface(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .combinedClickable(onClick = { onColorChanged(swatch) })
+                        .semantics {
+                            contentDescription = colorDescription
+                            this.selected = selected
+                        },
+                    shape = CircleShape,
+                    color = Color(swatch),
+                    border = BorderStroke(
+                        if (selected) 3.dp else 1.dp,
+                        if (selected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.outlineVariant,
+                    ),
+                ) {}
+            }
+        }
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                stringResource(R.string.settings_terminal_opacity),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                "${(previewOpacity.coerceIn(0f, 1f) * 100).roundToInt()}%",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        Slider(
+            value = previewOpacity.coerceIn(0f, 1f),
+            onValueChange = { previewOpacity = it },
+            onValueChangeFinished = { onOpacityChanged(previewOpacity) },
+            valueRange = 0f..1f,
+            steps = 19,
+        )
+        Row(Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.settings_terminal_wallpaper),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                stringResource(R.string.settings_terminal_solid),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+            )
         }
     }
 }
@@ -3209,6 +4286,57 @@ private const val MAX_SEARCH_RESULTS = 50
 private const val WIDGET_HEIGHT_STEP_DP = 56
 private const val MIN_WIDGET_HEIGHT_DP = 112
 private const val MAX_WIDGET_HEIGHT_DP = 480
+private const val MAX_TERMINAL_RESULTS = 3
+private const val MAX_TERMINAL_QUERY_LENGTH = 96
+
+private enum class TerminalBuiltInAction {
+    OPEN_APPS,
+    OPEN_SETTINGS,
+    SWITCH_TO_CLASSIC,
+}
+
+private sealed interface TerminalSuggestion {
+    data class SearchResult(val result: LauncherSearchResult) : TerminalSuggestion
+
+    data class BuiltIn(
+        val command: String,
+        val title: String,
+        val subtitle: String,
+        val action: TerminalBuiltInAction,
+    ) : TerminalSuggestion
+}
+
+private fun terminalBuiltInSuggestions(
+    context: android.content.Context,
+    query: String,
+): List<TerminalSuggestion> {
+    val normalizedQuery = query.trim().lowercase()
+    return listOf(
+        TerminalSuggestion.BuiltIn(
+            command = ":apps",
+            title = context.getString(R.string.terminal_command_apps),
+            subtitle = context.getString(R.string.terminal_command_apps_summary),
+            action = TerminalBuiltInAction.OPEN_APPS,
+        ),
+        TerminalSuggestion.BuiltIn(
+            command = ":settings",
+            title = context.getString(R.string.terminal_command_settings),
+            subtitle = context.getString(R.string.terminal_command_settings_summary),
+            action = TerminalBuiltInAction.OPEN_SETTINGS,
+        ),
+        TerminalSuggestion.BuiltIn(
+            command = ":classic",
+            title = context.getString(R.string.terminal_command_classic),
+            subtitle = context.getString(R.string.terminal_command_classic_summary),
+            action = TerminalBuiltInAction.SWITCH_TO_CLASSIC,
+        ),
+    ).filter { suggestion ->
+        suggestion.command.startsWith(normalizedQuery) ||
+            suggestion.title.normalizedForSearch().startsWith(
+                normalizedQuery.removePrefix(":"),
+            )
+    }
+}
 
 private sealed interface LauncherSearchResult {
     val score: Int

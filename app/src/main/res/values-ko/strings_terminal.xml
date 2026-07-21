@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">휴대전화를 얼마나 조용하게 사용할지 선택하세요.</string>
+    <string name="onboarding_summary">두 모드 모두 비공개이며 배경화면을 중심으로 합니다. 차이는 앱을 열기 전에 얼마나 의도적으로 행동하는지입니다.</string>
+    <string name="onboarding_change_later">Barely 설정에서 언제든지 모드를 바꿀 수 있습니다.</string>
+    <string name="onboarding_continue">계속</string>
+    <string name="home_mode_classic">클래식</string>
+    <string name="home_mode_classic_summary">배경화면 홈에서 즐겨찾기와 앱으로 한 번에 스와이프합니다.</string>
+    <string name="home_mode_terminal">터미널</string>
+    <string name="home_mode_terminal_summary">이름이나 명령을 입력해 의도적으로 앱을 엽니다.</string>
+    <string name="terminal_prompt_hint">앱 또는 명령 입력</string>
+    <string name="terminal_app_result">앱</string>
+    <string name="terminal_all_apps">모든 앱</string>
+    <string name="terminal_command_apps">모든 앱 열기</string>
+    <string name="terminal_command_apps_summary">전체 앱 목록으로 이동하는 임시 출구</string>
+    <string name="terminal_command_settings">Barely 설정 열기</string>
+    <string name="terminal_command_settings_summary">홈 모드, 제스처, 개인정보 보호 및 선택 모듈 변경</string>
+    <string name="terminal_command_classic">클래식 홈으로 전환</string>
+    <string name="terminal_command_classic_summary">즐겨찾기와 앱 페이지가 있는 배경화면 홈으로 돌아갑니다</string>
+    <string name="settings_home_mode">홈 스타일</string>
+    <string name="settings_home_mode_summary">클래식 페이지 또는 의도적인 터미널 프롬프트를 선택하세요.</string>
+    <string name="settings_terminal_background">터미널 배경</string>
+    <string name="settings_terminal_background_summary">색상과 배경화면이 보이는 정도를 선택하세요. 모든 설정은 이 기기에만 저장됩니다.</string>
+    <string name="settings_terminal_color">터미널 배경색</string>
+    <string name="settings_terminal_opacity">불투명도</string>
+    <string name="settings_terminal_wallpaper">배경화면</string>
+    <string name="settings_terminal_solid">단색</string>
+</resources>

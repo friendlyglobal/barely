@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">Edit widgets</string>
     <string name="finish_editing_widgets">Done editing widgets</string>
-    <string name="widget_edit_hint">Drag the handle to reorder. Drag the corner to resize.</string>
+    <string name="widget_edit_hint">Drag the handle to reorder. Drag the right or bottom edge to resize.</string>
     <string name="move_widget_up">Move widget up</string>
     <string name="move_widget_down">Move widget down</string>
     <string name="move_widget">Move widget</string>

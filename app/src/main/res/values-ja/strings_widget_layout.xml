@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">ウィジェットを編集</string>
     <string name="finish_editing_widgets">ウィジェットの編集を完了</string>
-    <string name="widget_edit_hint">ハンドルをドラッグして並べ替え、角をドラッグしてサイズを変更します。</string>
+    <string name="widget_edit_hint">ハンドルをドラッグして並べ替え、右端または下端をドラッグしてサイズを変更します。</string>
     <string name="move_widget_up">ウィジェットを上へ移動</string>
     <string name="move_widget_down">ウィジェットを下へ移動</string>
     <string name="move_widget">ウィジェットを移動</string>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Wähle, wie ruhig dein Smartphone sein soll.</string>
+    <string name="onboarding_summary">Beide Modi bleiben privat und stellen das Hintergrundbild in den Mittelpunkt. Der Unterschied ist, wie bewusst du eine App öffnest.</string>
+    <string name="onboarding_change_later">Du kannst den Modus jederzeit in den Barely-Einstellungen wechseln.</string>
+    <string name="onboarding_continue">Weiter</string>
+    <string name="home_mode_classic">Klassisch</string>
+    <string name="home_mode_classic_summary">Hintergrund-Home mit Favoriten und Apps nur eine Wischbewegung entfernt.</string>
+    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal_summary">Öffne Apps bewusst, indem du ihren Namen oder einen Befehl eingibst.</string>
+    <string name="terminal_prompt_hint">App oder Befehl eingeben</string>
+    <string name="terminal_app_result">App</string>
+    <string name="terminal_all_apps">Alle Apps</string>
+    <string name="terminal_command_apps">Alle Apps öffnen</string>
+    <string name="terminal_command_apps_summary">Temporärer Zugang zur vollständigen App-Liste</string>
+    <string name="terminal_command_settings">Barely-Einstellungen öffnen</string>
+    <string name="terminal_command_settings_summary">Home-Modus, Gesten, Datenschutz und optionale Module ändern</string>
+    <string name="terminal_command_classic">Zum klassischen Home wechseln</string>
+    <string name="terminal_command_classic_summary">Zum Hintergrund-Home mit Favoriten- und Apps-Seiten zurückkehren</string>
+    <string name="settings_home_mode">Home-Stil</string>
+    <string name="settings_home_mode_summary">Wähle die klassischen Seiten oder die bewusste Terminal-Eingabe.</string>
+    <string name="settings_terminal_background">Terminal-Hintergrund</string>
+    <string name="settings_terminal_background_summary">Wähle eine Farbe und wie stark das Hintergrundbild sichtbar bleibt. Alles bleibt auf diesem Gerät.</string>
+    <string name="settings_terminal_color">Terminal-Hintergrundfarbe</string>
+    <string name="settings_terminal_opacity">Deckkraft</string>
+    <string name="settings_terminal_wallpaper">Hintergrundbild</string>
+    <string name="settings_terminal_solid">Volltonfarbe</string>
+</resources>

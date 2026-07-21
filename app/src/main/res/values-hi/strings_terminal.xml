@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">चुनें कि आपका फ़ोन कितना शांत रहे।</string>
+    <string name="onboarding_summary">दोनों मोड निजी हैं और वॉलपेपर को प्राथमिकता देते हैं। अंतर यह है कि ऐप खोलने से पहले कितना सोचकर कदम उठाना पड़ता है।</string>
+    <string name="onboarding_change_later">आप Barely की सेटिंग में कभी भी मोड बदल सकते हैं।</string>
+    <string name="onboarding_continue">जारी रखें</string>
+    <string name="home_mode_classic">क्लासिक</string>
+    <string name="home_mode_classic_summary">वॉलपेपर होम, जहाँ पसंदीदा और ऐप्स बस एक स्वाइप दूर हैं।</string>
+    <string name="home_mode_terminal">टर्मिनल</string>
+    <string name="home_mode_terminal_summary">नाम या कमांड लिखकर सोच-समझकर ऐप खोलें।</string>
+    <string name="terminal_prompt_hint">ऐप या कमांड लिखें</string>
+    <string name="terminal_app_result">ऐप</string>
+    <string name="terminal_all_apps">सभी ऐप्स</string>
+    <string name="terminal_command_apps">सभी ऐप्स खोलें</string>
+    <string name="terminal_command_apps_summary">पूरी ऐप सूची तक अस्थायी पहुँच</string>
+    <string name="terminal_command_settings">Barely की सेटिंग खोलें</string>
+    <string name="terminal_command_settings_summary">होम मोड, जेस्चर, गोपनीयता और वैकल्पिक मॉड्यूल बदलें</string>
+    <string name="terminal_command_classic">क्लासिक होम पर जाएँ</string>
+    <string name="terminal_command_classic_summary">पसंदीदा और ऐप्स पेज वाले वॉलपेपर होम पर लौटें</string>
+    <string name="settings_home_mode">होम शैली</string>
+    <string name="settings_home_mode_summary">क्लासिक पेज या टर्मिनल का उद्देश्यपूर्ण प्रॉम्प्ट चुनें।</string>
+    <string name="settings_terminal_background">टर्मिनल बैकग्राउंड</string>
+    <string name="settings_terminal_background_summary">रंग और वॉलपेपर की दिखाई देने वाली मात्रा चुनें। सब कुछ इसी डिवाइस पर रहता है।</string>
+    <string name="settings_terminal_color">टर्मिनल बैकग्राउंड का रंग</string>
+    <string name="settings_terminal_opacity">अपारदर्शिता</string>
+    <string name="settings_terminal_wallpaper">वॉलपेपर</string>
+    <string name="settings_terminal_solid">ठोस रंग</string>
+</resources>

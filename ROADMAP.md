@@ -60,16 +60,20 @@ Goal: make the first second of using the launcher faster while settling the app 
 - TalkBack, keyboard, mouse, phone, foldable, and DeX paths are covered.
 - The permanent application ID and signing strategy are decided before the release.
 
-## 0.6 — Arrange
+## 0.6 — Intentional Home
 
-Goal: offer organization without turning Home into a conventional icon grid.
+Goal: add a digital-declutter interface without compromising Classic Home or local privacy.
 
-- Allow published App Shortcuts to be pinned as favorites.
-- Add optional one-level favorite stacks; no nested folder hierarchy.
-- Resize and reorder widgets with clear bounds and a reset action.
-- Let users map a small set of Home gestures to search, notifications, Apps, Favorites, lock, or no action.
-- Export and import portable settings through Android's Storage Access Framework, using a user-selected file and no storage permission.
-- Exclude widget IDs, notification data, contacts, and Private Space state from exports.
+- [x] Offer Classic and Terminal choices during onboarding and in settings.
+- [x] Keep Terminal wallpaper-first with an optional local color and opacity layer.
+- [x] Reuse the local fuzzy index for apps, App Shortcuts, and commands instead of creating a second search engine.
+- [x] Limit Terminal to three suggestions and support touch, keyboard, mouse, and DeX.
+- [x] Provide explicit `:apps`, `:settings`, and `:classic` exits.
+- [x] Resize widgets live from their right and bottom edges without covering provider content.
+- [x] Pack compatible half-width widgets side by side after editing without introducing a free-form, fragile canvas.
+- [x] Keep Classic Search bottom-up and open its closest, best-ranked result from the phone keyboard action.
+- [x] Smooth Home/Search transitions and preserve the wallpaper when system blur is unavailable.
+- [ ] Complete TalkBack, RTL, reduced-motion, foldable, and physical Galaxy S24 Ultra review before release.
 
 ## 0.7 — Android Power
 
@@ -81,6 +85,10 @@ Goal: use public Android capabilities well instead of depending on Samsung-only 
 - Expand quick settings through public Android settings panels and intents.
 - Add a compact permission dashboard showing exactly which optional modules are active.
 - Improve notification dots and media controls without indexing or persisting notification content.
+- Allow published App Shortcuts to be pinned as favorites.
+- Add optional one-level favorite stacks; no nested folder hierarchy.
+- Let users map a small set of Home gestures to search, notifications, Apps, Favorites, lock, or no action.
+- Export and import portable settings through Android's Storage Access Framework, excluding widget IDs and sensitive profile/module state.
 
 ## 0.8 — Everywhere
 

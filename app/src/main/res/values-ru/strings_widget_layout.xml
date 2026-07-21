@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">Изменить виджеты</string>
     <string name="finish_editing_widgets">Завершить изменение виджетов</string>
-    <string name="widget_edit_hint">Перетащите маркер, чтобы изменить порядок. Потяните за угол, чтобы изменить размер.</string>
+    <string name="widget_edit_hint">Перетащите маркер, чтобы изменить порядок. Потяните за правый или нижний край, чтобы изменить размер.</string>
     <string name="move_widget_up">Переместить виджет вверх</string>
     <string name="move_widget_down">Переместить виджет вниз</string>
     <string name="move_widget">Переместить виджет</string>
