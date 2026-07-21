@@ -8,4 +8,8 @@
     <string name="move_widget">نقل الأداة</string>
     <string name="position_widget">تغيير موضع الأداة</string>
     <string name="resize_widget">تغيير حجم الأداة</string>
+    <string name="increase_widget_width">زيادة عرض الأداة</string>
+    <string name="decrease_widget_width">تقليل عرض الأداة</string>
+    <string name="increase_widget_height">زيادة ارتفاع الأداة</string>
+    <string name="decrease_widget_height">تقليل ارتفاع الأداة</string>
 </resources>

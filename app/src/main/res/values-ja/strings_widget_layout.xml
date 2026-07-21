@@ -8,4 +8,8 @@
     <string name="move_widget">ウィジェットを移動</string>
     <string name="position_widget">ウィジェットの位置を変更</string>
     <string name="resize_widget">ウィジェットのサイズを変更</string>
+    <string name="increase_widget_width">ウィジェットの幅を広げる</string>
+    <string name="decrease_widget_width">ウィジェットの幅を狭める</string>
+    <string name="increase_widget_height">ウィジェットの高さを増やす</string>
+    <string name="decrease_widget_height">ウィジェットの高さを減らす</string>
 </resources>

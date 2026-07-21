@@ -36,7 +36,7 @@ Goal: make the first second of using the launcher faster while settling the app 
 - [x] Group installed widgets by publisher instead of exposing a flat provider list.
 - [x] Search by app or widget name and display published previews with proportional grid sizes.
 - [x] Use Android 15 generated previews, Android 12 scalable preview layouts, static preview images, and icon fallbacks progressively.
-- [ ] Add accessible manual ordering and resize controls to the hosted Favorites stack.
+- [x] Add accessible manual ordering and resize controls to the hosted Favorites stack.
 
 ### Lightweight organization
 
@@ -75,7 +75,20 @@ Goal: add a digital-declutter interface without compromising Classic Home or loc
 - [x] Smooth Home/Search transitions and preserve the wallpaper when system blur is unavailable.
 - [ ] Complete TalkBack, RTL, reduced-motion, foldable, and physical Galaxy S24 Ultra review before release.
 
-## 0.7 — Android Power
+## 0.7 — Visual Coherence
+
+Goal: make every existing path feel like one deliberate, daily-usable launcher before adding another broad feature set.
+
+- [x] Replace wallpaper-derived theme shifts with a stable neutral palette, typography hierarchy, shape scale, and motion language.
+- [x] Keep wallpaper context on content pages with tuned blur-aware scrims instead of disconnected gray or black backgrounds.
+- [x] Refine Classic Home, Terminal, Favorites, Apps, Search, Settings, onboarding, widget catalog/editing, and long app-action lists.
+- [x] Add a terminal-style local history drawer and learned query-to-app/shortcut ranking without contacts, commands, or AI prompts.
+- [x] Make Terminal top actions float by default, offer optional contrast, and share an adjustable 0–32 dp radius with the prompt.
+- [x] Provide local and full Terminal appearance resets with a restrained, squarer 12 dp default.
+- [x] Constrain readable content on foldables and DeX, preserve bottom-up one-handed Search, and expose selected states to accessibility.
+- [ ] Complete the final Galaxy S24 Ultra, TalkBack, keyboard/mouse, and reduced-motion acceptance pass before publishing 0.7.
+
+## 0.8 — Android Power
 
 Goal: use public Android capabilities well instead of depending on Samsung-only private APIs.
 
@@ -90,26 +103,19 @@ Goal: use public Android capabilities well instead of depending on Samsung-only 
 - Let users map a small set of Home gestures to search, notifications, Apps, Favorites, lock, or no action.
 - Export and import portable settings through Android's Storage Access Framework, excluding widget IDs and sensitive profile/module state.
 
-## 0.8 — Everywhere
+## 0.9 — Everywhere and Trust
 
-Goal: make the same minimal interaction model excellent on every Android form factor.
+Goal: finish form-factor coverage, stop adding broad features, and produce a trustworthy release candidate.
 
 - Complete keyboard focus order, shortcuts help, mouse hover, context actions, and drag behavior for DeX.
 - Tune one-, two-, and three-pane layouts for foldables, tablets, landscape, and external displays.
 - Respect hinges, cutouts, large fonts, RTL, high contrast, reduced motion, and touch-target guidance.
 - Add performance benchmarks for cold start, app discovery, shortcut refresh, search latency, and memory.
-- Keep app and shortcut indexes in memory and update them incrementally through platform callbacks.
-
-## 0.9 — Trust
-
-Goal: stop adding broad features and prepare a release candidate.
-
-- Complete a permissions, privacy, threat-model, and dependency review.
-- Test upgrades, profile changes, revoked permissions, locked profiles, missing apps, and corrupted preferences.
+- Complete permissions, privacy, threat-model, dependency, upgrade, profile, revoked-access, and corrupted-preference reviews.
 - Add migration tests for every persisted preference version.
-- Run UI tests across the supported Android versions and representative phone, foldable, tablet, and DeX sizes.
+- Run UI tests across supported Android versions and representative phone, foldable, tablet, and DeX sizes.
 - Finish accessibility review and human review of all thirteen languages.
-- Produce reproducible signed APK and AAB artifacts with checksums and recovery documentation for the signing key.
+- Produce reproducible signed APK and AAB artifacts with checksums and signing-key recovery documentation.
 - Establish cold-start, search-latency, memory, and crash-free release gates.
 
 ## 1.0 — Stable

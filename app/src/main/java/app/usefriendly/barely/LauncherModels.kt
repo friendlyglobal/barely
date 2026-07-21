@@ -16,10 +16,19 @@ enum class LauncherHomeMode {
     TERMINAL,
 }
 
+internal object BarelyDefaults {
+    const val TERMINAL_BACKGROUND_COLOR: Int = -0x1000000
+    const val TERMINAL_BACKGROUND_OPACITY: Float = 0.42f
+    const val TERMINAL_TOP_ACTION_BACKDROP: Boolean = false
+    const val TERMINAL_CORNER_RADIUS: Int = 12
+}
+
 data class LauncherSettings(
     val homeMode: LauncherHomeMode = LauncherHomeMode.CLASSIC,
-    val terminalBackgroundColor: Int = 0xFF000000.toInt(),
-    val terminalBackgroundOpacity: Float = 0.42f,
+    val terminalBackgroundColor: Int = BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
+    val terminalBackgroundOpacity: Float = BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
+    val terminalTopActionBackdrop: Boolean = BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
+    val terminalCornerRadius: Int = BarelyDefaults.TERMINAL_CORNER_RADIUS,
     val doubleTapToLock: Boolean = true,
     val swipeDownForNotifications: Boolean = true,
     val frostedWallpaper: Boolean = true,
@@ -27,6 +36,13 @@ data class LauncherSettings(
     val mediaControls: Boolean = false,
     val localSuggestions: Boolean = true,
     val showSearchHint: Boolean = true,
+)
+
+data class LauncherSearchLearning(
+    val query: String,
+    val targetKey: String,
+    val selectionCount: Int,
+    val lastSelectedAt: Long,
 )
 
 enum class LauncherProfileType {
@@ -55,6 +71,7 @@ data class LauncherApp(
     val icon: Bitmap?,
 ) {
     val key: String = "${component.flattenToString()}@$userSerial"
+    val searchTargetKey: String = "app:$key"
     val isPrivate: Boolean = profileType == LauncherProfileType.PRIVATE
 }
 
@@ -64,6 +81,7 @@ data class LauncherShortcut(
 ) {
     val label: String = info.shortLabel.toString()
     val description: String? = info.longLabel?.toString()
+    val searchTargetKey: String = "shortcut:${owner.key}:${info.id}"
 }
 
 data class LauncherSnapshot(

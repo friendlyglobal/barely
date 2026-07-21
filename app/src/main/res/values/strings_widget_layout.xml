@@ -8,4 +8,8 @@
     <string name="move_widget">Move widget</string>
     <string name="position_widget">Change widget position</string>
     <string name="resize_widget">Resize widget</string>
+    <string name="increase_widget_width">Increase widget width</string>
+    <string name="decrease_widget_width">Decrease widget width</string>
+    <string name="increase_widget_height">Increase widget height</string>
+    <string name="decrease_widget_height">Decrease widget height</string>
 </resources>

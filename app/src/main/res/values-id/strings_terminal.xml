@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">Latar Terminal</string>
     <string name="settings_terminal_background_summary">Pilih warna dan seberapa banyak wallpaper terlihat. Semuanya tetap di perangkat ini.</string>
     <string name="settings_terminal_color">Warna latar Terminal</string>
+    <string name="settings_terminal_color_option">Warna latar %1$d dari %2$d</string>
     <string name="settings_terminal_opacity">Opasitas</string>
     <string name="settings_terminal_wallpaper">Wallpaper</string>
     <string name="settings_terminal_solid">Warna solid</string>
+    <string name="settings_terminal_action_backdrop">Kontras tindakan atas</string>
+    <string name="settings_terminal_action_backdrop_summary">Tambahkan kapsul halus di belakang :apps dan :settings untuk wallpaper yang ramai.</string>
+    <string name="settings_terminal_corner_radius">Radius pencarian &amp; perintah</string>
+    <string name="settings_terminal_reset">Atur ulang</string>
+    <string name="terminal_history_empty">Aplikasi yang dibuka dari pencarian Terminal akan muncul di sini.</string>
 </resources>

@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">Terminal-Hintergrund</string>
     <string name="settings_terminal_background_summary">Wähle eine Farbe und wie stark das Hintergrundbild sichtbar bleibt. Alles bleibt auf diesem Gerät.</string>
     <string name="settings_terminal_color">Terminal-Hintergrundfarbe</string>
+    <string name="settings_terminal_color_option">Hintergrundfarbe %1$d von %2$d</string>
     <string name="settings_terminal_opacity">Deckkraft</string>
     <string name="settings_terminal_wallpaper">Hintergrundbild</string>
     <string name="settings_terminal_solid">Volltonfarbe</string>
+    <string name="settings_terminal_action_backdrop">Kontrast der oberen Aktionen</string>
+    <string name="settings_terminal_action_backdrop_summary">Fügt hinter :apps und :settings eine dezente Kapsel für unruhige Hintergründe ein.</string>
+    <string name="settings_terminal_corner_radius">Radius für Suche und Befehle</string>
+    <string name="settings_terminal_reset">Zurücksetzen</string>
+    <string name="terminal_history_empty">Apps, die über die Terminal-Suche geöffnet wurden, erscheinen hier.</string>
 </resources>

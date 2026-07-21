@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">Фон терминала</string>
     <string name="settings_terminal_background_summary">Выберите цвет и степень видимости обоев. Все настройки хранятся только на устройстве.</string>
     <string name="settings_terminal_color">Цвет фона терминала</string>
+    <string name="settings_terminal_color_option">Цвет фона %1$d из %2$d</string>
     <string name="settings_terminal_opacity">Непрозрачность</string>
     <string name="settings_terminal_wallpaper">Обои</string>
     <string name="settings_terminal_solid">Сплошной цвет</string>
+    <string name="settings_terminal_action_backdrop">Контраст верхних действий</string>
+    <string name="settings_terminal_action_backdrop_summary">Добавляет ненавязчивую капсулу за :apps и :settings для пёстрых обоев.</string>
+    <string name="settings_terminal_corner_radius">Радиус поиска и команд</string>
+    <string name="settings_terminal_reset">Сбросить</string>
+    <string name="terminal_history_empty">Здесь появятся приложения, открытые через поиск в терминале.</string>
 </resources>

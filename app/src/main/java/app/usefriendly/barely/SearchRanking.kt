@@ -2,6 +2,8 @@ package app.usefriendly.barely
 
 import java.text.Normalizer
 import java.util.Locale
+import kotlin.math.ln
+import kotlin.math.roundToInt
 
 internal data class SearchTerm(
     val text: String,
@@ -22,6 +24,25 @@ internal fun String.normalizedForSearch(): String = Normalizer
     .replace("\\p{Mn}+".toRegex(), "")
     .lowercase(Locale.getDefault())
     .trim()
+
+internal fun learnedSearchBoost(
+    normalizedQuery: String,
+    targetKey: String,
+    learning: List<LauncherSearchLearning>,
+    now: Long = System.currentTimeMillis(),
+): Int {
+    val match = learning.firstOrNull {
+        it.query == normalizedQuery && it.targetKey == targetKey
+    } ?: return 0
+    val ageHours = ((now - match.lastSelectedAt).coerceAtLeast(0L) / 3_600_000.0)
+    val recencyBoost = when {
+        ageHours < 24 -> 24
+        ageHours < 168 -> 16
+        ageHours < 720 -> 8
+        else -> 0
+    }
+    return 48 + (ln(match.selectionCount + 1.0) * 12).roundToInt() + recencyBoost
+}
 
 private fun String.matchScore(normalizedQuery: String, allowFuzzy: Boolean): Int? {
     val normalizedText = normalizedForSearch()

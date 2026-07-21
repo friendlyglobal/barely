@@ -8,4 +8,8 @@
     <string name="move_widget">Переместить виджет</string>
     <string name="position_widget">Изменить положение виджета</string>
     <string name="resize_widget">Изменить размер виджета</string>
+    <string name="increase_widget_width">Увеличить ширину виджета</string>
+    <string name="decrease_widget_width">Уменьшить ширину виджета</string>
+    <string name="increase_widget_height">Увеличить высоту виджета</string>
+    <string name="decrease_widget_height">Уменьшить высоту виджета</string>
 </resources>

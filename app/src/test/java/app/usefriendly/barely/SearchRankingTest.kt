@@ -60,4 +60,38 @@ class SearchRankingTest {
             ),
         )
     }
+
+    @Test
+    fun successfulAppSelectionBoostsOnlyTheSameQueryAndApp() {
+        val now = 2_000_000_000L
+        val learning = listOf(
+            LauncherSearchLearning(
+                query = "wa",
+                targetKey = "app:whatsapp",
+                selectionCount = 3,
+                lastSelectedAt = now,
+            ),
+        )
+
+        assertTrue(learnedSearchBoost("wa", "app:whatsapp", learning, now) > 0)
+        assertEquals(0, learnedSearchBoost("wh", "app:whatsapp", learning, now))
+        assertEquals(0, learnedSearchBoost("wa", "app:whatsapp-business", learning, now))
+    }
+
+    @Test
+    fun repeatedRecentSelectionsReceiveTheStrongestBoost() {
+        val now = 3_000_000_000L
+        val recentRepeated = LauncherSearchLearning("ca", "app:camera", 8, now)
+        val oldSingle = LauncherSearchLearning(
+            "ca",
+            "app:calendar",
+            1,
+            now - (45L * 24 * 3_600_000),
+        )
+
+        assertTrue(
+            learnedSearchBoost("ca", "app:camera", listOf(recentRepeated), now) >
+                learnedSearchBoost("ca", "app:calendar", listOf(oldSingle), now),
+        )
+    }
 }

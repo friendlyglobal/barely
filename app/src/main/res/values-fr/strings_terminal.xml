@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">Arrière-plan du Terminal</string>
     <string name="settings_terminal_background_summary">Choisissez une teinte et la visibilité du fond d’écran. Tout reste sur cet appareil.</string>
     <string name="settings_terminal_color">Couleur d’arrière-plan du Terminal</string>
+    <string name="settings_terminal_color_option">Couleur d’arrière-plan %1$d sur %2$d</string>
     <string name="settings_terminal_opacity">Opacité</string>
     <string name="settings_terminal_wallpaper">Fond d’écran</string>
     <string name="settings_terminal_solid">Couleur unie</string>
+    <string name="settings_terminal_action_backdrop">Contraste des actions supérieures</string>
+    <string name="settings_terminal_action_backdrop_summary">Ajoutez une capsule discrète derrière :apps et :settings sur les fonds chargés.</string>
+    <string name="settings_terminal_corner_radius">Rayon de la recherche et des commandes</string>
+    <string name="settings_terminal_reset">Réinitialiser</string>
+    <string name="terminal_history_empty">Les applications ouvertes depuis les recherches du Terminal apparaîtront ici.</string>
 </resources>

@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">ターミナルの背景</string>
     <string name="settings_terminal_background_summary">色と壁紙の見え方を選びます。設定はすべてこの端末内に保存されます。</string>
     <string name="settings_terminal_color">ターミナルの背景色</string>
+    <string name="settings_terminal_color_option">背景色 %1$d / %2$d</string>
     <string name="settings_terminal_opacity">不透明度</string>
     <string name="settings_terminal_wallpaper">壁紙</string>
     <string name="settings_terminal_solid">単色</string>
+    <string name="settings_terminal_action_backdrop">上部アクションのコントラスト</string>
+    <string name="settings_terminal_action_backdrop_summary">見づらい壁紙では :apps と :settings の背後に控えめなカプセルを表示します。</string>
+    <string name="settings_terminal_corner_radius">検索とコマンドの角丸</string>
+    <string name="settings_terminal_reset">リセット</string>
+    <string name="terminal_history_empty">ターミナル検索から開いたアプリがここに表示されます。</string>
 </resources>

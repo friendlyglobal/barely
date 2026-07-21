@@ -8,4 +8,8 @@
     <string name="move_widget">위젯 이동</string>
     <string name="position_widget">위젯 위치 변경</string>
     <string name="resize_widget">위젯 크기 조절</string>
+    <string name="increase_widget_width">위젯 너비 늘리기</string>
+    <string name="decrease_widget_width">위젯 너비 줄이기</string>
+    <string name="increase_widget_height">위젯 높이 늘리기</string>
+    <string name="decrease_widget_height">위젯 높이 줄이기</string>
 </resources>
