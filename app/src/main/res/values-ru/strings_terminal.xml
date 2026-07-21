@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Продолжить</string>
     <string name="home_mode_classic">Классический</string>
     <string name="home_mode_classic_summary">Главный экран с обоями, Избранным и Приложениями в одном свайпе.</string>
-    <string name="home_mode_terminal">Терминал</string>
+    <string name="home_mode_terminal">Командный режим</string>
     <string name="home_mode_terminal_summary">Открывайте приложения осознанно, вводя название или команду.</string>
     <string name="terminal_prompt_hint">введите приложение или команду</string>
     <string name="terminal_app_result">Приложение</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">Переключиться на классический экран</string>
     <string name="terminal_command_classic_summary">Вернуться к обоям со страницами Избранного и Приложений</string>
     <string name="settings_home_mode">Стиль главного экрана</string>
-    <string name="settings_home_mode_summary">Выберите классические страницы или осознанную строку Терминала.</string>
-    <string name="settings_terminal_background">Фон терминала</string>
+    <string name="settings_home_mode_summary">Выберите классические страницы или осознанную строку Командного режима.</string>
+    <string name="settings_terminal_background">Фон Командного режима</string>
     <string name="settings_terminal_background_summary">Выберите цвет и степень видимости обоев. Все настройки хранятся только на устройстве.</string>
-    <string name="settings_terminal_color">Цвет фона терминала</string>
+    <string name="settings_terminal_color">Цвет фона Командного режима</string>
     <string name="settings_terminal_color_option">Цвет фона %1$d из %2$d</string>
     <string name="settings_terminal_opacity">Непрозрачность</string>
     <string name="settings_terminal_wallpaper">Обои</string>
     <string name="settings_terminal_solid">Сплошной цвет</string>
     <string name="settings_terminal_action_backdrop">Контраст верхних действий</string>
-    <string name="settings_terminal_action_backdrop_summary">Добавляет ненавязчивую капсулу за :apps и :settings для пёстрых обоев.</string>
+    <string name="settings_terminal_action_backdrop_summary">Добавляет ненавязчивую капсулу за значками приложений и настроек для пёстрых обоев.</string>
+    <string name="settings_terminal_aesthetic">Оформление терминала</string>
+    <string name="settings_terminal_aesthetic_summary">Показывает приглашения &gt;, стрелки и моноширинный текст в Командном режиме. Команды работают в любом случае.</string>
     <string name="settings_terminal_corner_radius">Радиус поиска и команд</string>
     <string name="settings_terminal_reset">Сбросить</string>
-    <string name="terminal_history_empty">Здесь появятся приложения, открытые через поиск в терминале.</string>
+    <string name="terminal_history_empty">Здесь появятся приложения, открытые через поиск в Командном режиме.</string>
 </resources>

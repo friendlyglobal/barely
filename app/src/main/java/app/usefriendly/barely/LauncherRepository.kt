@@ -232,7 +232,7 @@ class LauncherRepository(
     fun launcherSettings(): LauncherSettings = LauncherSettings(
         homeMode = preferences.getString(HOME_MODE_KEY, null)
             ?.let { value -> runCatching { LauncherHomeMode.valueOf(value) }.getOrNull() }
-            ?: LauncherHomeMode.CLASSIC,
+            ?: LauncherHomeMode.TERMINAL,
         terminalBackgroundColor = preferences.getInt(
             TERMINAL_BACKGROUND_COLOR_KEY,
             BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
@@ -250,6 +250,10 @@ class LauncherRepository(
             BarelyDefaults.TERMINAL_CORNER_RADIUS,
         )
             .coerceIn(MIN_TERMINAL_CORNER_RADIUS, MAX_TERMINAL_CORNER_RADIUS),
+        terminalAesthetic = preferences.getBoolean(
+            TERMINAL_AESTHETIC_KEY,
+            BarelyDefaults.TERMINAL_AESTHETIC,
+        ),
         doubleTapToLock = preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true),
         swipeDownForNotifications = preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true),
         frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
@@ -275,6 +279,7 @@ class LauncherRepository(
                     MAX_TERMINAL_CORNER_RADIUS,
                 ),
             )
+            putBoolean(TERMINAL_AESTHETIC_KEY, settings.terminalAesthetic)
             putBoolean(DOUBLE_TAP_LOCK_KEY, settings.doubleTapToLock)
             putBoolean(SWIPE_NOTIFICATIONS_KEY, settings.swipeDownForNotifications)
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
@@ -471,6 +476,7 @@ class LauncherRepository(
         const val TERMINAL_BACKGROUND_OPACITY_KEY = "terminal_background_opacity"
         const val TERMINAL_TOP_ACTION_BACKDROP_KEY = "terminal_top_action_backdrop"
         const val TERMINAL_CORNER_RADIUS_KEY = "terminal_corner_radius"
+        const val TERMINAL_AESTHETIC_KEY = "terminal_aesthetic"
         const val PRIVATE_SPACE_EXPANDED_KEY = "private_space_expanded"
         const val DOUBLE_TAP_LOCK_KEY = "double_tap_lock_enabled"
         const val SWIPE_NOTIFICATIONS_KEY = "swipe_notifications_enabled"

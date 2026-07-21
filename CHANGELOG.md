@@ -2,6 +2,17 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.7.1 — Unreleased
+
+### Changed
+
+- Renamed the user-facing Terminal style to Command while preserving the internal preference identifier for seamless upgrades.
+- Made Command the default Home style for new installations while preserving the saved choice of existing users.
+- Made Command visually clean by default and moved prompts, arrows, and monospace typography behind an optional Terminal aesthetics switch.
+- Replaced Command's textual top actions with compact, accessible app-grid and settings icons.
+- Applied the configured Command corner radius to the All apps search entry and the full Search input.
+- Reworked Command history into a finger-tracked vertical transition that snaps open or closed from drag distance and velocity.
+
 ## 0.7 — 2026-07-21
 
 ### Added

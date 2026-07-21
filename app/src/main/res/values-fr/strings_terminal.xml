@@ -6,7 +6,7 @@
     <string name="onboarding_continue">Continuer</string>
     <string name="home_mode_classic">Classique</string>
     <string name="home_mode_classic_summary">Accueil avec fond d’écran, Favoris et Apps accessibles d’un geste.</string>
-    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal">Mode Commande</string>
     <string name="home_mode_terminal_summary">Ouvrez les apps volontairement en saisissant leur nom ou une commande.</string>
     <string name="terminal_prompt_hint">saisissez une app ou une commande</string>
     <string name="terminal_app_result">App</string>
@@ -18,17 +18,19 @@
     <string name="terminal_command_classic">Passer à l’accueil classique</string>
     <string name="terminal_command_classic_summary">Revenez au fond d’écran avec les pages Favoris et Apps</string>
     <string name="settings_home_mode">Style d’accueil</string>
-    <string name="settings_home_mode_summary">Choisissez les pages classiques ou l’invite volontaire du Terminal.</string>
-    <string name="settings_terminal_background">Arrière-plan du Terminal</string>
+    <string name="settings_home_mode_summary">Choisissez les pages classiques ou l’invite volontaire du Mode Commande.</string>
+    <string name="settings_terminal_background">Arrière-plan du Mode Commande</string>
     <string name="settings_terminal_background_summary">Choisissez une teinte et la visibilité du fond d’écran. Tout reste sur cet appareil.</string>
-    <string name="settings_terminal_color">Couleur d’arrière-plan du Terminal</string>
+    <string name="settings_terminal_color">Couleur d’arrière-plan du Mode Commande</string>
     <string name="settings_terminal_color_option">Couleur d’arrière-plan %1$d sur %2$d</string>
     <string name="settings_terminal_opacity">Opacité</string>
     <string name="settings_terminal_wallpaper">Fond d’écran</string>
     <string name="settings_terminal_solid">Couleur unie</string>
     <string name="settings_terminal_action_backdrop">Contraste des actions supérieures</string>
-    <string name="settings_terminal_action_backdrop_summary">Ajoutez une capsule discrète derrière :apps et :settings sur les fonds chargés.</string>
+    <string name="settings_terminal_action_backdrop_summary">Ajoutez une capsule discrète derrière les icônes des apps et des réglages sur les fonds chargés.</string>
+    <string name="settings_terminal_aesthetic">Esthétique terminal</string>
+    <string name="settings_terminal_aesthetic_summary">Affiche les invites &gt;, les flèches et le texte à chasse fixe dans le Mode Commande. Les commandes fonctionnent dans les deux cas.</string>
     <string name="settings_terminal_corner_radius">Rayon de la recherche et des commandes</string>
     <string name="settings_terminal_reset">Réinitialiser</string>
-    <string name="terminal_history_empty">Les applications ouvertes depuis les recherches du Terminal apparaîtront ici.</string>
+    <string name="terminal_history_empty">Les applications ouvertes depuis les recherches du Mode Commande apparaîtront ici.</string>
 </resources>
