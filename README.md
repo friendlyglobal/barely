@@ -17,6 +17,10 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
 - Opens full-screen search with an upward swipe from the center page.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
+- Combines apps and shortcuts into one relevance-ranked list without flooding app-name searches with unrelated conversations.
+- Tolerates small typos, transposed characters, initials, word prefixes, case, and accents with an on-device fuzzy matcher.
+- Provides a one-handed search entry point at the bottom of the all-apps page.
+- Launches the best result when the keyboard Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
 - Shows published shortcuts, favorite actions, app info, and uninstall from a long press.
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
@@ -114,8 +118,9 @@ To return to Samsung’s launcher, select **One UI Home** from the same system p
 4. Tap an app name to launch it.
 5. Long-press an app and verify its shortcuts, favorite action, app info, and uninstall action.
 6. Add a favorite and confirm that it persists after restarting Launchly.
-7. Search for a shortcut published by an installed app and launch it directly.
-8. Change the Android system language and reopen Launchly to verify automatic localization.
+7. Search for a shortcut published by an installed app and confirm that a direct label match appears above apps.
+8. Press the keyboard Search action and confirm that the top result opens directly.
+9. Change the Android system language and reopen Launchly to verify automatic localization.
 
 ## Privacy
 
@@ -126,7 +131,7 @@ Launchly does not request internet access, collect analytics, or maintain a data
 - No folders, widgets, cloud backup, or drag-to-reorder support.
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
-- Release `0.1` is debug-signed and intended for development testing.
+- Release `0.2` is debug-signed and intended for development testing.
 
 ## Official Android references
 
