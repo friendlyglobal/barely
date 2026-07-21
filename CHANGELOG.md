@@ -2,6 +2,25 @@
 
 All notable changes to Launchly are documented in this file.
 
+## 0.4 — 2026-07-21
+
+### Added
+
+- Added an Android 15 Private Space container with lock, unlock, collapse, profile callbacks, and correct exclusion of locked private apps and shortcuts from search.
+- Added a fully local command palette for calculations, common unit conversions, and Android quick settings.
+- Added optional in-memory contact search, requested only when the user explicitly enables it.
+- Added explicit handoff of questions to installed ChatGPT, Gemini, or Claude apps without an API key, Launchly server, or internet permission.
+- Added full keyboard navigation for DeX, tablets, foldables, and external keyboards, including page navigation, search selection, Enter, Escape, and Ctrl+K.
+- Added right-click app actions for mouse and trackpad use.
+- Added optional notification dots and active-media controls backed by a disabled-by-default `NotificationListenerService`.
+- Added native cross-window wallpaper blur on Android 12 and newer for Favorites, Apps, and Search.
+
+### Changed
+
+- Replaced flat gray page overlays with a restrained translucent gradient and a blur-aware fallback for devices, battery modes, or accessibility configurations that disable window blur.
+- Kept the center Home page completely clear while making content pages easier to read over detailed wallpapers.
+- Repositioned and simplified search so its input sits directly above the keyboard without a heavy outline.
+
 ## 0.3 — 2026-07-21
 
 ### Added
