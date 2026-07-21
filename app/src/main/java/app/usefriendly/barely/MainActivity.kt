@@ -64,6 +64,9 @@ class MainActivity : ComponentActivity() {
     private var widgetProviders by androidx.compose.runtime.mutableStateOf(emptyList<AppWidgetProviderInfo>())
     private var recommendedAppKeys by androidx.compose.runtime.mutableStateOf(emptyList<String>())
     private var recentAppSearches by androidx.compose.runtime.mutableStateOf(emptyList<String>())
+    private var launcherSearchLearning by androidx.compose.runtime.mutableStateOf(
+        emptyList<LauncherSearchLearning>(),
+    )
     private var privateSpaceExpanded by androidx.compose.runtime.mutableStateOf(true)
     private var contacts by androidx.compose.runtime.mutableStateOf(emptyList<LauncherContact>())
     private var hasContactsPermission by androidx.compose.runtime.mutableStateOf(false)
@@ -196,6 +199,7 @@ class MainActivity : ComponentActivity() {
                     },
                     recommendedAppKeys = recommendedAppKeys,
                     recentAppSearches = recentAppSearches,
+                    launcherSearchLearning = launcherSearchLearning,
                     onLaunchApp = { app ->
                         perform(getString(R.string.error_open_app, app.label)) {
                             repository.launch(app)
@@ -245,8 +249,22 @@ class MainActivity : ComponentActivity() {
                         runAccessibilityAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
                     },
                     onSettingsChanged = ::updateLauncherSettings,
-                    onAppSearchCommitted = { query ->
+                    onAppSearchCommitted = { query, app ->
                         repository.recordRecentAppSearch(query)
+                        repository.recordSearchSelection(
+                            query = query,
+                            targetKey = app.searchTargetKey,
+                            isPrivate = app.isPrivate,
+                        )
+                        refreshLocalSuggestions()
+                    },
+                    onShortcutSearchCommitted = { query, shortcut ->
+                        repository.recordRecentAppSearch(query)
+                        repository.recordSearchSelection(
+                            query = query,
+                            targetKey = shortcut.searchTargetKey,
+                            isPrivate = shortcut.owner.isPrivate,
+                        )
                         refreshLocalSuggestions()
                     },
                     onClearLocalHistory = {
@@ -467,12 +485,14 @@ class MainActivity : ComponentActivity() {
     private fun updateLauncherSettings(settings: LauncherSettings) {
         repository.setLauncherSettings(settings)
         launcherSettings = settings
+        refreshLocalSuggestions()
         applyBackdrop(requestedBackdrop)
     }
 
     private fun refreshLocalSuggestions() {
         recommendedAppKeys = repository.recommendedAppKeys()
         recentAppSearches = repository.recentAppSearches()
+        launcherSearchLearning = repository.launcherSearchLearning()
     }
 
     private fun openAccessibilitySettings() {
@@ -523,8 +543,8 @@ class MainActivity : ComponentActivity() {
             0
         } else when (backdrop) {
             LauncherBackdrop.CLEAR -> 0
-            LauncherBackdrop.FROSTED -> 34
-            LauncherBackdrop.SEARCH -> 48
+            LauncherBackdrop.FROSTED -> BarelyVisualTokens.frostedBlurRadiusDp
+            LauncherBackdrop.SEARCH -> BarelyVisualTokens.searchBlurRadiusDp
         }
         val attributes = window.attributes
         attributes.setBlurBehindRadius(

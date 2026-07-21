@@ -8,4 +8,8 @@
     <string name="move_widget">Sposta widget</string>
     <string name="position_widget">Cambia posizione del widget</string>
     <string name="resize_widget">Ridimensiona widget</string>
+    <string name="increase_widget_width">Aumenta larghezza widget</string>
+    <string name="decrease_widget_width">Riduci larghezza widget</string>
+    <string name="increase_widget_height">Aumenta altezza widget</string>
+    <string name="decrease_widget_height">Riduci altezza widget</string>
 </resources>

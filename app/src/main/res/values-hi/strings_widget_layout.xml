@@ -8,4 +8,8 @@
     <string name="move_widget">विजेट ले जाएँ</string>
     <string name="position_widget">विजेट की स्थिति बदलें</string>
     <string name="resize_widget">विजेट का आकार बदलें</string>
+    <string name="increase_widget_width">विजेट की चौड़ाई बढ़ाएँ</string>
+    <string name="decrease_widget_width">विजेट की चौड़ाई घटाएँ</string>
+    <string name="increase_widget_height">विजेट की ऊँचाई बढ़ाएँ</string>
+    <string name="decrease_widget_height">विजेट की ऊँचाई घटाएँ</string>
 </resources>

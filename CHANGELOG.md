@@ -2,6 +2,34 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.7 — Unreleased
+
+### Added
+
+- Added a swipe-up Terminal history drawer with tappable recent app results, pull-down dismissal from the list edge, and local query-to-app learning.
+- Added `:history` and `:clearhistory` Terminal commands backed by the same local history controls as Settings.
+- Added a shared 0–32 dp Terminal corner-radius control for the prompt and optional top-action capsule, with a squarer 12 dp default plus local radius/opacity resets and a complete appearance reset.
+- Added localized TalkBack actions for increasing or decreasing widget width and height without relying on edge-drag gestures.
+
+### Changed
+
+- Replaced Android wallpaper-derived Dynamic Color with a stable neutral Barely palette and consistent shape scale.
+- Moved Terminal Apps and Settings actions to floating top-right commands, with an optional contrast capsule for busy wallpapers.
+- Refined app actions into compact grouped rows with a calmer, scrollable shortcuts section.
+- Strengthened wallpaper-aware reading scrims without replacing the wallpaper, and constrained Search/Terminal controls to a comfortable width on foldables and DeX.
+- Made Search fully fade the previous Classic page during entry so app names never compete with results or the bottom input.
+- Consolidated spacing, shape, opacity, elevation, blur, and motion values into a shared Barely token system, and restored 48 dp touch targets on compact controls.
+
+### Privacy
+
+- Search learning stores only successful app or published-shortcut queries and identifiers locally so the chosen result can be reopened. Contacts, commands, and AI questions are never learned, and Settings or `:clearhistory` removes the complete local log.
+
+### Fixed
+
+- Kept the Terminal prompt within the 600 dp readable-width limit on unfolded and DeX windows.
+- Prevented Terminal Home commands and its prompt from remaining interactive or visually leaking beneath the expanded All apps surface.
+- Preserved literal `:command`, `>_`, and `>` syntax in RTL locales while leaving localized content in the system text direction.
+
 ## 0.6 — 2026-07-21
 
 ### Added

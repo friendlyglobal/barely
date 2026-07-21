@@ -8,4 +8,8 @@
     <string name="move_widget">移动小组件</string>
     <string name="position_widget">更改小组件位置</string>
     <string name="resize_widget">调整小组件大小</string>
+    <string name="increase_widget_width">增加小组件宽度</string>
+    <string name="decrease_widget_width">减小小组件宽度</string>
+    <string name="increase_widget_height">增加小组件高度</string>
+    <string name="decrease_widget_height">减小小组件高度</string>
 </resources>

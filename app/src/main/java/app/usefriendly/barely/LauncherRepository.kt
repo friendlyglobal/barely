@@ -185,7 +185,7 @@ class LauncherRepository(
     }
 
     fun launch(app: LauncherApp) {
-        recordAppLaunch(app)
+        if (localSuggestionsEnabled() && !app.isPrivate) recordAppLaunch(app)
         launcherApps.startMainActivity(app.component, app.user, null, null)
     }
 
@@ -235,12 +235,21 @@ class LauncherRepository(
             ?: LauncherHomeMode.CLASSIC,
         terminalBackgroundColor = preferences.getInt(
             TERMINAL_BACKGROUND_COLOR_KEY,
-            0xFF000000.toInt(),
+            BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
         ),
         terminalBackgroundOpacity = preferences.getFloat(
             TERMINAL_BACKGROUND_OPACITY_KEY,
-            0.42f,
+            BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
         ).coerceIn(0f, 1f),
+        terminalTopActionBackdrop = preferences.getBoolean(
+            TERMINAL_TOP_ACTION_BACKDROP_KEY,
+            BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
+        ),
+        terminalCornerRadius = preferences.getInt(
+            TERMINAL_CORNER_RADIUS_KEY,
+            BarelyDefaults.TERMINAL_CORNER_RADIUS,
+        )
+            .coerceIn(MIN_TERMINAL_CORNER_RADIUS, MAX_TERMINAL_CORNER_RADIUS),
         doubleTapToLock = preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true),
         swipeDownForNotifications = preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true),
         frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
@@ -258,6 +267,14 @@ class LauncherRepository(
                 TERMINAL_BACKGROUND_OPACITY_KEY,
                 settings.terminalBackgroundOpacity.coerceIn(0f, 1f),
             )
+            putBoolean(TERMINAL_TOP_ACTION_BACKDROP_KEY, settings.terminalTopActionBackdrop)
+            putInt(
+                TERMINAL_CORNER_RADIUS_KEY,
+                settings.terminalCornerRadius.coerceIn(
+                    MIN_TERMINAL_CORNER_RADIUS,
+                    MAX_TERMINAL_CORNER_RADIUS,
+                ),
+            )
             putBoolean(DOUBLE_TAP_LOCK_KEY, settings.doubleTapToLock)
             putBoolean(SWIPE_NOTIFICATIONS_KEY, settings.swipeDownForNotifications)
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
@@ -269,6 +286,7 @@ class LauncherRepository(
     }
 
     fun recommendedAppKeys(limit: Int = 5): List<String> {
+        if (!localSuggestionsEnabled()) return emptyList()
         val now = System.currentTimeMillis()
         return preferences.all.keys
             .asSequence()
@@ -293,13 +311,17 @@ class LauncherRepository(
             .toList()
     }
 
-    fun recentAppSearches(): List<String> = preferences
-        .getString(RECENT_APP_SEARCHES_KEY, null)
-        ?.split(RECENT_SEPARATOR)
-        ?.filter(String::isNotBlank)
-        .orEmpty()
+    fun recentAppSearches(): List<String> {
+        if (!localSuggestionsEnabled()) return emptyList()
+        return preferences
+            .getString(RECENT_APP_SEARCHES_KEY, null)
+            ?.split(RECENT_SEPARATOR)
+            ?.filter(String::isNotBlank)
+            .orEmpty()
+    }
 
     fun recordRecentAppSearch(query: String) {
+        if (!localSuggestionsEnabled()) return
         val cleanQuery = query.trim().replace(RECENT_SEPARATOR, " ")
         if (cleanQuery.length < 2) return
         val updated = buildList {
@@ -309,6 +331,78 @@ class LauncherRepository(
         preferences.edit { putString(RECENT_APP_SEARCHES_KEY, updated.joinToString(RECENT_SEPARATOR)) }
     }
 
+    fun launcherSearchLearning(): List<LauncherSearchLearning> {
+        if (!localSuggestionsEnabled()) return emptyList()
+        return preferences
+            .getString(APP_SEARCH_LEARNING_KEY, null)
+            ?.split(LEARNING_ENTRY_SEPARATOR)
+            ?.mapNotNull { encoded ->
+                val fields = encoded.split(LEARNING_FIELD_SEPARATOR)
+                if (fields.size != 4) return@mapNotNull null
+                LauncherSearchLearning(
+                    query = fields[0],
+                    targetKey = fields[1].let { storedKey ->
+                        if (storedKey.startsWith("app:") || storedKey.startsWith("shortcut:")) {
+                            storedKey
+                        } else {
+                            "app:$storedKey"
+                        }
+                    },
+                    selectionCount = fields[2].toIntOrNull()?.coerceAtLeast(1)
+                        ?: return@mapNotNull null,
+                    lastSelectedAt = fields[3].toLongOrNull() ?: return@mapNotNull null,
+                )
+            }
+            .orEmpty()
+    }
+
+    fun recordSearchSelection(
+        query: String,
+        targetKey: String,
+        isPrivate: Boolean,
+    ) {
+        if (!localSuggestionsEnabled()) return
+        val normalizedQuery = query
+            .replace(LEARNING_ENTRY_SEPARATOR, " ")
+            .replace(LEARNING_FIELD_SEPARATOR, " ")
+            .normalizedForSearch()
+            .take(MAX_LEARNED_QUERY_LENGTH)
+        if (normalizedQuery.length < 2 || isPrivate) return
+        val now = System.currentTimeMillis()
+        val existing = launcherSearchLearning()
+        val previous = existing.firstOrNull {
+            it.query == normalizedQuery && it.targetKey == targetKey
+        }
+        val updated = buildList {
+            add(
+                LauncherSearchLearning(
+                    query = normalizedQuery,
+                    targetKey = targetKey,
+                    selectionCount = ((previous?.selectionCount ?: 0) + 1)
+                        .coerceAtMost(MAX_LEARNED_SELECTION_COUNT),
+                    lastSelectedAt = now,
+                ),
+            )
+            addAll(existing.filterNot {
+                it.query == normalizedQuery && it.targetKey == targetKey
+            })
+        }.sortedByDescending(LauncherSearchLearning::lastSelectedAt)
+            .take(MAX_LEARNED_APP_SEARCHES)
+        preferences.edit {
+            putString(
+                APP_SEARCH_LEARNING_KEY,
+                updated.joinToString(LEARNING_ENTRY_SEPARATOR) { learning ->
+                    listOf(
+                        learning.query,
+                        learning.targetKey,
+                        learning.selectionCount.toString(),
+                        learning.lastSelectedAt.toString(),
+                    ).joinToString(LEARNING_FIELD_SEPARATOR)
+                },
+            )
+        }
+    }
+
     fun clearLocalHistory() {
         val dynamicKeys = preferences.all.keys.filter {
             it.startsWith(USAGE_COUNT_PREFIX) || it.startsWith(USAGE_LAST_PREFIX)
@@ -316,6 +410,7 @@ class LauncherRepository(
         preferences.edit {
             dynamicKeys.forEach(::remove)
             remove(RECENT_APP_SEARCHES_KEY)
+            remove(APP_SEARCH_LEARNING_KEY)
         }
     }
 
@@ -327,6 +422,9 @@ class LauncherRepository(
             putLong(lastKey, System.currentTimeMillis())
         }
     }
+
+    private fun localSuggestionsEnabled(): Boolean =
+        preferences.getBoolean(LOCAL_SUGGESTIONS_KEY, true)
 
     fun setPrivateSpaceLocked(profile: LauncherProfile, locked: Boolean): Boolean {
         if (profile.type != LauncherProfileType.PRIVATE) return false
@@ -371,6 +469,8 @@ class LauncherRepository(
         const val HOME_MODE_KEY = "home_mode"
         const val TERMINAL_BACKGROUND_COLOR_KEY = "terminal_background_color"
         const val TERMINAL_BACKGROUND_OPACITY_KEY = "terminal_background_opacity"
+        const val TERMINAL_TOP_ACTION_BACKDROP_KEY = "terminal_top_action_backdrop"
+        const val TERMINAL_CORNER_RADIUS_KEY = "terminal_corner_radius"
         const val PRIVATE_SPACE_EXPANDED_KEY = "private_space_expanded"
         const val DOUBLE_TAP_LOCK_KEY = "double_tap_lock_enabled"
         const val SWIPE_NOTIFICATIONS_KEY = "swipe_notifications_enabled"
@@ -382,8 +482,16 @@ class LauncherRepository(
         const val USAGE_COUNT_PREFIX = "usage_count:"
         const val USAGE_LAST_PREFIX = "usage_last:"
         const val RECENT_APP_SEARCHES_KEY = "recent_app_searches"
+        const val APP_SEARCH_LEARNING_KEY = "app_search_learning"
         const val RECENT_SEPARATOR = "\u001F"
+        const val LEARNING_ENTRY_SEPARATOR = "\u001D"
+        const val LEARNING_FIELD_SEPARATOR = "\u001E"
         const val MAX_RECENT_SEARCHES = 5
+        const val MAX_LEARNED_APP_SEARCHES = 48
+        const val MAX_LEARNED_QUERY_LENGTH = 64
+        const val MAX_LEARNED_SELECTION_COUNT = 99
+        const val MIN_TERMINAL_CORNER_RADIUS = 0
+        const val MAX_TERMINAL_CORNER_RADIUS = 32
         const val ICON_SIZE_PX = 144
     }
 }

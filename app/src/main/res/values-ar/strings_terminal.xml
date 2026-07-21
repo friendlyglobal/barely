@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">خلفية الوضع الطرفي</string>
     <string name="settings_terminal_background_summary">اختر لونًا ودرجة ظهور خلفية الشاشة. تبقى جميع الإعدادات على هذا الجهاز.</string>
     <string name="settings_terminal_color">لون خلفية الوضع الطرفي</string>
+    <string name="settings_terminal_color_option">لون الخلفية %1$d من %2$d</string>
     <string name="settings_terminal_opacity">التعتيم</string>
     <string name="settings_terminal_wallpaper">خلفية الشاشة</string>
     <string name="settings_terminal_solid">لون خالص</string>
+    <string name="settings_terminal_action_backdrop">تباين الإجراءات العلوية</string>
+    <string name="settings_terminal_action_backdrop_summary">أضف كبسولة خفيفة خلف :apps و:settings عند استخدام خلفيات مزدحمة.</string>
+    <string name="settings_terminal_corner_radius">نصف قطر البحث والأوامر</string>
+    <string name="settings_terminal_reset">إعادة الضبط</string>
+    <string name="terminal_history_empty">ستظهر هنا التطبيقات التي فتحتها من بحث الطرفية.</string>
 </resources>

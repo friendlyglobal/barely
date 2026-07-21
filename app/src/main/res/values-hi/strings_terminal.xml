@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">टर्मिनल बैकग्राउंड</string>
     <string name="settings_terminal_background_summary">रंग और वॉलपेपर की दिखाई देने वाली मात्रा चुनें। सब कुछ इसी डिवाइस पर रहता है।</string>
     <string name="settings_terminal_color">टर्मिनल बैकग्राउंड का रंग</string>
+    <string name="settings_terminal_color_option">बैकग्राउंड रंग %2$d में से %1$d</string>
     <string name="settings_terminal_opacity">अपारदर्शिता</string>
     <string name="settings_terminal_wallpaper">वॉलपेपर</string>
     <string name="settings_terminal_solid">ठोस रंग</string>
+    <string name="settings_terminal_action_backdrop">ऊपरी क्रियाओं का कंट्रास्ट</string>
+    <string name="settings_terminal_action_backdrop_summary">व्यस्त वॉलपेपर पर :apps और :settings के पीछे हल्की कैप्सूल जोड़ें।</string>
+    <string name="settings_terminal_corner_radius">खोज और कमांड का कोना</string>
+    <string name="settings_terminal_reset">रीसेट करें</string>
+    <string name="terminal_history_empty">टर्मिनल खोज से खोले गए ऐप यहाँ दिखाई देंगे।</string>
 </resources>

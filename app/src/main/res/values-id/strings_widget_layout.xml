@@ -8,4 +8,8 @@
     <string name="move_widget">Pindahkan widget</string>
     <string name="position_widget">Ubah posisi widget</string>
     <string name="resize_widget">Ubah ukuran widget</string>
+    <string name="increase_widget_width">Perlebar widget</string>
+    <string name="decrease_widget_width">Persempit widget</string>
+    <string name="increase_widget_height">Tambah tinggi widget</string>
+    <string name="decrease_widget_height">Kurangi tinggi widget</string>
 </resources>

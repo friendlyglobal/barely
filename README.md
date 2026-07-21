@@ -18,7 +18,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Offers an optional Terminal Home during onboarding and in settings for people who prefer opening apps deliberately by typing.
 - Keeps Terminal search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
 - Provides explicit `:apps`, `:settings`, and `:classic` exits so Terminal mode never traps the user.
-- Lets Terminal users choose a background tint and opacity from solid color to a completely transparent wallpaper; the preference never leaves the device.
+- Lets Terminal users choose a background tint and opacity from solid color to a completely transparent wallpaper, tune the shared prompt/top-action corner radius from 0–32 dp, and restore either an individual control or the complete appearance preset; the preferences never leave the device.
 - Opens full-screen search with an upward swipe from the center page.
 - Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
@@ -27,7 +27,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Provides a one-handed search entry point at the bottom of the all-apps page.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
 - Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
-- Learns recommendations only from app launches made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the history.
+- Learns recommendations from app launches and successful query-to-app/shortcut choices made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the complete history.
 - Uses short, restrained transitions for page changes and search instead of moving the whole screen as one sheet.
 - Launches that bottom, best-ranked result when the phone keyboard's Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
@@ -36,7 +36,7 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Persists favorites with `SharedPreferences`; no database is used.
 - Hosts user-selected Android widgets in a vertical glanceable stack below favorites.
 - Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; Barely persists only widget IDs and simple layout metadata, never widget contents.
-- Lets users resize hosted widgets live by dragging their right or bottom edge, then align and reorder them from a separate edit toolbar; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
+- Lets users resize hosted widgets live by dragging their right or bottom edge, then align and reorder them from a separate edit toolbar. TalkBack exposes localized increase/decrease width and height actions, and all edit controls retain 48 dp touch targets; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
 - Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
 - Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
@@ -90,7 +90,7 @@ Version 0.5 adopts the permanent `app.usefriendly.barely` application ID. Androi
 - `CommandPalette.kt` — local calculator, conversions, contacts, quick settings, and explicit AI-app handoff.
 - `LauncherNotificationService.kt` — optional in-memory notification counts and active media-session controls.
 - `LauncherModels.kt` — lightweight app and shortcut models.
-- `LauncherTheme.kt` — Material 3, dynamic colors, and light/dark fallbacks.
+- `LauncherTheme.kt` — the stable neutral Material 3 palette, shape scale, readable widths, and wallpaper scrim tokens.
 - `res/values-*/strings.xml` — system-locale translations.
 
 ## Requirements
@@ -170,20 +170,24 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 11. Confirm that Classic Search grows upward with the best result nearest the bottom capsule, then press the phone keyboard's Search action and verify that this result opens directly.
 12. Change the Android system language and reopen Barely to verify automatic localization.
 13. On the wallpaper page, swipe down and verify that notifications open; double-tap and verify that the phone locks.
-14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and two-column Apps/search layouts. Resize the window and confirm it returns to one column below 600 dp.
+14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and the appropriate two- or three-column Apps/search layout. Resize the window and confirm it returns to one column below 600 dp.
 15. On Android 15 or newer, configure Private Space, verify its separate Apps container, lock it, and confirm its apps and shortcuts disappear from search.
 16. Search for `18*12`, `10 km to mi`, or `wifi`; verify calculations and conversions stay local and settings open directly.
 17. With a physical keyboard, use Left/Right, Ctrl+K, Up/Down, Enter, and Escape. Right-click an app with a mouse to open its actions.
 18. Search for `notifications`, read the warning, and enable access only if desired. Verify dots and media controls can each remain independently disabled.
 19. Move between Home, Favorites, Apps, and Search. Confirm Home remains clear and other pages use wallpaper blur or the translucent fallback.
 20. Select **Terminal** in Barely settings, type an app and a published shortcut, and verify that at most three local results appear. Test `:apps`, `:settings`, and `:classic`.
-21. Change the Terminal background color and opacity, return Home, and verify that 0% opacity shows the unmodified wallpaper.
-22. Enter widget edit mode, drag the right and bottom handles, and confirm that the preview follows the gesture, the size persists, and the page does not swipe away.
-23. Resize two compatible widgets to half width, leave edit mode, and confirm that they share one row without overlapping.
+21. Change the Terminal background color, opacity, and search/command radius. Verify that the prompt and optional top-action capsule update together. Test the local resets, then use the section Reset and confirm black, 42%, 12 dp, and top contrast off are restored.
+22. Swipe up in Terminal, confirm that successful app/shortcut searches appear as a terminal-style history log, open an entry, and verify that it moves to the most recent position. Use `:clearhistory` to remove it.
+23. Enter widget edit mode, drag the right and bottom handles, and confirm that the preview follows the gesture, the size persists, and the page does not swipe away.
+24. Resize two compatible widgets to half width, leave edit mode, and confirm that they share one row without overlapping.
+25. Enable TalkBack and verify that top commands, settings choices, widget editing controls, and resize actions receive a clear focus target and label.
+26. Set the system font to 150% and use an RTL language. Confirm that localized content follows RTL while Terminal syntax still reads `:command`, `>_`, and `>`.
+27. Disable Android animator scales and repeat Home, Apps, Search, and back navigation; every state change must remain usable without relying on motion.
 
 ## Privacy
 
-Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, Terminal appearance, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, Terminal appearance, successful local app/shortcut query associations, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. Disabling local suggestions stops new ranking/history writes and hides the saved suggestions; clearing local history removes them. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
 
 Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Barely saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Barely never sees the assistant's response.
 

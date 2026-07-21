@@ -22,7 +22,13 @@
     <string name="settings_terminal_background">Fundo do Terminal</string>
     <string name="settings_terminal_background_summary">Escolha uma cor e quanto do wallpaper fica visível. Tudo permanece neste aparelho.</string>
     <string name="settings_terminal_color">Cor de fundo do Terminal</string>
+    <string name="settings_terminal_color_option">Cor de fundo %1$d de %2$d</string>
     <string name="settings_terminal_opacity">Opacidade</string>
     <string name="settings_terminal_wallpaper">Wallpaper</string>
     <string name="settings_terminal_solid">Cor sólida</string>
+    <string name="settings_terminal_action_backdrop">Contraste das ações superiores</string>
+    <string name="settings_terminal_action_backdrop_summary">Adicione uma cápsula discreta atrás de :apps e :settings em wallpapers mais carregados.</string>
+    <string name="settings_terminal_corner_radius">Raio da busca e dos comandos</string>
+    <string name="settings_terminal_reset">Redefinir</string>
+    <string name="terminal_history_empty">Os apps abertos por buscas no Terminal aparecerão aqui.</string>
 </resources>
