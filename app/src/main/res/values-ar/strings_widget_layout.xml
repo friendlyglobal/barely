@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">تحرير الأدوات</string>
     <string name="finish_editing_widgets">إنهاء تحرير الأدوات</string>
-    <string name="widget_edit_hint">اسحب المقبض لإعادة الترتيب. اسحب الزاوية لتغيير الحجم.</string>
+    <string name="widget_edit_hint">اسحب المقبض لإعادة الترتيب. اسحب الحافة اليمنى أو السفلية لتغيير الحجم.</string>
     <string name="move_widget_up">نقل الأداة لأعلى</string>
     <string name="move_widget_down">نقل الأداة لأسفل</string>
     <string name="move_widget">نقل الأداة</string>

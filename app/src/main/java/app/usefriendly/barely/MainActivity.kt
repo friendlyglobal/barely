@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
     private var favoriteKeys by androidx.compose.runtime.mutableStateOf(emptySet<String>())
     private var isHomeRoleHeld by androidx.compose.runtime.mutableStateOf(false)
     private var isLoading by androidx.compose.runtime.mutableStateOf(true)
+    private var showOnboarding by androidx.compose.runtime.mutableStateOf(false)
     private var showGestureCoach by androidx.compose.runtime.mutableStateOf(false)
     private var homeRequestId by androidx.compose.runtime.mutableIntStateOf(0)
     private var widgets by androidx.compose.runtime.mutableStateOf(emptyList<WidgetPlacement>())
@@ -132,6 +133,7 @@ class MainActivity : ComponentActivity() {
         refreshLocalSuggestions()
         privateSpaceExpanded = repository.isPrivateSpaceExpanded()
         launcherSettings = repository.launcherSettings()
+        showOnboarding = !repository.isOnboardingComplete()
         hasGestureAccess = isGestureAccessGranted()
         hasNotificationAccess = isNotificationAccessGranted()
         pendingWidgetId = savedInstanceState?.getInt(
@@ -142,7 +144,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BarelyTheme {
-                LauncherScreen(
+                if (showOnboarding) {
+                    BarelyOnboarding(
+                        initialMode = launcherSettings.homeMode,
+                        onComplete = { homeMode ->
+                            updateLauncherSettings(launcherSettings.copy(homeMode = homeMode))
+                            repository.markOnboardingComplete()
+                            if (homeMode == LauncherHomeMode.TERMINAL) {
+                                repository.markGestureCoachSeen()
+                                showGestureCoach = false
+                            }
+                            showOnboarding = false
+                        },
+                    )
+                } else LauncherScreen(
                     snapshot = snapshot,
                     favoriteKeys = favoriteKeys,
                     isHomeRoleHeld = isHomeRoleHeld,
@@ -490,7 +505,10 @@ class MainActivity : ComponentActivity() {
     private fun observeCrossWindowBlur() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
         val manager = getSystemService(WindowManager::class.java)
-        val listener = Consumer<Boolean> { enabled -> crossWindowBlurEnabled = enabled }
+        val listener = Consumer<Boolean> { enabled ->
+            crossWindowBlurEnabled = enabled
+            applyBackdrop(requestedBackdrop)
+        }
         blurEnabledListener = listener
         manager.addCrossWindowBlurEnabledListener(mainExecutor, listener)
     }
@@ -498,7 +516,10 @@ class MainActivity : ComponentActivity() {
     private fun applyBackdrop(backdrop: LauncherBackdrop) {
         requestedBackdrop = backdrop
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
-        val radiusDp = if (!launcherSettings.frostedWallpaper) {
+        val shouldBlur = launcherSettings.frostedWallpaper &&
+            crossWindowBlurEnabled &&
+            backdrop != LauncherBackdrop.CLEAR
+        val radiusDp = if (!shouldBlur) {
             0
         } else when (backdrop) {
             LauncherBackdrop.CLEAR -> 0
@@ -510,7 +531,7 @@ class MainActivity : ComponentActivity() {
             (radiusDp * resources.displayMetrics.density).toInt(),
         )
         window.attributes = attributes
-        if (backdrop == LauncherBackdrop.CLEAR || !launcherSettings.frostedWallpaper) {
+        if (!shouldBlur) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)

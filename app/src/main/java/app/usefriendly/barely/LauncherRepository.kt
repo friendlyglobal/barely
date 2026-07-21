@@ -213,6 +213,15 @@ class LauncherRepository(
         preferences.edit { putBoolean(GESTURE_COACH_KEY, true) }
     }
 
+    fun isOnboardingComplete(): Boolean = preferences.getBoolean(
+        ONBOARDING_COMPLETE_KEY,
+        preferences.getBoolean(GESTURE_COACH_KEY, false),
+    )
+
+    fun markOnboardingComplete() {
+        preferences.edit { putBoolean(ONBOARDING_COMPLETE_KEY, true) }
+    }
+
     fun isPrivateSpaceExpanded(): Boolean =
         preferences.getBoolean(PRIVATE_SPACE_EXPANDED_KEY, true)
 
@@ -221,6 +230,17 @@ class LauncherRepository(
     }
 
     fun launcherSettings(): LauncherSettings = LauncherSettings(
+        homeMode = preferences.getString(HOME_MODE_KEY, null)
+            ?.let { value -> runCatching { LauncherHomeMode.valueOf(value) }.getOrNull() }
+            ?: LauncherHomeMode.CLASSIC,
+        terminalBackgroundColor = preferences.getInt(
+            TERMINAL_BACKGROUND_COLOR_KEY,
+            0xFF000000.toInt(),
+        ),
+        terminalBackgroundOpacity = preferences.getFloat(
+            TERMINAL_BACKGROUND_OPACITY_KEY,
+            0.42f,
+        ).coerceIn(0f, 1f),
         doubleTapToLock = preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true),
         swipeDownForNotifications = preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true),
         frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
@@ -232,6 +252,12 @@ class LauncherRepository(
 
     fun setLauncherSettings(settings: LauncherSettings) {
         preferences.edit {
+            putString(HOME_MODE_KEY, settings.homeMode.name)
+            putInt(TERMINAL_BACKGROUND_COLOR_KEY, settings.terminalBackgroundColor)
+            putFloat(
+                TERMINAL_BACKGROUND_OPACITY_KEY,
+                settings.terminalBackgroundOpacity.coerceIn(0f, 1f),
+            )
             putBoolean(DOUBLE_TAP_LOCK_KEY, settings.doubleTapToLock)
             putBoolean(SWIPE_NOTIFICATIONS_KEY, settings.swipeDownForNotifications)
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
@@ -341,6 +367,10 @@ class LauncherRepository(
     private companion object {
         const val FAVORITES_KEY = "favorites"
         const val GESTURE_COACH_KEY = "gesture_coach_seen"
+        const val ONBOARDING_COMPLETE_KEY = "onboarding_complete"
+        const val HOME_MODE_KEY = "home_mode"
+        const val TERMINAL_BACKGROUND_COLOR_KEY = "terminal_background_color"
+        const val TERMINAL_BACKGROUND_OPACITY_KEY = "terminal_background_opacity"
         const val PRIVATE_SPACE_EXPANDED_KEY = "private_space_expanded"
         const val DOUBLE_TAP_LOCK_KEY = "double_tap_lock_enabled"
         const val SWIPE_NOTIFICATIONS_KEY = "swipe_notifications_enabled"

@@ -15,6 +15,10 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Opens apps with `LauncherApps.startMainActivity`.
 - Keeps the system wallpaper visible on every page, including live wallpapers, through `FLAG_SHOW_WALLPAPER`.
 - Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
+- Offers an optional Terminal Home during onboarding and in settings for people who prefer opening apps deliberately by typing.
+- Keeps Terminal search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
+- Provides explicit `:apps`, `:settings`, and `:classic` exits so Terminal mode never traps the user.
+- Lets Terminal users choose a background tint and opacity from solid color to a completely transparent wallpaper; the preference never leaves the device.
 - Opens full-screen search with an upward swipe from the center page.
 - Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
@@ -22,16 +26,18 @@ The current release is a debug-signed prototype intended for testing. Android ma
 - Tolerates small typos, transposed characters, initials, word prefixes, case, and accents with an on-device fuzzy matcher.
 - Provides a one-handed search entry point at the bottom of the all-apps page.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
+- Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
 - Learns recommendations only from app launches made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the history.
 - Uses short, restrained transitions for page changes and search instead of moving the whole screen as one sheet.
-- Launches the best result when the keyboard Search action is pressed.
+- Launches that bottom, best-ranked result when the phone keyboard's Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
 - Shows published shortcuts, favorite actions, app info, and uninstall from a long press.
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
 - Persists favorites with `SharedPreferences`; no database is used.
 - Hosts user-selected Android widgets in a vertical glanceable stack below favorites.
 - Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; Barely persists only widget IDs and simple layout metadata, never widget contents.
-- Lets users resize, align, and reorder hosted widgets in a dedicated edit mode; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
+- Lets users resize hosted widgets live by dragging their right or bottom edge, then align and reorder them from a separate edit toolbar; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
+- Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
 - Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
@@ -161,7 +167,7 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 8. On the Favorites page, tap the plus button beside **Widgets**, choose a provider, and finish its configuration when requested.
 9. Interact with the hosted widget, restart Barely to verify persistence, then remove it with its close button.
 10. Search for a shortcut published by an installed app and confirm that a direct label match appears above apps.
-11. Press the keyboard Search action and confirm that the top result opens directly.
+11. Confirm that Classic Search grows upward with the best result nearest the bottom capsule, then press the phone keyboard's Search action and verify that this result opens directly.
 12. Change the Android system language and reopen Barely to verify automatic localization.
 13. On the wallpaper page, swipe down and verify that notifications open; double-tap and verify that the phone locks.
 14. On a foldable emulator or unfolded device, verify the two-pane Favorites/Widgets page and two-column Apps/search layouts. Resize the window and confirm it returns to one column below 600 dp.
@@ -170,10 +176,14 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 17. With a physical keyboard, use Left/Right, Ctrl+K, Up/Down, Enter, and Escape. Right-click an app with a mouse to open its actions.
 18. Search for `notifications`, read the warning, and enable access only if desired. Verify dots and media controls can each remain independently disabled.
 19. Move between Home, Favorites, Apps, and Search. Confirm Home remains clear and other pages use wallpaper blur or the translucent fallback.
+20. Select **Terminal** in Barely settings, type an app and a published shortcut, and verify that at most three local results appear. Test `:apps`, `:settings`, and `:classic`.
+21. Change the Terminal background color and opacity, return Home, and verify that 0% opacity shows the unmodified wallpaper.
+22. Enter widget edit mode, drag the right and bottom handles, and confirm that the preview follows the gesture, the size persists, and the page does not swipe away.
+23. Resize two compatible widgets to half width, leave edit mode, and confirm that they share one row without overlapping.
 
 ## Privacy
 
-Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
+Barely does not request internet access, collect analytics, maintain a database, or allow Android cloud backup. Favorites, selected widget IDs, Terminal appearance, and opt-in feature switches remain in local `SharedPreferences`. App, shortcut, and profile information comes directly from Android’s `LauncherApps` service, while widget contents are rendered and updated by their provider apps through Android's `AppWidgetHost` APIs. The optional Accessibility service cannot retrieve window content and subscribes to no accessibility events after connecting.
 
 Contact search is off until its runtime permission is granted. Matching contact names and phone numbers stay in process memory and Barely saves none of them. AI handoff uses an explicit Android `ACTION_SEND` intent to an installed assistant; Barely never sees the assistant's response.
 
@@ -181,11 +191,11 @@ Notification and media integration is also off by default and requires approval 
 
 ## Prototype limitations
 
-- No folders, cloud backup, widget resizing, or drag-to-reorder support.
+- No folders, cloud backup, or drag-and-drop favorite organization yet; widget ordering currently uses deliberate edit controls.
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
 - Cross-window blur requires Android 12 or newer and can be disabled by the device at runtime; the UI retains a contrast-safe fallback.
-- Release `0.4` is debug-signed and intended for development testing.
+- Development builds are debug-signed and intended for testing until the production signing flow is finalized.
 
 ## Official Android references
 

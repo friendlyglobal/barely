@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Pilih seberapa tenang ponsel Anda.</string>
+    <string name="onboarding_summary">Kedua mode tetap privat dan mengutamakan wallpaper. Perbedaannya adalah seberapa besar niat yang diperlukan sebelum membuka aplikasi.</string>
+    <string name="onboarding_change_later">Anda dapat mengganti mode kapan saja di setelan Barely.</string>
+    <string name="onboarding_continue">Lanjutkan</string>
+    <string name="home_mode_classic">Klasik</string>
+    <string name="home_mode_classic_summary">Beranda wallpaper dengan Favorit dan Aplikasi cukup satu usapan.</string>
+    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal_summary">Buka aplikasi secara sengaja dengan mengetik nama atau perintah.</string>
+    <string name="terminal_prompt_hint">ketik aplikasi atau perintah</string>
+    <string name="terminal_app_result">Aplikasi</string>
+    <string name="terminal_all_apps">Semua aplikasi</string>
+    <string name="terminal_command_apps">Buka semua aplikasi</string>
+    <string name="terminal_command_apps_summary">Jalan keluar sementara ke daftar aplikasi lengkap</string>
+    <string name="terminal_command_settings">Buka setelan Barely</string>
+    <string name="terminal_command_settings_summary">Ubah mode Beranda, gestur, privasi, dan modul opsional</string>
+    <string name="terminal_command_classic">Beralih ke Beranda Klasik</string>
+    <string name="terminal_command_classic_summary">Kembali ke wallpaper dengan halaman Favorit dan Aplikasi</string>
+    <string name="settings_home_mode">Gaya Beranda</string>
+    <string name="settings_home_mode_summary">Pilih halaman Klasik atau prompt Terminal yang disengaja.</string>
+    <string name="settings_terminal_background">Latar Terminal</string>
+    <string name="settings_terminal_background_summary">Pilih warna dan seberapa banyak wallpaper terlihat. Semuanya tetap di perangkat ini.</string>
+    <string name="settings_terminal_color">Warna latar Terminal</string>
+    <string name="settings_terminal_opacity">Opasitas</string>
+    <string name="settings_terminal_wallpaper">Wallpaper</string>
+    <string name="settings_terminal_solid">Warna solid</string>
+</resources>

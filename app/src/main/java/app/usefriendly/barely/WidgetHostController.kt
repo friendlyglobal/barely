@@ -29,6 +29,35 @@ enum class WidgetHorizontalPosition {
     fun next(): WidgetHorizontalPosition = entries[(ordinal + 1) % entries.size]
 }
 
+internal fun packWidgetRows(
+    widgets: List<WidgetPlacement>,
+): List<List<WidgetPlacement>> {
+    if (widgets.isEmpty()) return emptyList()
+    val rows = mutableListOf<MutableList<WidgetPlacement>>()
+    var currentRow = mutableListOf<WidgetPlacement>()
+    var occupiedSpans = 0
+    widgets.forEach { widget ->
+        val span = widget.widthSpan.coerceIn(
+            WidgetPlacement.MIN_WIDGET_SPAN,
+            WidgetPlacement.MAX_WIDGET_SPAN,
+        )
+        if (currentRow.isNotEmpty() && occupiedSpans + span > WidgetPlacement.MAX_WIDGET_SPAN) {
+            rows += currentRow
+            currentRow = mutableListOf()
+            occupiedSpans = 0
+        }
+        currentRow += widget
+        occupiedSpans += span
+        if (occupiedSpans == WidgetPlacement.MAX_WIDGET_SPAN) {
+            rows += currentRow
+            currentRow = mutableListOf()
+            occupiedSpans = 0
+        }
+    }
+    if (currentRow.isNotEmpty()) rows += currentRow
+    return rows
+}
+
 class WidgetHostController(context: Context) {
     val manager: AppWidgetManager = AppWidgetManager.getInstance(context)
     val host = AppWidgetHost(context, HOST_ID)

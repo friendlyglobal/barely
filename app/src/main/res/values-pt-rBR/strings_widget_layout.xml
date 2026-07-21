@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">Editar widgets</string>
     <string name="finish_editing_widgets">Concluir edição dos widgets</string>
-    <string name="widget_edit_hint">Arraste a alça para reordenar. Arraste o canto para redimensionar.</string>
+    <string name="widget_edit_hint">Arraste a alça para reordenar. Arraste a borda direita ou inferior para redimensionar.</string>
     <string name="move_widget_up">Mover widget para cima</string>
     <string name="move_widget_down">Mover widget para baixo</string>
     <string name="move_widget">Mover widget</string>

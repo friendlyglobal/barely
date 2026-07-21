@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Elige cuánto silencio quieres en tu teléfono.</string>
+    <string name="onboarding_summary">Ambos modos son privados y priorizan el fondo. La diferencia es cuánta intención hay entre tú y una app.</string>
+    <string name="onboarding_change_later">Puedes cambiar de modo en cualquier momento desde los ajustes de Barely.</string>
+    <string name="onboarding_continue">Continuar</string>
+    <string name="home_mode_classic">Clásico</string>
+    <string name="home_mode_classic_summary">Inicio con fondo, Favoritos y Apps a un gesto de distancia.</string>
+    <string name="home_mode_terminal">Terminal</string>
+    <string name="home_mode_terminal_summary">Abre apps de forma intencional escribiendo su nombre o un comando.</string>
+    <string name="terminal_prompt_hint">escribe una app o un comando</string>
+    <string name="terminal_app_result">App</string>
+    <string name="terminal_all_apps">Todas las apps</string>
+    <string name="terminal_command_apps">Abrir todas las apps</string>
+    <string name="terminal_command_apps_summary">Salida temporal a la lista completa de apps</string>
+    <string name="terminal_command_settings">Abrir ajustes de Barely</string>
+    <string name="terminal_command_settings_summary">Cambia el Inicio, los gestos, la privacidad y los módulos opcionales</string>
+    <string name="terminal_command_classic">Cambiar al Inicio clásico</string>
+    <string name="terminal_command_classic_summary">Vuelve al fondo con las páginas de Favoritos y Apps</string>
+    <string name="settings_home_mode">Estilo de Inicio</string>
+    <string name="settings_home_mode_summary">Elige las páginas clásicas o el indicador intencional de Terminal.</string>
+    <string name="settings_terminal_background">Fondo del Terminal</string>
+    <string name="settings_terminal_background_summary">Elige un color y cuánto se ve el fondo de pantalla. Todo permanece en este dispositivo.</string>
+    <string name="settings_terminal_color">Color de fondo del Terminal</string>
+    <string name="settings_terminal_opacity">Opacidad</string>
+    <string name="settings_terminal_wallpaper">Fondo de pantalla</string>
+    <string name="settings_terminal_solid">Color sólido</string>
+</resources>

@@ -2,7 +2,7 @@
 <resources>
     <string name="edit_widgets">编辑小组件</string>
     <string name="finish_editing_widgets">完成编辑小组件</string>
-    <string name="widget_edit_hint">拖动手柄可重新排序，拖动角落可调整大小。</string>
+    <string name="widget_edit_hint">拖动手柄可重新排序，拖动右侧或底部边缘可调整大小。</string>
     <string name="move_widget_up">向上移动小组件</string>
     <string name="move_widget_down">向下移动小组件</string>
     <string name="move_widget">移动小组件</string>

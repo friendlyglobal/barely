@@ -11,7 +11,15 @@ enum class LauncherBackdrop {
     SEARCH,
 }
 
+enum class LauncherHomeMode {
+    CLASSIC,
+    TERMINAL,
+}
+
 data class LauncherSettings(
+    val homeMode: LauncherHomeMode = LauncherHomeMode.CLASSIC,
+    val terminalBackgroundColor: Int = 0xFF000000.toInt(),
+    val terminalBackgroundOpacity: Float = 0.42f,
     val doubleTapToLock: Boolean = true,
     val swipeDownForNotifications: Boolean = true,
     val frostedWallpaper: Boolean = true,

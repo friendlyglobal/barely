@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Выберите, насколько спокойным будет ваш телефон.</string>
+    <string name="onboarding_summary">Оба режима сохраняют приватность и ставят обои на первое место. Разница в том, сколько осознанности требуется перед открытием приложения.</string>
+    <string name="onboarding_change_later">Режим можно изменить в настройках Barely в любое время.</string>
+    <string name="onboarding_continue">Продолжить</string>
+    <string name="home_mode_classic">Классический</string>
+    <string name="home_mode_classic_summary">Главный экран с обоями, Избранным и Приложениями в одном свайпе.</string>
+    <string name="home_mode_terminal">Терминал</string>
+    <string name="home_mode_terminal_summary">Открывайте приложения осознанно, вводя название или команду.</string>
+    <string name="terminal_prompt_hint">введите приложение или команду</string>
+    <string name="terminal_app_result">Приложение</string>
+    <string name="terminal_all_apps">Все приложения</string>
+    <string name="terminal_command_apps">Открыть все приложения</string>
+    <string name="terminal_command_apps_summary">Временный выход к полному списку приложений</string>
+    <string name="terminal_command_settings">Открыть настройки Barely</string>
+    <string name="terminal_command_settings_summary">Измените главный экран, жесты, приватность и дополнительные модули</string>
+    <string name="terminal_command_classic">Переключиться на классический экран</string>
+    <string name="terminal_command_classic_summary">Вернуться к обоям со страницами Избранного и Приложений</string>
+    <string name="settings_home_mode">Стиль главного экрана</string>
+    <string name="settings_home_mode_summary">Выберите классические страницы или осознанную строку Терминала.</string>
+    <string name="settings_terminal_background">Фон терминала</string>
+    <string name="settings_terminal_background_summary">Выберите цвет и степень видимости обоев. Все настройки хранятся только на устройстве.</string>
+    <string name="settings_terminal_color">Цвет фона терминала</string>
+    <string name="settings_terminal_opacity">Непрозрачность</string>
+    <string name="settings_terminal_wallpaper">Обои</string>
+    <string name="settings_terminal_solid">Сплошной цвет</string>
+</resources>

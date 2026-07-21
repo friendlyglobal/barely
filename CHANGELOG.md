@@ -2,6 +2,30 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.6 — 2026-07-21
+
+### Added
+
+- Added an optional Terminal Home that can be selected during onboarding or changed later in Barely settings.
+- Added a wallpaper-first terminal prompt with the existing local fuzzy ranking for apps, App Shortcuts, and commands, capped at three actionable suggestions.
+- Added `:apps`, `:settings`, and `:classic` escape commands plus touch, keyboard, mouse, and DeX navigation.
+- Added a local Terminal background palette with adjustable opacity from solid color to fully transparent wallpaper.
+
+### Changed
+
+- Rebuilt widget editing around live right-edge width and bottom-edge height handles; widget previews now resize during the gesture and persist on release.
+- Moved widget ordering, alignment, dimensions, and removal into a separate toolbar below the widget instead of covering provider content.
+- Packed compatible half-width widgets side by side in a predictable four-column Favorites grid while keeping edit mode spacious and touch-friendly.
+- Made Classic Search results grow upward from the bottom capsule, with the best-ranked result closest to the thumb and opened by the keyboard Search action.
+- Smoothed Home, Search, and Terminal Apps transitions while keeping the wallpaper visible beneath each entering surface.
+- Reduced wallpaper scrims and made the native blur flag conditional on Android actually enabling cross-window blur.
+
+### Fixed
+
+- Prevented horizontal page navigation from stealing resize gestures while widget edit mode is active.
+- Removed the opaque gray fallback seen when cross-window blur is unavailable or disabled.
+- Updated widget guidance and all thirteen locales for edge-based resizing and Terminal appearance controls.
+
 ## 0.5.1 — 2026-07-21
 
 ### Added
