@@ -1,93 +1,136 @@
 # Launchly
 
-Protótipo funcional de launcher Android feito com Kotlin e Jetpack Compose. O app usa diretamente as APIs de launcher do sistema, sem banco de dados, DI ou camadas arquiteturais desnecessárias.
+Launchly is a minimal, wallpaper-first Android launcher built with Kotlin and Jetpack Compose. It uses Android launcher APIs directly and intentionally avoids databases, dependency injection, and unnecessary architecture.
 
-## O que está implementado
+## Download
 
-- solicitação do papel de launcher padrão com `RoleManager.ROLE_HOME`;
-- listagem de apps e perfis acessíveis com `LauncherApps.getActivityList`;
-- abertura de apps com `LauncherApps.startMainActivity`;
-- página central totalmente transparente, mostrando o wallpaper do sistema — inclusive wallpapers animados — por `FLAG_SHOW_WALLPAPER`;
-- navegação horizontal: favoritos à esquerda, wallpaper no centro e todos os apps à direita;
-- gesto para cima na página central abre uma busca de tela cheia;
-- orientação gestual discreta na primeira execução; ela desaparece no primeiro gesto e a tela central volta a exibir somente o wallpaper;
-- visual minimalista inspirado em launchers tipográficos: o wallpaper permanece visível em todas as páginas, sob uma camada de contraste discreta;
-- Material 3 como base de acessibilidade, cores dinâmicas, gestos e motion, sem decoração excessiva;
-- favoritos persistidos em `SharedPreferences`;
-- long press com shortcuts dinâmicos, estáticos, fixados e em cache;
-- busca pelos nomes curto e longo dos shortcuts — por exemplo, “Nova guia anônima” quando o Chrome o publica;
-- execução com `LauncherApps.startShortcut`;
-- atualização automática por `LauncherApps.Callback`, inclusive `onShortcutsChanged`;
-- informações do app com `startAppDetailsActivity` e desinstalação pela tela de confirmação do Android;
-- suporte a perfil de trabalho e, quando disponibilizado pelo sistema, perfil privado.
+Download the latest APK from [GitHub Releases](https://github.com/friendlyglobal/launchly/releases/latest).
 
-Shortcuts de outros apps são protegidos pelo Android. Eles aparecem somente depois que este app é o launcher padrão e `LauncherApps.hasShortcutHostPermission()` retorna `true`.
+The current release is a debug-signed prototype intended for testing. Android may display an additional warning when installing it outside Google Play.
 
-## Estrutura
+## Features
 
-- `MainActivity.kt`: estado enxuto, janela sobre o wallpaper e solicitação de `ROLE_HOME`.
-- `LauncherUi.kt`: pager, páginas de favoritos/apps, busca e folha de ações.
-- `LauncherRepository.kt`: chamadas a `LauncherApps`, callback e favoritos.
-- `LauncherModels.kt`: três modelos simples.
-- `LauncherTheme.kt`: Material 3 com cores dinâmicas e fallbacks claro/escuro.
+- Requests the default home role through `RoleManager.ROLE_HOME`.
+- Lists launchable activities from every accessible profile with `LauncherApps.getActivityList`.
+- Opens apps with `LauncherApps.startMainActivity`.
+- Keeps the system wallpaper visible on every page, including live wallpapers, through `FLAG_SHOW_WALLPAPER`.
+- Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
+- Opens full-screen search with an upward swipe from the center page.
+- Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
+- Opens shortcuts with `LauncherApps.startShortcut`.
+- Shows published shortcuts, favorite actions, app info, and uninstall from a long press.
+- Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
+- Persists favorites with `SharedPreferences`; no database is used.
+- Supports work profiles and hidden profiles when Android exposes them to the launcher.
+- Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
 
-## Compilar
+Shortcut data from other apps is protected by Android. It becomes available only after Launchly is the default launcher and `LauncherApps.hasShortcutHostPermission()` returns `true`.
 
-O projeto usa JDK 17, Android SDK 37.0, AGP 9.1.1, Gradle 9.3.1, Kotlin integrado do AGP e Compose Compiler 2.3.21. O Material 3 está fixado em `1.5.0-alpha24` para usar os List Items atuais com suporte nativo a clique e long press.
+## Languages
 
-Na máquina em que o projeto foi gerado, a toolchain de linha de comando já foi instalada. Para compilar:
+Launchly automatically follows the Android system language. English is the fallback language, with localized resources for:
+
+- Arabic
+- Chinese, Simplified
+- French
+- German
+- Hindi
+- Indonesian
+- Italian
+- Japanese
+- Korean
+- Portuguese, Brazil
+- Russian
+- Spanish
+
+Android selects the matching resource automatically. On Android 13 and newer, Launchly also exposes these languages in the system’s per-app language settings through an auto-generated `LocaleConfig`. Arabic uses Android’s right-to-left layout support.
+
+## Project structure
+
+- `MainActivity.kt` — small state holder, wallpaper window setup, and `ROLE_HOME` request.
+- `LauncherUi.kt` — pager, favorites and app lists, search, and app action sheet.
+- `LauncherRepository.kt` — `LauncherApps` calls, callbacks, profiles, shortcuts, and favorites.
+- `LauncherModels.kt` — lightweight app and shortcut models.
+- `LauncherTheme.kt` — Material 3, dynamic colors, and light/dark fallbacks.
+- `res/values-*/strings.xml` — system-locale translations.
+
+## Requirements
+
+- JDK 17
+- Android SDK Platform 37.0
+- Android Gradle Plugin 9.1.1
+- Gradle 9.3.1
+- Android 10 or newer (`minSdk 29`)
+
+The project uses AGP built-in Kotlin, Compose Compiler 2.3.21, and Material 3 `1.5.0-alpha24`. The Material version is pinned because the current clickable and long-clickable List Item APIs are still pre-release.
+
+## Build
 
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
-./gradlew assembleDebug
+./gradlew lintDebug assembleDebug
 ```
 
-O APK é gerado em:
+The APK is generated at:
 
 ```text
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Instalar pelo Android Studio no Galaxy S24 Ultra
+If Gradle reports duplicated generated names such as `BuildConfig 2.java` or `... 4.class`, the project directory is being synchronized while Gradle writes intermediate files. Move the project outside iCloud, Google Drive, or another live-sync folder, run `./gradlew clean`, and build again.
 
-1. Instale o Android Studio Panda 3 (2025.3.3 Patch 1) ou mais recente e abra esta pasta como projeto.
-2. Em **Settings > Build, Execution, Deployment > Build Tools > Gradle**, escolha **Gradle JDK 17**. O JDK embutido do Android Studio também serve se for 17 ou superior.
-3. Em **Tools > SDK Manager**, confirme que **Android SDK Platform 37.0** e **Android SDK Platform-Tools** estão instalados. Isso é necessário somente para compilar; o app continua instalável no Android 10 ou superior.
-4. No S24 Ultra, abra **Configurações > Sobre o telefone > Informações do software** e toque sete vezes em **Número da compilação**. Confirme o PIN para ativar as opções do desenvolvedor.
-5. Volte a **Configurações > Opções do desenvolvedor** e ative **Depuração USB**.
-6. Conecte o telefone por USB, aceite a impressão digital RSA no aparelho e selecione o S24 Ultra na barra de dispositivos do Android Studio.
-7. Clique em **Run app**. Como há também um intent `LAUNCHER`, o Android Studio consegue abrir o protótipo antes que ele seja definido como tela inicial.
+## Install on a Galaxy S24 Ultra
 
-Também é possível instalar o APK pelo terminal:
+### Android Studio
+
+1. Open the project in Android Studio Panda 3 or newer.
+2. Under **Settings > Build, Execution, Deployment > Build Tools > Gradle**, select JDK 17 or the compatible embedded JDK.
+3. Under **Tools > SDK Manager**, install Android SDK Platform 37.0 and Android SDK Platform-Tools.
+4. On the phone, open **Settings > About phone > Software information** and tap **Build number** seven times.
+5. Return to **Developer options**, enable **USB debugging**, connect the phone, and accept the RSA prompt.
+6. Select the Galaxy S24 Ultra in Android Studio and run the `app` configuration.
+
+### ADB
 
 ```bash
-/opt/homebrew/share/android-commandlinetools/platform-tools/adb devices
-/opt/homebrew/share/android-commandlinetools/platform-tools/adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb devices
+adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Definir como launcher e testar
+## Set as the default launcher
 
-1. Abra **Launchly**, arraste para a esquerda para chegar a **Apps** e toque em **Definir** no cartão “Usar como tela inicial”.
-2. Confirme **Launchly** no diálogo do Android. Como alternativa, no Samsung: **Configurações > Aplicativos > Escolher aplicativos padrão > Aplicativo de início**.
-3. Pressione o botão/gesto **Início**. Na primeira execução, uma orientação compacta mostra os três gestos disponíveis. Ela some assim que um gesto é usado; depois disso, a tela mostra somente o wallpaper e as barras de sistema.
-4. Arraste para a esquerda para abrir **Apps**; arraste para a direita a partir do wallpaper para abrir **Favoritos**.
-5. Na página central, arraste para cima. A busca deve subir, focar o campo e abrir o teclado.
-6. Toque em qualquer app da lista para abri-lo.
-7. Pressione um app por alguns instantes. A folha inferior deve mostrar os shortcuts publicados, **Adicionar aos favoritos**, **Informações do app** e **Desinstalar**.
-8. Adicione um favorito e navegue para a página à esquerda; ele deve aparecer imediatamente e continuar lá após reiniciar o app.
-9. Com o Chrome instalado, busque `anônima`. Se a versão instalada do Chrome publicar esse shortcut em português, **Nova guia anônima** aparecerá e poderá ser aberta diretamente.
-10. Adicione ou remova um shortcut dinâmico em um app que ofereça essa função; a lista será recarregada pelo `LauncherApps.Callback` sem reiniciar o launcher.
-11. Teste **Informações do app** e **Desinstalar**. O Android sempre exibe a confirmação; apps de sistema ou administrados podem não permitir remoção.
+1. Open Launchly and swipe left to the **Apps** page.
+2. Tap **Set** in the default home card and approve the Android role dialog.
+3. On Samsung devices, the same setting is available under **Settings > Apps > Choose default apps > Home app**.
+4. Select **Launchly**.
 
-Para voltar ao launcher da Samsung, acesse **Configurações > Aplicativos > Escolher aplicativos padrão > Aplicativo de início > One UI Home**. Faça isso antes de desinstalar o protótipo.
+To return to Samsung’s launcher, select **One UI Home** from the same system page before uninstalling Launchly.
 
-Se o Gradle acusar nomes duplicados como `BuildConfig 2.java` ou `... 4.class`, a pasta está sendo sincronizada enquanto a compilação escreve os intermediários. Mova o projeto para uma pasta local fora do iCloud/Drive, execute `./gradlew clean` e compile novamente; o código-fonte não é a causa desse erro.
+## Test checklist
 
-## Limites intencionais do protótipo
+1. Press Home and confirm that only the wallpaper and system bars remain visible.
+2. Swipe left for all apps and right for favorites.
+3. Swipe up from the wallpaper to open search and the keyboard.
+4. Tap an app name to launch it.
+5. Long-press an app and verify its shortcuts, favorite action, app info, and uninstall action.
+6. Add a favorite and confirm that it persists after restarting Launchly.
+7. Search for a shortcut published by an installed app and launch it directly.
+8. Change the Android system language and reopen Launchly to verify automatic localization.
 
-- Favoritos são locais e simples; não há backup, pastas, widgets ou reordenação por arrastar.
-- A dependência atual do Material 3 ainda é alpha; a versão está fixada para que futuras mudanças não quebrem a build inesperadamente.
-- Alguns fabricantes ou políticas corporativas escondem apps/perfis da API de launcher.
-- O texto e a disponibilidade de shortcuts pertencem a cada app e podem mudar entre versões.
+## Privacy
 
-Referências oficiais: [Material 3 para Compose](https://developer.android.com/develop/ui/compose/designsystems/material3), [RoleManager](https://developer.android.com/reference/android/app/role/RoleManager), [LauncherApps](https://developer.android.com/reference/android/content/pm/LauncherApps) e [LauncherApps.ShortcutQuery](https://developer.android.com/reference/android/content/pm/LauncherApps.ShortcutQuery).
+Launchly does not request internet access, collect analytics, or maintain a database. Favorites remain in local `SharedPreferences`. App and shortcut information comes directly from Android’s `LauncherApps` service.
+
+## Prototype limitations
+
+- No folders, widgets, cloud backup, or drag-to-reorder support.
+- Shortcut names and availability are controlled by the apps that publish them.
+- Device manufacturers and work policies may hide apps or profiles from launcher APIs.
+- Release `0.1` is debug-signed and intended for development testing.
+
+## Official Android references
+
+- [Material 3 for Compose](https://developer.android.com/develop/ui/compose/designsystems/material3)
+- [RoleManager](https://developer.android.com/reference/android/app/role/RoleManager)
+- [LauncherApps](https://developer.android.com/reference/android/content/pm/LauncherApps)
+- [LauncherApps.ShortcutQuery](https://developer.android.com/reference/android/content/pm/LauncherApps.ShortcutQuery)

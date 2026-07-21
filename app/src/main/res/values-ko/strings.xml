@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">홈 화면입니다. 위로 스와이프하여 검색하세요.</string>
+    <string name="favorites">즐겨찾기</string>
+    <string name="search">검색</string>
+    <string name="apps">앱</string>
+    <string name="no_favorites">즐겨찾기가 없습니다</string>
+    <string name="favorites_empty_message">앱을 길게 눌러 즐겨찾기에 추가하세요.</string>
+    <string name="activating_shortcuts">바로가기 활성화 중…</string>
+    <string name="use_as_home">홈 화면으로 사용</string>
+    <string name="android_granting_shortcuts">Android에서 바로가기 접근 권한을 부여하고 있습니다.</string>
+    <string name="home_role_required">홈 동작과 바로가기에 필요합니다.</string>
+    <string name="set_default">설정</string>
+    <string name="actions_for_app">%1$s 작업</string>
+    <string name="close_search">검색 닫기</string>
+    <string name="apps_and_shortcuts">앱 및 바로가기</string>
+    <string name="clear_search">지우기</string>
+    <string name="shortcuts">바로가기</string>
+    <string name="find_anything">무엇이든 찾아보세요</string>
+    <string name="search_hint">앱 이름이나 앱에서 제공하는 작업을 입력하세요.</string>
+    <string name="nothing_found">검색 결과 없음</string>
+    <string name="try_another_name">다른 이름을 입력해 보세요.</string>
+    <string name="set_default_to_search_shortcuts">바로가기를 검색하려면 이 런처를 기본값으로 설정하세요.</string>
+    <string name="app_actions">앱 작업</string>
+    <string name="set_default_to_view_shortcuts">게시된 바로가기를 보려면 이 런처를 기본값으로 설정하세요.</string>
+    <string name="app_has_no_shortcuts">이 앱에서 게시한 바로가기가 없습니다.</string>
+    <string name="remove_from_favorites">즐겨찾기에서 삭제</string>
+    <string name="add_to_favorites">즐겨찾기에 추가</string>
+    <string name="app_info">앱 정보</string>
+    <string name="uninstall">제거</string>
+    <string name="error_open_app">%1$s을(를) 열 수 없습니다</string>
+    <string name="error_shortcut_unavailable">이 바로가기는 더 이상 사용할 수 없습니다</string>
+    <string name="error_open_app_info">앱 정보를 열 수 없습니다</string>
+    <string name="error_start_uninstall">제거를 시작할 수 없습니다</string>
+    <string name="error_refresh_apps">앱을 새로고침할 수 없습니다</string>
+</resources>

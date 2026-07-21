@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">होम स्क्रीन। खोजने के लिए ऊपर स्वाइप करें।</string>
+    <string name="favorites">पसंदीदा</string>
+    <string name="search">खोजें</string>
+    <string name="apps">ऐप्स</string>
+    <string name="no_favorites">अभी कोई पसंदीदा नहीं</string>
+    <string name="favorites_empty_message">किसी ऐप को पसंदीदा में जोड़ने के लिए उसे दबाकर रखें।</string>
+    <string name="activating_shortcuts">शॉर्टकट सक्रिय किए जा रहे हैं…</string>
+    <string name="use_as_home">होम स्क्रीन के रूप में उपयोग करें</string>
+    <string name="android_granting_shortcuts">Android शॉर्टकट की अनुमति दे रहा है।</string>
+    <string name="home_role_required">होम जेस्चर और शॉर्टकट के लिए आवश्यक है।</string>
+    <string name="set_default">सेट करें</string>
+    <string name="actions_for_app">%1$s के विकल्प</string>
+    <string name="close_search">खोज बंद करें</string>
+    <string name="apps_and_shortcuts">ऐप्स और शॉर्टकट</string>
+    <string name="clear_search">साफ़ करें</string>
+    <string name="shortcuts">शॉर्टकट</string>
+    <string name="find_anything">कुछ भी खोजें</string>
+    <string name="search_hint">किसी ऐप या उसके द्वारा उपलब्ध कराई गई कार्रवाई का नाम लिखें।</string>
+    <string name="nothing_found">कुछ नहीं मिला</string>
+    <string name="try_another_name">कोई दूसरा नाम आज़माएँ।</string>
+    <string name="set_default_to_search_shortcuts">शॉर्टकट खोजने के लिए इस लॉन्चर को डिफ़ॉल्ट बनाएं।</string>
+    <string name="app_actions">ऐप के विकल्प</string>
+    <string name="set_default_to_view_shortcuts">प्रकाशित शॉर्टकट देखने के लिए इस लॉन्चर को डिफ़ॉल्ट बनाएं।</string>
+    <string name="app_has_no_shortcuts">इस ऐप ने कोई शॉर्टकट प्रकाशित नहीं किया है।</string>
+    <string name="remove_from_favorites">पसंदीदा से हटाएं</string>
+    <string name="add_to_favorites">पसंदीदा में जोड़ें</string>
+    <string name="app_info">ऐप की जानकारी</string>
+    <string name="uninstall">अनइंस्टॉल करें</string>
+    <string name="error_open_app">%1$s नहीं खुल सका</string>
+    <string name="error_shortcut_unavailable">यह शॉर्टकट अब उपलब्ध नहीं है</string>
+    <string name="error_open_app_info">ऐप की जानकारी नहीं खुल सकी</string>
+    <string name="error_start_uninstall">अनइंस्टॉल शुरू नहीं हो सका</string>
+    <string name="error_refresh_apps">ऐप्स रीफ़्रेश नहीं हो सके</string>
+</resources>

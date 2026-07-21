@@ -68,16 +68,16 @@ class MainActivity : ComponentActivity() {
                         repository.markGestureCoachSeen()
                         showGestureCoach = false
                     },
-                    onLaunchApp = { app -> perform("Não foi possível abrir ${app.label}") {
+                    onLaunchApp = { app -> perform(getString(R.string.error_open_app, app.label)) {
                         repository.launch(app)
                     } },
-                    onLaunchShortcut = { shortcut -> perform("O atalho não está mais disponível") {
+                    onLaunchShortcut = { shortcut -> perform(getString(R.string.error_shortcut_unavailable)) {
                         repository.launch(shortcut)
                     } },
                     onToggleFavorite = { app ->
                         favoriteKeys = repository.toggleFavorite(app)
                     },
-                    onAppInfo = { app -> perform("Não foi possível abrir as informações") {
+                    onAppInfo = { app -> perform(getString(R.string.error_open_app_info)) {
                         repository.showAppInfo(app)
                     } },
                     onUninstall = ::requestUninstall,
@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestUninstall(app: LauncherApp) {
-        perform("Não foi possível iniciar a desinstalação") {
+        perform(getString(R.string.error_start_uninstall)) {
             startActivity(Intent(Intent.ACTION_DELETE).apply {
                 data = "package:${app.packageName}".toUri()
                 putExtra(Intent.EXTRA_RETURN_RESULT, false)
@@ -135,7 +135,7 @@ class MainActivity : ComponentActivity() {
             } catch (_: Exception) {
                 Toast.makeText(
                     this@MainActivity,
-                    "Não foi possível atualizar os apps",
+                    getString(R.string.error_refresh_apps),
                     Toast.LENGTH_SHORT,
                 ).show()
             }

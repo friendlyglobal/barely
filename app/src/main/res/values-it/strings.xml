@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Schermata Home. Scorri verso l’alto per cercare.</string>
+    <string name="favorites">Preferiti</string>
+    <string name="search">Cerca</string>
+    <string name="apps">App</string>
+    <string name="no_favorites">Nessun preferito</string>
+    <string name="favorites_empty_message">Tieni premuta un’app per aggiungerla ai preferiti.</string>
+    <string name="activating_shortcuts">Attivazione scorciatoie…</string>
+    <string name="use_as_home">Usa come schermata Home</string>
+    <string name="android_granting_shortcuts">Android sta concedendo l’accesso alle scorciatoie.</string>
+    <string name="home_role_required">Necessario per il gesto Home e le scorciatoie.</string>
+    <string name="set_default">Imposta</string>
+    <string name="actions_for_app">Azioni per %1$s</string>
+    <string name="close_search">Chiudi ricerca</string>
+    <string name="apps_and_shortcuts">App e scorciatoie</string>
+    <string name="clear_search">Cancella</string>
+    <string name="shortcuts">Scorciatoie</string>
+    <string name="find_anything">Trova qualsiasi cosa</string>
+    <string name="search_hint">Digita il nome di un’app o di un’azione che mette a disposizione.</string>
+    <string name="nothing_found">Nessun risultato</string>
+    <string name="try_another_name">Prova un altro nome.</string>
+    <string name="set_default_to_search_shortcuts">Imposta questo launcher come predefinito per includere le scorciatoie.</string>
+    <string name="app_actions">Azioni dell’app</string>
+    <string name="set_default_to_view_shortcuts">Imposta questo launcher come predefinito per vedere le scorciatoie pubblicate.</string>
+    <string name="app_has_no_shortcuts">Questa app non ha pubblicato scorciatoie.</string>
+    <string name="remove_from_favorites">Rimuovi dai preferiti</string>
+    <string name="add_to_favorites">Aggiungi ai preferiti</string>
+    <string name="app_info">Informazioni app</string>
+    <string name="uninstall">Disinstalla</string>
+    <string name="error_open_app">Impossibile aprire %1$s</string>
+    <string name="error_shortcut_unavailable">Questa scorciatoia non è più disponibile</string>
+    <string name="error_open_app_info">Impossibile aprire le informazioni dell’app</string>
+    <string name="error_start_uninstall">Impossibile avviare la disinstallazione</string>
+    <string name="error_refresh_apps">Impossibile aggiornare le app</string>
+</resources>

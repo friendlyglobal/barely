@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">الشاشة الرئيسية. اسحب لأعلى للبحث.</string>
+    <string name="favorites">المفضلة</string>
+    <string name="search">بحث</string>
+    <string name="apps">التطبيقات</string>
+    <string name="no_favorites">لا توجد مفضلات بعد</string>
+    <string name="favorites_empty_message">اضغط مطولًا على تطبيق لإضافته إلى المفضلة.</string>
+    <string name="activating_shortcuts">جارٍ تفعيل الاختصارات…</string>
+    <string name="use_as_home">استخدام كشاشة رئيسية</string>
+    <string name="android_granting_shortcuts">يمنح Android إذن الوصول إلى الاختصارات.</string>
+    <string name="home_role_required">مطلوب لإيماءة الشاشة الرئيسية والاختصارات.</string>
+    <string name="set_default">تعيين</string>
+    <string name="actions_for_app">إجراءات %1$s</string>
+    <string name="close_search">إغلاق البحث</string>
+    <string name="apps_and_shortcuts">التطبيقات والاختصارات</string>
+    <string name="clear_search">مسح</string>
+    <string name="shortcuts">الاختصارات</string>
+    <string name="find_anything">ابحث عن أي شيء</string>
+    <string name="search_hint">اكتب اسم تطبيق أو إجراء ينشره.</string>
+    <string name="nothing_found">لم يتم العثور على نتائج</string>
+    <string name="try_another_name">جرّب اسمًا آخر.</string>
+    <string name="set_default_to_search_shortcuts">عيّن هذا المشغّل كافتراضي لتضمين الاختصارات.</string>
+    <string name="app_actions">إجراءات التطبيق</string>
+    <string name="set_default_to_view_shortcuts">عيّن هذا المشغّل كافتراضي لعرض الاختصارات المنشورة.</string>
+    <string name="app_has_no_shortcuts">لم ينشر هذا التطبيق أي اختصارات.</string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="app_info">معلومات التطبيق</string>
+    <string name="uninstall">إلغاء التثبيت</string>
+    <string name="error_open_app">تعذر فتح %1$s</string>
+    <string name="error_shortcut_unavailable">لم يعد هذا الاختصار متاحًا</string>
+    <string name="error_open_app_info">تعذر فتح معلومات التطبيق</string>
+    <string name="error_start_uninstall">تعذر بدء إلغاء التثبيت</string>
+    <string name="error_refresh_apps">تعذر تحديث التطبيقات</string>
+</resources>

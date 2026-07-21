@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Launchly</string>
+    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar.</string>
+    <string name="favorites">Favoritos</string>
+    <string name="search">Buscar</string>
+    <string name="apps">Apps</string>
+    <string name="no_favorites">Nenhum favorito</string>
+    <string name="favorites_empty_message">Pressione um app e adicione aos favoritos.</string>
+    <string name="activating_shortcuts">Ativando atalhos…</string>
+    <string name="use_as_home">Usar como tela inicial</string>
+    <string name="android_granting_shortcuts">O Android está liberando o acesso aos atalhos.</string>
+    <string name="home_role_required">Necessário para o gesto Início e os atalhos.</string>
+    <string name="set_default">Definir</string>
+    <string name="actions_for_app">Ações de %1$s</string>
+    <string name="close_search">Fechar busca</string>
+    <string name="apps_and_shortcuts">Apps e atalhos</string>
+    <string name="clear_search">Limpar</string>
+    <string name="shortcuts">Atalhos</string>
+    <string name="find_anything">Encontre qualquer coisa</string>
+    <string name="search_hint">Digite o nome de um app ou de uma ação publicada por ele.</string>
+    <string name="nothing_found">Nada por aqui</string>
+    <string name="try_another_name">Tente outro nome.</string>
+    <string name="set_default_to_search_shortcuts">Defina este launcher como padrão para incluir atalhos.</string>
+    <string name="app_actions">Ações do app</string>
+    <string name="set_default_to_view_shortcuts">Defina este launcher como padrão para ver os atalhos publicados.</string>
+    <string name="app_has_no_shortcuts">Este app não publicou atalhos.</string>
+    <string name="remove_from_favorites">Remover dos favoritos</string>
+    <string name="add_to_favorites">Adicionar aos favoritos</string>
+    <string name="app_info">Informações do app</string>
+    <string name="uninstall">Desinstalar</string>
+    <string name="error_open_app">Não foi possível abrir %1$s</string>
+    <string name="error_shortcut_unavailable">Este atalho não está mais disponível</string>
+    <string name="error_open_app_info">Não foi possível abrir as informações do app</string>
+    <string name="error_start_uninstall">Não foi possível iniciar a desinstalação</string>
+    <string name="error_refresh_apps">Não foi possível atualizar os apps</string>
+</resources>
