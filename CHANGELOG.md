@@ -2,6 +2,26 @@
 
 All notable changes to Launchly are documented in this file.
 
+## 0.3 — 2026-07-21
+
+### Added
+
+- Added a vertical Android widget stack below favorite apps.
+- Added the system widget picker, provider configuration flow, local widget ID persistence, and removal.
+- Added pull-down-to-dismiss from the top of search with direct gesture feedback.
+- Added optional double-tap-to-lock and swipe-down-for-notifications home gestures without screen-content access or accessibility event collection.
+- Localized the widget interface in all thirteen supported languages.
+- Added responsive one-, two-, and three-column layouts plus hinge-aware foldable support through Jetpack WindowManager.
+
+### Changed
+
+- Reworked search entry into a short layered transition with a bottom-originating input bar.
+- Tuned horizontal page snapping and added subtle depth feedback while paging.
+- Made the empty favorites state compact so widgets remain immediately reachable.
+- Prevented fuzzy matching against opaque package and shortcut IDs to remove unrelated search results.
+- Moved the all-apps search entry into a true bottom section so app names never render behind it.
+- Disabled Android cloud backup so favorites, widget IDs, and launcher preferences stay on the device.
+
 ## 0.2 — 2026-07-21
 
 ### Changed

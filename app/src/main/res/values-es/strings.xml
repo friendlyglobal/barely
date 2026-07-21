@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Pantalla de inicio. Desliza hacia arriba para buscar.</string>
+    <string name="home_content_description">Pantalla de inicio. Desliza hacia arriba para buscar, hacia abajo para ver notificaciones o toca dos veces para bloquear.</string>
     <string name="favorites">Favoritos</string>
     <string name="search">Buscar</string>
     <string name="apps">Apps</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">No se pudo abrir la información de la app</string>
     <string name="error_start_uninstall">No se pudo iniciar la desinstalación</string>
     <string name="error_refresh_apps">No se pudieron actualizar las apps</string>
+    <string name="widgets">Widgets</string>
+    <string name="add_widget">Añadir widget</string>
+    <string name="remove_widget">Quitar widget</string>
+    <string name="widgets_empty_message">Añade los widgets que quieras consultar rápidamente.</string>
+    <string name="error_add_widget">No se pudo añadir este widget</string>
+    <string name="accessibility_service_label">Gestos de Launchly</string>
+    <string name="accessibility_service_description">Solo ofrece gestos opcionales en la pantalla de inicio para bloquear la pantalla y abrir las notificaciones. No lee el contenido de la pantalla.</string>
+    <string name="enable_accessibility_gestures">Activa los gestos de Launchly en Accesibilidad para usar esta acción.</string>
 </resources>

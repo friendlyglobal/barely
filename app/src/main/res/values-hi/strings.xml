@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">होम स्क्रीन। खोजने के लिए ऊपर स्वाइप करें।</string>
+    <string name="home_content_description">होम स्क्रीन। खोजने के लिए ऊपर, नोटिफ़िकेशन के लिए नीचे स्वाइप करें या लॉक करने के लिए दो बार टैप करें।</string>
     <string name="favorites">पसंदीदा</string>
     <string name="search">खोजें</string>
     <string name="apps">ऐप्स</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">ऐप की जानकारी नहीं खुल सकी</string>
     <string name="error_start_uninstall">अनइंस्टॉल शुरू नहीं हो सका</string>
     <string name="error_refresh_apps">ऐप्स रीफ़्रेश नहीं हो सके</string>
+    <string name="widgets">विजेट</string>
+    <string name="add_widget">विजेट जोड़ें</string>
+    <string name="remove_widget">विजेट हटाएं</string>
+    <string name="widgets_empty_message">वे विजेट जोड़ें जिन्हें आप एक नज़र में देखना चाहते हैं।</string>
+    <string name="error_add_widget">यह विजेट नहीं जोड़ा जा सका</string>
+    <string name="accessibility_service_label">Launchly जेस्चर</string>
+    <string name="accessibility_service_description">यह केवल स्क्रीन लॉक करने और नोटिफ़िकेशन खोलने के वैकल्पिक होम स्क्रीन जेस्चर देता है। यह स्क्रीन की सामग्री नहीं पढ़ता।</string>
+    <string name="enable_accessibility_gestures">इस क्रिया के लिए Accessibility में Launchly जेस्चर चालू करें।</string>
 </resources>

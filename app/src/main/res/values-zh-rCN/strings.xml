@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">主屏幕。向上滑动即可搜索。</string>
+    <string name="home_content_description">主屏幕。向上滑动搜索，向下滑动查看通知，双击锁屏。</string>
     <string name="favorites">收藏</string>
     <string name="search">搜索</string>
     <string name="apps">应用</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">无法打开应用信息</string>
     <string name="error_start_uninstall">无法开始卸载</string>
     <string name="error_refresh_apps">无法刷新应用列表</string>
+    <string name="widgets">小组件</string>
+    <string name="add_widget">添加小组件</string>
+    <string name="remove_widget">移除小组件</string>
+    <string name="widgets_empty_message">添加你想快速查看的小组件。</string>
+    <string name="error_add_widget">无法添加此小组件</string>
+    <string name="accessibility_service_label">Launchly 手势</string>
+    <string name="accessibility_service_description">仅提供用于锁定屏幕和打开通知的可选主屏幕手势，不会读取屏幕内容。</string>
+    <string name="enable_accessibility_gestures">请在无障碍设置中启用 Launchly 手势以使用此操作。</string>
 </resources>

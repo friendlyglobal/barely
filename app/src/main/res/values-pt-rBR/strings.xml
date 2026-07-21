@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar.</string>
+    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar, para baixo para ver notificações ou toque duas vezes para bloquear.</string>
     <string name="favorites">Favoritos</string>
     <string name="search">Buscar</string>
     <string name="apps">Apps</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">Não foi possível abrir as informações do app</string>
     <string name="error_start_uninstall">Não foi possível iniciar a desinstalação</string>
     <string name="error_refresh_apps">Não foi possível atualizar os apps</string>
+    <string name="widgets">Widgets</string>
+    <string name="add_widget">Adicionar widget</string>
+    <string name="remove_widget">Remover widget</string>
+    <string name="widgets_empty_message">Adicione os widgets que você quer ver rapidamente.</string>
+    <string name="error_add_widget">Não foi possível adicionar este widget</string>
+    <string name="accessibility_service_label">Gestos do Launchly</string>
+    <string name="accessibility_service_description">Fornece apenas os gestos opcionais da tela inicial para bloquear a tela e abrir as notificações. Não lê o conteúdo da tela.</string>
+    <string name="enable_accessibility_gestures">Ative os gestos do Launchly em Acessibilidade para usar esta ação.</string>
 </resources>

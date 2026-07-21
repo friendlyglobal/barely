@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Layar utama. Geser ke atas untuk mencari.</string>
+    <string name="home_content_description">Layar utama. Geser ke atas untuk mencari, ke bawah untuk notifikasi, atau ketuk dua kali untuk mengunci.</string>
     <string name="favorites">Favorit</string>
     <string name="search">Cari</string>
     <string name="apps">Aplikasi</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">Tidak dapat membuka info aplikasi</string>
     <string name="error_start_uninstall">Tidak dapat memulai uninstal</string>
     <string name="error_refresh_apps">Tidak dapat memuat ulang aplikasi</string>
+    <string name="widgets">Widget</string>
+    <string name="add_widget">Tambahkan widget</string>
+    <string name="remove_widget">Hapus widget</string>
+    <string name="widgets_empty_message">Tambahkan widget yang ingin Anda lihat sekilas.</string>
+    <string name="error_add_widget">Tidak dapat menambahkan widget ini</string>
+    <string name="accessibility_service_label">Gestur Launchly</string>
+    <string name="accessibility_service_description">Hanya menyediakan gestur layar utama opsional untuk mengunci layar dan membuka notifikasi. Tidak membaca konten layar.</string>
+    <string name="enable_accessibility_gestures">Aktifkan gestur Launchly di Aksesibilitas untuk menggunakan tindakan ini.</string>
 </resources>

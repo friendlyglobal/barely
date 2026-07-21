@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Home screen. Swipe up to search.</string>
+    <string name="home_content_description">Home screen. Swipe up to search, down for notifications, or double-tap to lock.</string>
     <string name="favorites">Favorites</string>
     <string name="search">Search</string>
     <string name="apps">Apps</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">Could not open app info</string>
     <string name="error_start_uninstall">Could not start uninstall</string>
     <string name="error_refresh_apps">Could not refresh apps</string>
+    <string name="widgets">Widgets</string>
+    <string name="add_widget">Add widget</string>
+    <string name="remove_widget">Remove widget</string>
+    <string name="widgets_empty_message">Add the widgets you want to see at a glance.</string>
+    <string name="error_add_widget">Could not add this widget</string>
+    <string name="accessibility_service_label">Launchly gestures</string>
+    <string name="accessibility_service_description">Provides only the optional home gestures to lock the screen and open notifications. It does not read screen content.</string>
+    <string name="enable_accessibility_gestures">Enable Launchly gestures in Accessibility to use this action.</string>
 </resources>

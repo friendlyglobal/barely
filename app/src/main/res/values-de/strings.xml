@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Startbildschirm. Zum Suchen nach oben wischen.</string>
+    <string name="home_content_description">Startbildschirm. Nach oben zum Suchen, nach unten für Benachrichtigungen oder doppelt zum Sperren tippen.</string>
     <string name="favorites">Favoriten</string>
     <string name="search">Suchen</string>
     <string name="apps">Apps</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">App-Info konnte nicht geöffnet werden</string>
     <string name="error_start_uninstall">Deinstallation konnte nicht gestartet werden</string>
     <string name="error_refresh_apps">Apps konnten nicht aktualisiert werden</string>
+    <string name="widgets">Widgets</string>
+    <string name="add_widget">Widget hinzufügen</string>
+    <string name="remove_widget">Widget entfernen</string>
+    <string name="widgets_empty_message">Füge Widgets hinzu, die du auf einen Blick sehen möchtest.</string>
+    <string name="error_add_widget">Dieses Widget konnte nicht hinzugefügt werden</string>
+    <string name="accessibility_service_label">Launchly-Gesten</string>
+    <string name="accessibility_service_description">Stellt nur optionale Startbildschirm-Gesten zum Sperren des Bildschirms und Öffnen der Benachrichtigungen bereit. Bildschirminhalte werden nicht gelesen.</string>
+    <string name="enable_accessibility_gestures">Aktiviere Launchly-Gesten unter Bedienungshilfen, um diese Aktion zu verwenden.</string>
 </resources>

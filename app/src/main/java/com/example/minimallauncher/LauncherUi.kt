@@ -8,22 +8,30 @@ package com.example.minimallauncher
 import android.app.Activity
 import android.app.WallpaperColors
 import android.app.WallpaperManager
+import android.appwidget.AppWidgetHost
+import android.appwidget.AppWidgetManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,8 +48,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +65,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Info
@@ -88,13 +102,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -104,7 +121,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.delay
+import kotlin.math.absoluteValue
 
 @Composable
 fun LauncherScreen(
@@ -114,6 +133,10 @@ fun LauncherScreen(
     isLoading: Boolean,
     showGestureCoach: Boolean,
     homeRequestId: Int,
+    widgetIds: List<Int>,
+    widgetHost: AppWidgetHost,
+    widgetManager: AppWidgetManager,
+    foldingFeature: FoldingFeature?,
     onRequestHomeRole: () -> Unit,
     onGestureCoachSeen: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -121,6 +144,10 @@ fun LauncherScreen(
     onToggleFavorite: (LauncherApp) -> Unit,
     onAppInfo: (LauncherApp) -> Unit,
     onUninstall: (LauncherApp) -> Unit,
+    onAddWidget: () -> Unit,
+    onRemoveWidget: (Int) -> Unit,
+    onLockScreen: () -> Unit,
+    onOpenNotifications: () -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = HOME_PAGE, pageCount = { PAGE_COUNT })
     var searchVisible by remember { mutableStateOf(false) }
@@ -138,6 +165,18 @@ fun LauncherScreen(
     val favorites = remember(snapshot.apps, favoriteKeys) {
         snapshot.apps.filter { it.key in favoriteKeys }
     }
+    val pagerFlingBehavior = PagerDefaults.flingBehavior(
+        state = pagerState,
+        snapAnimationSpec = spring(
+            dampingRatio = 0.88f,
+            stiffness = Spring.StiffnessMediumLow,
+        ),
+    )
+    val pagerContentAlpha by animateFloatAsState(
+        targetValue = if (searchVisible) 0f else 1f,
+        animationSpec = tween(120),
+        label = "pagerContentAlpha",
+    )
 
     LaunchedEffect(homeRequestId) {
         if (homeRequestId > 0) {
@@ -179,57 +218,79 @@ fun LauncherScreen(
     Box(Modifier.fillMaxSize()) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { alpha = pagerContentAlpha },
             beyondViewportPageCount = 1,
+            flingBehavior = pagerFlingBehavior,
             key = { it },
         ) { page ->
-            when (page) {
-                FAVORITES_PAGE -> FavoritesPage(
-                    favorites = favorites,
-                    isLoading = isLoading,
-                    onLaunchApp = onLaunchApp,
-                    onLongPress = { selectedApp = it },
-                )
-
-                HOME_PAGE -> WallpaperPage(
-                    showGestureCoach = showGestureCoach,
-                    onSearch = {
-                        onGestureCoachSeen()
-                        searchVisible = true
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        val pageOffset = (
+                            (pagerState.currentPage - page) +
+                                pagerState.currentPageOffsetFraction
+                        ).absoluteValue.coerceIn(0f, 1f)
+                        alpha = 1f - (pageOffset * 0.1f)
+                        scaleX = 1f - (pageOffset * 0.018f)
+                        scaleY = scaleX
+                        translationY = pageOffset * 10.dp.toPx()
                     },
-                )
+            ) {
+                when (page) {
+                    FAVORITES_PAGE -> FavoritesPage(
+                        favorites = favorites,
+                        widgetIds = widgetIds,
+                        widgetHost = widgetHost,
+                        widgetManager = widgetManager,
+                        foldingFeature = foldingFeature,
+                        isLoading = isLoading,
+                        onLaunchApp = onLaunchApp,
+                        onLongPress = { selectedApp = it },
+                        onAddWidget = onAddWidget,
+                        onRemoveWidget = onRemoveWidget,
+                    )
 
-                APPS_PAGE -> AppsPage(
-                    apps = snapshot.apps,
-                    isLoading = isLoading,
-                    isHomeRoleHeld = isHomeRoleHeld,
-                    hasShortcutPermission = snapshot.hasShortcutPermission,
-                    onRequestHomeRole = onRequestHomeRole,
-                    onLaunchApp = onLaunchApp,
-                    onLongPress = { selectedApp = it },
-                    onSearch = {
-                        onGestureCoachSeen()
-                        searchVisible = true
-                    },
-                )
+                    HOME_PAGE -> WallpaperPage(
+                        showGestureCoach = showGestureCoach,
+                        onLockScreen = onLockScreen,
+                        onOpenNotifications = onOpenNotifications,
+                        onSearch = {
+                            onGestureCoachSeen()
+                            searchVisible = true
+                        },
+                    )
+
+                    APPS_PAGE -> AppsPage(
+                        apps = snapshot.apps,
+                        isLoading = isLoading,
+                        isHomeRoleHeld = isHomeRoleHeld,
+                        hasShortcutPermission = snapshot.hasShortcutPermission,
+                        foldingFeature = foldingFeature,
+                        onRequestHomeRole = onRequestHomeRole,
+                        onLaunchApp = onLaunchApp,
+                        onLongPress = { selectedApp = it },
+                        onSearch = {
+                            onGestureCoachSeen()
+                            searchVisible = true
+                        },
+                    )
+                }
             }
         }
 
         AnimatedVisibility(
             visible = searchVisible,
-            enter = slideInVertically(
-                initialOffsetY = { it },
-                animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f),
-            ) + fadeIn(),
-            exit = slideOutVertically(
-                targetOffsetY = { it },
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 480f),
-            ) + fadeOut(),
+            enter = fadeIn(animationSpec = tween(150)),
+            exit = fadeOut(animationSpec = tween(120)),
         ) {
             SearchPage(
                 apps = snapshot.apps,
                 shortcuts = snapshot.shortcuts,
                 canSearchShortcuts = snapshot.hasShortcutPermission,
+                foldingFeature = foldingFeature,
                 onClose = { searchVisible = false },
                 onLaunchApp = {
                     searchVisible = false
@@ -279,6 +340,8 @@ fun LauncherScreen(
 private fun WallpaperPage(
     showGestureCoach: Boolean,
     onSearch: () -> Unit,
+    onLockScreen: () -> Unit,
+    onOpenNotifications: () -> Unit,
 ) {
     val threshold = with(LocalDensity.current) { 72.dp.toPx() }
     var dragDistance by remember { mutableFloatStateOf(0f) }
@@ -290,6 +353,9 @@ private fun WallpaperPage(
             .semantics {
                 contentDescription = homeContentDescription
             }
+            .pointerInput(onLockScreen) {
+                detectTapGestures(onDoubleTap = { onLockScreen() })
+            }
             .pointerInput(threshold) {
                 detectVerticalDragGestures(
                     onDragStart = { dragDistance = 0f },
@@ -298,7 +364,10 @@ private fun WallpaperPage(
                         change.consume()
                     },
                     onDragEnd = {
-                        if (dragDistance < -threshold) onSearch()
+                        when {
+                            dragDistance < -threshold -> onSearch()
+                            dragDistance > threshold -> onOpenNotifications()
+                        }
                         dragDistance = 0f
                     },
                     onDragCancel = { dragDistance = 0f },
@@ -350,53 +419,257 @@ private fun GestureLabel(label: String, arrow: String) {
 @Composable
 private fun FavoritesPage(
     favorites: List<LauncherApp>,
+    widgetIds: List<Int>,
+    widgetHost: AppWidgetHost,
+    widgetManager: AppWidgetManager,
+    foldingFeature: FoldingFeature?,
     isLoading: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    onAddWidget: () -> Unit,
+    onRemoveWidget: (Int) -> Unit,
 ) {
+    var editingWidgets by remember { mutableStateOf(false) }
+    LaunchedEffect(widgetIds.isEmpty()) {
+        if (widgetIds.isEmpty()) editingWidgets = false
+    }
     PageSurface(isLoading = isLoading) {
         PageHeader(
             title = stringResource(R.string.favorites),
         )
-
-        if (favorites.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 28.dp, vertical = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val verticalFold = foldingFeature?.takeIf {
+                it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
+            }
+            val useTwoPanes = maxWidth >= 700.dp || verticalFold != null
+            val paneGap = verticalFold?.let {
+                with(LocalDensity.current) { it.bounds.width().toDp() }.coerceAtLeast(24.dp)
+            } ?: 24.dp
+            if (useTwoPanes) {
+                Row(Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
+                    ) {
+                        favoriteItems(favorites, onLaunchApp, onLongPress)
+                    }
+                    Spacer(Modifier.width(paneGap))
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
+                    ) {
+                        widgetItems(
+                            widgetIds = widgetIds,
+                            widgetHost = widgetHost,
+                            widgetManager = widgetManager,
+                            editingWidgets = editingWidgets,
+                            onToggleEditing = { editingWidgets = !editingWidgets },
+                            onAddWidget = onAddWidget,
+                            onRemoveWidget = onRemoveWidget,
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 28.dp),
                 ) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier.size(34.dp),
-                        tint = Color.White.copy(alpha = 0.82f),
-                    )
-                    Spacer(Modifier.height(18.dp))
-                    Text(
-                        stringResource(R.string.no_favorites),
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        stringResource(R.string.favorites_empty_message),
-                        color = Color.White.copy(alpha = 0.68f),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
+                    favoriteItems(favorites, onLaunchApp, onLongPress)
+                    widgetItems(
+                        widgetIds = widgetIds,
+                        widgetHost = widgetHost,
+                        widgetManager = widgetManager,
+                        editingWidgets = editingWidgets,
+                        onToggleEditing = { editingWidgets = !editingWidgets },
+                        onAddWidget = onAddWidget,
+                        onRemoveWidget = onRemoveWidget,
                     )
                 }
             }
-        } else {
-            AppGrid(
-                apps = favorites,
-                onLaunchApp = onLaunchApp,
-                onLongPress = onLongPress,
+        }
+    }
+}
+
+private fun LazyListScope.favoriteItems(
+    favorites: List<LauncherApp>,
+    onLaunchApp: (LauncherApp) -> Unit,
+    onLongPress: (LauncherApp) -> Unit,
+) {
+    if (favorites.isEmpty()) {
+        item(key = "empty_favorites") {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 28.dp, vertical = 30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    Icons.Outlined.StarOutline,
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.White.copy(alpha = 0.78f),
+                )
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.no_favorites),
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(7.dp))
+                Text(
+                    stringResource(R.string.favorites_empty_message),
+                    color = Color.White.copy(alpha = 0.64f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    } else {
+        items(favorites, key = { it.key }) { app ->
+            AppTile(
+                app = app,
+                onClick = { onLaunchApp(app) },
+                onLongPress = { onLongPress(app) },
             )
+        }
+    }
+}
+
+private fun LazyListScope.widgetItems(
+    widgetIds: List<Int>,
+    widgetHost: AppWidgetHost,
+    widgetManager: AppWidgetManager,
+    editingWidgets: Boolean,
+    onToggleEditing: () -> Unit,
+    onAddWidget: () -> Unit,
+    onRemoveWidget: (Int) -> Unit,
+) {
+    item(key = "widget_header") {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 4.dp, top = 22.dp, bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                stringResource(R.string.widgets),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Normal,
+            )
+            if (widgetIds.isNotEmpty()) {
+                IconButton(
+                    onClick = onToggleEditing,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            if (editingWidgets) {
+                                Color.White.copy(alpha = 0.14f)
+                            } else {
+                                Color.Transparent
+                            },
+                        ),
+                ) {
+                    Icon(
+                        Icons.Outlined.DeleteOutline,
+                        contentDescription = stringResource(R.string.remove_widget),
+                        tint = Color.White.copy(alpha = 0.8f),
+                    )
+                }
+            }
+            IconButton(onClick = onAddWidget) {
+                Icon(
+                    Icons.Outlined.Add,
+                    contentDescription = stringResource(R.string.add_widget),
+                )
+            }
+        }
+    }
+
+    if (widgetIds.isEmpty()) {
+        item(key = "empty_widgets") {
+            Text(
+                stringResource(R.string.widgets_empty_message),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                color = Color.White.copy(alpha = 0.62f),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    } else {
+        items(widgetIds, key = { "widget_$it" }) { widgetId ->
+            HostedWidget(
+                widgetId = widgetId,
+                widgetHost = widgetHost,
+                widgetManager = widgetManager,
+                showRemove = editingWidgets,
+                onRemove = { onRemoveWidget(widgetId) },
+            )
+            Spacer(Modifier.height(14.dp))
+        }
+    }
+}
+
+@Composable
+private fun HostedWidget(
+    widgetId: Int,
+    widgetHost: AppWidgetHost,
+    widgetManager: AppWidgetManager,
+    showRemove: Boolean,
+    onRemove: () -> Unit,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val info = remember(widgetId) { widgetManager.getAppWidgetInfo(widgetId) }
+    if (info == null) return
+
+    val preferredHeight = with(density) { info.minHeight.toDp() }.coerceIn(110.dp, 360.dp)
+    val hostView = remember(widgetId, info) {
+        widgetHost.createView(context, widgetId, info)
+    }
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp)
+            .height(preferredHeight)
+            .clip(RoundedCornerShape(28.dp)),
+    ) {
+        val widthDp = maxWidth.value.toInt().coerceAtLeast(1)
+        val heightDp = preferredHeight.value.toInt().coerceAtLeast(1)
+        AndroidView(
+            factory = { hostView },
+            modifier = Modifier.fillMaxSize(),
+            update = { view ->
+                view.updateAppWidgetSize(
+                    null,
+                    widthDp,
+                    heightDp,
+                    widthDp,
+                    heightDp,
+                )
+            },
+        )
+        AnimatedVisibility(
+            visible = showRemove,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(7.dp),
+            enter = fadeIn(tween(120)) + scaleIn(tween(160), initialScale = 0.8f),
+            exit = fadeOut(tween(100)),
+        ) {
+            IconButton(
+                onClick = onRemove,
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.68f)),
+            ) {
+                Icon(
+                    Icons.Outlined.Close,
+                    contentDescription = stringResource(R.string.remove_widget),
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.White,
+                )
+            }
         }
     }
 }
@@ -407,6 +680,7 @@ private fun AppsPage(
     isLoading: Boolean,
     isHomeRoleHeld: Boolean,
     hasShortcutPermission: Boolean,
+    foldingFeature: FoldingFeature?,
     onRequestHomeRole: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
@@ -430,18 +704,16 @@ private fun AppsPage(
                 apps = apps,
                 onLaunchApp = onLaunchApp,
                 onLongPress = onLongPress,
+                foldingFeature = foldingFeature,
                 contentPadding = PaddingValues(
                     start = 12.dp,
                     top = 8.dp,
                     end = 12.dp,
-                    bottom = 82.dp,
+                    bottom = 8.dp,
                 ),
             )
-            SearchLauncherBar(
-                onClick = onSearch,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
         }
+        SearchLauncherBar(onClick = onSearch)
     }
 }
 
@@ -560,18 +832,34 @@ private fun AppGrid(
     apps: List<LauncherApp>,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    foldingFeature: FoldingFeature?,
     contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding,
-    ) {
-        items(apps, key = { it.key }) { app ->
-            AppTile(
-                app = app,
-                onClick = { onLaunchApp(app) },
-                onLongPress = { onLongPress(app) },
-            )
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val verticalFold = foldingFeature?.takeIf {
+            it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
+        }
+        val columnCount = when {
+            maxWidth >= 1080.dp -> 3
+            maxWidth >= 600.dp || verticalFold != null -> 2
+            else -> 1
+        }
+        val columnGap = verticalFold?.let {
+            with(LocalDensity.current) { it.bounds.width().toDp() }.coerceAtLeast(20.dp)
+        } ?: 4.dp
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columnCount),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = contentPadding,
+            horizontalArrangement = Arrangement.spacedBy(columnGap),
+        ) {
+            gridItems(apps, key = { it.key }) { app ->
+                AppTile(
+                    app = app,
+                    onClick = { onLaunchApp(app) },
+                    onLongPress = { onLongPress(app) },
+                )
+            }
         }
     }
 }
@@ -672,14 +960,28 @@ private fun SearchPage(
     apps: List<LauncherApp>,
     shortcuts: List<LauncherShortcut>,
     canSearchShortcuts: Boolean,
+    foldingFeature: FoldingFeature?,
     onClose: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
+    var contentVisible by remember { mutableStateOf(false) }
+    var dismissDrag by remember { mutableFloatStateOf(0f) }
+    var dismissDragging by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
+    val dismissThreshold = with(LocalDensity.current) { 76.dp.toPx() }
+    val animatedDismissDrag by animateFloatAsState(
+        targetValue = dismissDrag,
+        animationSpec = if (dismissDragging) {
+            snap()
+        } else {
+            spring(dampingRatio = 0.78f, stiffness = Spring.StiffnessMedium)
+        },
+        label = "searchDismissDrag",
+    )
     val normalizedQuery = remember(query) { query.normalizedForSearch() }
     val rankedResults = remember(apps, shortcuts, normalizedQuery) {
         if (normalizedQuery.isBlank()) {
@@ -691,7 +993,11 @@ private fun SearchPage(
                         query = normalizedQuery,
                         terms = listOf(
                             SearchTerm(app.label),
-                            SearchTerm(app.packageName, PACKAGE_MATCH_PENALTY),
+                            SearchTerm(
+                                app.packageName,
+                                PACKAGE_MATCH_PENALTY,
+                                allowFuzzy = false,
+                            ),
                         ),
                     )?.let { score -> add(AppSearchResult(app, score)) }
                 }
@@ -701,7 +1007,11 @@ private fun SearchPage(
                         terms = listOf(
                             SearchTerm(shortcut.label),
                             SearchTerm(shortcut.description.orEmpty(), DESCRIPTION_MATCH_PENALTY),
-                            SearchTerm(shortcut.info.id, SHORTCUT_ID_MATCH_PENALTY),
+                            SearchTerm(
+                                shortcut.info.id,
+                                SHORTCUT_ID_MATCH_PENALTY,
+                                allowFuzzy = false,
+                            ),
                         ),
                     )?.let { score -> add(ShortcutSearchResult(shortcut, score)) }
                 }
@@ -724,7 +1034,8 @@ private fun SearchPage(
     }
 
     LaunchedEffect(Unit) {
-        delay(120)
+        contentVisible = true
+        delay(90)
         focusRequester.requestFocus()
         keyboard?.show()
     }
@@ -732,7 +1043,7 @@ private fun SearchPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.58f)),
+            .background(Color.Black.copy(alpha = 0.64f)),
     ) {
         CompositionLocalProvider(LocalContentColor provides Color.White) {
             Column(
@@ -740,35 +1051,105 @@ private fun SearchPage(
                     .fillMaxSize()
                     .statusBarsPadding()
                     .navigationBarsPadding()
-                    .imePadding(),
+                    .imePadding()
+                    .graphicsLayer {
+                        translationY = animatedDismissDrag * 0.62f
+                        alpha = 1f - (
+                            animatedDismissDrag / (dismissThreshold * 2f)
+                        ).coerceIn(0f, 0.16f)
+                    },
             ) {
-                IconButton(
-                    onClick = onClose,
-                    modifier = Modifier.padding(start = 8.dp, top = 8.dp),
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    modifier = Modifier.weight(1f),
+                    enter = fadeIn(tween(180)) + slideInVertically(tween(220)) { -it / 18 },
                 ) {
-                    Icon(
-                        Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = stringResource(R.string.close_search),
-                    )
+                    Column {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(58.dp)
+                                .pointerInput(dismissThreshold) {
+                                    detectVerticalDragGestures(
+                                        onDragStart = {
+                                            dismissDragging = true
+                                            dismissDrag = 0f
+                                        },
+                                        onVerticalDrag = { change, amount ->
+                                            dismissDrag = (dismissDrag + amount).coerceAtLeast(0f)
+                                            change.consume()
+                                        },
+                                        onDragEnd = {
+                                            dismissDragging = false
+                                            if (dismissDrag >= dismissThreshold) {
+                                                keyboard?.hide()
+                                                onClose()
+                                            } else {
+                                                dismissDrag = 0f
+                                            }
+                                        },
+                                        onDragCancel = {
+                                            dismissDragging = false
+                                            dismissDrag = 0f
+                                        },
+                                    )
+                                },
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    keyboard?.hide()
+                                    onClose()
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(start = 8.dp),
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Outlined.ArrowBack,
+                                    contentDescription = stringResource(R.string.close_search),
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .padding(top = 10.dp)
+                                    .size(width = 34.dp, height = 4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.42f)),
+                            )
+                        }
+
+                        SearchResults(
+                            modifier = Modifier.weight(1f),
+                            query = query,
+                            results = rankedResults,
+                            canSearchShortcuts = canSearchShortcuts,
+                            foldingFeature = foldingFeature,
+                            onLaunchApp = onLaunchApp,
+                            onLongPress = onLongPress,
+                            onLaunchShortcut = onLaunchShortcut,
+                        )
+                    }
                 }
 
-                SearchResults(
-                    modifier = Modifier.weight(1f),
-                    query = query,
-                    results = rankedResults,
-                    canSearchShortcuts = canSearchShortcuts,
-                    onLaunchApp = onLaunchApp,
-                    onLongPress = onLongPress,
-                    onLaunchShortcut = onLaunchShortcut,
-                )
-
-                SearchInput(
-                    query = query,
-                    onQueryChange = { query = it },
-                    onSearch = ::launchBestResult,
-                    onClear = { query = "" },
-                    modifier = Modifier.focusRequester(focusRequester),
-                )
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(tween(160)) +
+                        slideInVertically(tween(260)) { it / 2 } +
+                        scaleIn(
+                            animationSpec = tween(220),
+                            initialScale = 0.96f,
+                            transformOrigin = TransformOrigin(0.5f, 1f),
+                        ),
+                ) {
+                    SearchInput(
+                        query = query,
+                        onQueryChange = { query = it },
+                        onSearch = ::launchBestResult,
+                        onClear = { query = "" },
+                        modifier = Modifier.focusRequester(focusRequester),
+                    )
+                }
             }
         }
     }
@@ -847,39 +1228,55 @@ private fun SearchResults(
     query: String,
     results: List<LauncherSearchResult>,
     canSearchShortcuts: Boolean,
+    foldingFeature: FoldingFeature?,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-    ) {
-        items(results, key = { it.key }) { result ->
-            when (result) {
-                is AppSearchResult -> AppSearchRow(
-                    app = result.app,
-                    onLaunchApp = onLaunchApp,
-                    onLongPress = onLongPress,
-                )
-
-                is ShortcutSearchResult -> ShortcutSearchRow(
-                    shortcut = result.shortcut,
-                    onLaunchShortcut = onLaunchShortcut,
-                    onLongPress = onLongPress,
-                )
-            }
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val verticalFold = foldingFeature?.takeIf {
+            it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
         }
-        if (query.isNotBlank() && results.isEmpty()) {
-            item {
-                SearchHint(
-                    title = stringResource(R.string.nothing_found),
-                    description = if (canSearchShortcuts) {
-                        stringResource(R.string.try_another_name)
-                    } else {
-                        stringResource(R.string.set_default_to_search_shortcuts)
-                    },
-                )
+        val columnCount = when {
+            maxWidth >= 1080.dp -> 3
+            maxWidth >= 600.dp || verticalFold != null -> 2
+            else -> 1
+        }
+        val columnGap = verticalFold?.let {
+            with(LocalDensity.current) { it.bounds.width().toDp() }.coerceAtLeast(20.dp)
+        } ?: 4.dp
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columnCount),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(columnGap),
+        ) {
+            gridItems(results, key = { it.key }) { result ->
+                when (result) {
+                    is AppSearchResult -> AppSearchRow(
+                        app = result.app,
+                        onLaunchApp = onLaunchApp,
+                        onLongPress = onLongPress,
+                    )
+
+                    is ShortcutSearchResult -> ShortcutSearchRow(
+                        shortcut = result.shortcut,
+                        onLaunchShortcut = onLaunchShortcut,
+                        onLongPress = onLongPress,
+                    )
+                }
+            }
+            if (query.isNotBlank() && results.isEmpty()) {
+                item {
+                    SearchHint(
+                        title = stringResource(R.string.nothing_found),
+                        description = if (canSearchShortcuts) {
+                            stringResource(R.string.try_another_name)
+                        } else {
+                            stringResource(R.string.set_default_to_search_shortcuts)
+                        },
+                    )
+                }
             }
         }
     }

@@ -6,13 +6,14 @@ import java.util.Locale
 internal data class SearchTerm(
     val text: String,
     val penalty: Int = 0,
+    val allowFuzzy: Boolean = true,
 )
 
 internal fun relevanceScore(query: String, terms: List<SearchTerm>): Int? {
     if (query.isBlank()) return null
 
     return terms.minOfOrNull { term ->
-        term.text.matchScore(query)?.plus(term.penalty) ?: Int.MAX_VALUE
+        term.text.matchScore(query, term.allowFuzzy)?.plus(term.penalty) ?: Int.MAX_VALUE
     }?.takeUnless { it == Int.MAX_VALUE }
 }
 
@@ -22,7 +23,7 @@ internal fun String.normalizedForSearch(): String = Normalizer
     .lowercase(Locale.getDefault())
     .trim()
 
-private fun String.matchScore(normalizedQuery: String): Int? {
+private fun String.matchScore(normalizedQuery: String, allowFuzzy: Boolean): Int? {
     val normalizedText = normalizedForSearch()
     if (normalizedText.isBlank()) return null
 
@@ -33,9 +34,11 @@ private fun String.matchScore(normalizedQuery: String): Int? {
         normalizedText.startsWith(normalizedQuery) -> 10
         textWords.any { it.startsWith(normalizedQuery) } -> 20
         normalizedText.contains(normalizedQuery) -> 30
-        queryWords.size > 1 -> multiWordScore(queryWords, textWords)
-        normalizedQuery.length >= 2 && initialism(textWords).startsWith(normalizedQuery) -> 38
-        normalizedQuery.length >= 3 -> fuzzyScore(normalizedQuery, normalizedText, textWords)
+        allowFuzzy && queryWords.size > 1 -> multiWordScore(queryWords, textWords)
+        allowFuzzy && normalizedQuery.length >= 2 &&
+            initialism(textWords).startsWith(normalizedQuery) -> 38
+        allowFuzzy && normalizedQuery.length >= 3 ->
+            fuzzyScore(normalizedQuery, normalizedText, textWords)
         else -> null
     }
 }

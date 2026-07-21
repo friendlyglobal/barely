@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Главный экран. Проведите вверх для поиска.</string>
+    <string name="home_content_description">Главный экран. Вверх — поиск, вниз — уведомления, двойное касание — блокировка.</string>
     <string name="favorites">Избранное</string>
     <string name="search">Поиск</string>
     <string name="apps">Приложения</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">Не удалось открыть сведения о приложении</string>
     <string name="error_start_uninstall">Не удалось начать удаление</string>
     <string name="error_refresh_apps">Не удалось обновить приложения</string>
+    <string name="widgets">Виджеты</string>
+    <string name="add_widget">Добавить виджет</string>
+    <string name="remove_widget">Удалить виджет</string>
+    <string name="widgets_empty_message">Добавьте виджеты, которые хотите быстро просматривать.</string>
+    <string name="error_add_widget">Не удалось добавить этот виджет</string>
+    <string name="accessibility_service_label">Жесты Launchly</string>
+    <string name="accessibility_service_description">Предоставляет только необязательные жесты главного экрана для блокировки экрана и открытия уведомлений. Не считывает содержимое экрана.</string>
+    <string name="enable_accessibility_gestures">Включите жесты Launchly в настройках специальных возможностей.</string>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">ホーム画面。上にスワイプして検索します。</string>
+    <string name="home_content_description">ホーム画面。上にスワイプして検索、下にスワイプして通知、ダブルタップしてロックします。</string>
     <string name="favorites">お気に入り</string>
     <string name="search">検索</string>
     <string name="apps">アプリ</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">アプリ情報を開けませんでした</string>
     <string name="error_start_uninstall">アンインストールを開始できませんでした</string>
     <string name="error_refresh_apps">アプリを更新できませんでした</string>
+    <string name="widgets">ウィジェット</string>
+    <string name="add_widget">ウィジェットを追加</string>
+    <string name="remove_widget">ウィジェットを削除</string>
+    <string name="widgets_empty_message">すぐに確認したいウィジェットを追加できます。</string>
+    <string name="error_add_widget">このウィジェットを追加できませんでした</string>
+    <string name="accessibility_service_label">Launchly のジェスチャー</string>
+    <string name="accessibility_service_description">画面のロックと通知の表示に使う、任意のホーム画面ジェスチャーだけを提供します。画面の内容は読み取りません。</string>
+    <string name="enable_accessibility_gestures">この操作を使うには、ユーザー補助で Launchly のジェスチャーを有効にしてください。</string>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">الشاشة الرئيسية. اسحب لأعلى للبحث.</string>
+    <string name="home_content_description">الشاشة الرئيسية. اسحب لأعلى للبحث ولأسفل للإشعارات أو انقر مرتين للقفل.</string>
     <string name="favorites">المفضلة</string>
     <string name="search">بحث</string>
     <string name="apps">التطبيقات</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">تعذر فتح معلومات التطبيق</string>
     <string name="error_start_uninstall">تعذر بدء إلغاء التثبيت</string>
     <string name="error_refresh_apps">تعذر تحديث التطبيقات</string>
+    <string name="widgets">الأدوات</string>
+    <string name="add_widget">إضافة أداة</string>
+    <string name="remove_widget">إزالة الأداة</string>
+    <string name="widgets_empty_message">أضف الأدوات التي تريد رؤيتها بلمحة سريعة.</string>
+    <string name="error_add_widget">تعذرت إضافة هذه الأداة</string>
+    <string name="accessibility_service_label">إيماءات Launchly</string>
+    <string name="accessibility_service_description">يوفّر فقط إيماءات الشاشة الرئيسية الاختيارية لقفل الشاشة وفتح الإشعارات، ولا يقرأ محتوى الشاشة.</string>
+    <string name="enable_accessibility_gestures">فعّل إيماءات Launchly ضمن تسهيلات الاستخدام لاستعمال هذا الإجراء.</string>
 </resources>

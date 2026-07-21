@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">Écran d’accueil. Balayez vers le haut pour rechercher.</string>
+    <string name="home_content_description">Écran d’accueil. Balayez vers le haut pour rechercher, vers le bas pour les notifications ou touchez deux fois pour verrouiller.</string>
     <string name="favorites">Favoris</string>
     <string name="search">Rechercher</string>
     <string name="apps">Applications</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">Impossible d’ouvrir les informations de l’application</string>
     <string name="error_start_uninstall">Impossible de lancer la désinstallation</string>
     <string name="error_refresh_apps">Impossible d’actualiser les applications</string>
+    <string name="widgets">Widgets</string>
+    <string name="add_widget">Ajouter un widget</string>
+    <string name="remove_widget">Supprimer le widget</string>
+    <string name="widgets_empty_message">Ajoutez les widgets que vous souhaitez consulter en un coup d’œil.</string>
+    <string name="error_add_widget">Impossible d’ajouter ce widget</string>
+    <string name="accessibility_service_label">Gestes Launchly</string>
+    <string name="accessibility_service_description">Fournit uniquement les gestes facultatifs de l’écran d’accueil pour verrouiller l’écran et ouvrir les notifications. Aucun contenu à l’écran n’est lu.</string>
+    <string name="enable_accessibility_gestures">Activez les gestes Launchly dans Accessibilité pour utiliser cette action.</string>
 </resources>

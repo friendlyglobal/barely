@@ -49,4 +49,15 @@ class SearchRankingTest {
             relevanceScore("wb", listOf(SearchTerm("WhatsApp Business"))) != null,
         )
     }
+
+    @Test
+    fun opaqueIdsDoNotCreateLooseFuzzyMatches() {
+        assertEquals(
+            null,
+            relevanceScore(
+                "chro",
+                listOf(SearchTerm("create_event_shortcut", 96, allowFuzzy = false)),
+            ),
+        )
+    }
 }

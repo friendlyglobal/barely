@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Launchly</string>
-    <string name="home_content_description">홈 화면입니다. 위로 스와이프하여 검색하세요.</string>
+    <string name="home_content_description">홈 화면입니다. 위로 밀어 검색하고 아래로 밀어 알림을 열거나 두 번 눌러 잠그세요.</string>
     <string name="favorites">즐겨찾기</string>
     <string name="search">검색</string>
     <string name="apps">앱</string>
@@ -34,4 +34,12 @@
     <string name="error_open_app_info">앱 정보를 열 수 없습니다</string>
     <string name="error_start_uninstall">제거를 시작할 수 없습니다</string>
     <string name="error_refresh_apps">앱을 새로고침할 수 없습니다</string>
+    <string name="widgets">위젯</string>
+    <string name="add_widget">위젯 추가</string>
+    <string name="remove_widget">위젯 삭제</string>
+    <string name="widgets_empty_message">한눈에 보고 싶은 위젯을 추가하세요.</string>
+    <string name="error_add_widget">이 위젯을 추가할 수 없습니다</string>
+    <string name="accessibility_service_label">Launchly 제스처</string>
+    <string name="accessibility_service_description">화면 잠금과 알림 열기를 위한 선택적 홈 화면 제스처만 제공합니다. 화면 콘텐츠를 읽지 않습니다.</string>
+    <string name="enable_accessibility_gestures">이 동작을 사용하려면 접근성에서 Launchly 제스처를 사용 설정하세요.</string>
 </resources>
