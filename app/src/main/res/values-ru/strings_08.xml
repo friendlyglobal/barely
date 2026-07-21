@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Открыть Codex</string>
+    <string name="command_open_codex_summary">Продолжить работу с кодом в приложении ChatGPT</string>
+    <string name="settings_ai_assistant">ИИ-ассистент</string>
+    <string name="settings_ai_assistant_summary">Используется только тогда, когда локальный поиск не находит результатов. Вопрос передаётся установленному приложению.</string>
+    <string name="onboarding_ai_assistant_summary">Выберите установленное приложение, которое получит вопрос, если локальный поиск ничего не найдёт.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Всегда спрашивать</string>
+    <string name="assistant_not_installed">Не установлено</string>
+    <string name="settings_portability">Резервная копия</string>
+    <string name="settings_export">Экспорт настроек</string>
+    <string name="settings_export_summary">Сохраните переносимые настройки внешнего вида, жестов, поиска и дополнительных модулей.</string>
+    <string name="settings_import">Импорт настроек</string>
+    <string name="settings_import_summary">Восстановите файл настроек Barely. Виджеты, разрешения, профили и личная история не включаются.</string>
+    <string name="settings_export_complete">Настройки экспортированы</string>
+    <string name="settings_export_failed">Не удалось экспортировать настройки</string>
+    <string name="settings_import_complete">Настройки импортированы</string>
+    <string name="settings_import_failed">Не удалось импортировать этот файл настроек</string>
+    <string name="settings_double_tap">Двойное касание</string>
+    <string name="settings_double_tap_action_summary">Выберите действие при двойном касании пустой области главного экрана.</string>
+    <string name="settings_swipe_down">Свайп вниз</string>
+    <string name="settings_swipe_down_action_summary">Выберите действие при свайпе вниз на главном экране.</string>
+    <string name="gesture_action_none">Ничего</string>
+    <string name="gesture_action_lock">Заблокировать экран</string>
+    <string name="gesture_action_notifications">Уведомления</string>
+    <string name="gesture_action_search">Поиск</string>
+    <string name="gesture_action_apps">Все приложения</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Codex öffnen</string>
+    <string name="command_open_codex_summary">Programmierarbeit in der ChatGPT-App fortsetzen</string>
+    <string name="settings_ai_assistant">KI-Assistent</string>
+    <string name="settings_ai_assistant_summary">Wird nur verwendet, wenn die lokale Suche kein Ergebnis findet. Deine Frage wird an die installierte App übergeben.</string>
+    <string name="onboarding_ai_assistant_summary">Wähle die installierte App, die eine Frage erhält, wenn die lokale Suche nichts findet.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Immer fragen</string>
+    <string name="assistant_not_installed">Nicht installiert</string>
+    <string name="settings_portability">Sicherung</string>
+    <string name="settings_export">Einstellungen exportieren</string>
+    <string name="settings_export_summary">Portable Einstellungen für Darstellung, Gesten, Suche und optionale Module speichern.</string>
+    <string name="settings_import">Einstellungen importieren</string>
+    <string name="settings_import_summary">Eine Barely-Einstellungsdatei wiederherstellen. Widgets, Berechtigungen, Profile und privater Verlauf sind ausgeschlossen.</string>
+    <string name="settings_export_complete">Einstellungen exportiert</string>
+    <string name="settings_export_failed">Einstellungen konnten nicht exportiert werden</string>
+    <string name="settings_import_complete">Einstellungen importiert</string>
+    <string name="settings_import_failed">Diese Einstellungsdatei konnte nicht importiert werden</string>
+    <string name="settings_double_tap">Doppeltippen</string>
+    <string name="settings_double_tap_action_summary">Wähle, was beim Doppeltippen auf einen freien Startbildschirmbereich geschieht.</string>
+    <string name="settings_swipe_down">Nach unten wischen</string>
+    <string name="settings_swipe_down_action_summary">Wähle, was beim Herunterziehen des Startbildschirms geschieht.</string>
+    <string name="gesture_action_none">Nichts</string>
+    <string name="gesture_action_lock">Bildschirm sperren</string>
+    <string name="gesture_action_notifications">Benachrichtigungen</string>
+    <string name="gesture_action_search">Suche</string>
+    <string name="gesture_action_apps">Alle Apps</string>
+</resources>

@@ -19,5 +19,8 @@ class LauncherSettingsTest {
         assertFalse(settings.terminalTopActionBackdrop)
         assertFalse(settings.terminalAesthetic)
         assertEquals(12, settings.terminalCornerRadius)
+        assertEquals(AssistantPreference.CHATGPT, settings.preferredAssistant)
+        assertEquals(LauncherGestureAction.LOCK_SCREEN, settings.doubleTapAction)
+        assertEquals(LauncherGestureAction.NOTIFICATIONS, settings.swipeDownAction)
     }
 }

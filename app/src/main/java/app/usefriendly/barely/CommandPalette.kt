@@ -29,6 +29,7 @@ sealed interface LauncherCommandAction {
         val packageName: String,
         val prompt: String,
     ) : LauncherCommandAction
+    data class OpenAssistant(val packageName: String) : LauncherCommandAction
     data object RequestContactsPermission : LauncherCommandAction
     data object OpenNotificationAccess : LauncherCommandAction
     data class ToggleNotificationDots(val enabled: Boolean) : LauncherCommandAction
@@ -53,6 +54,7 @@ internal fun buildLauncherCommands(
     hasNotificationAccess: Boolean,
     notificationDotsEnabled: Boolean,
     mediaControlsEnabled: Boolean,
+    preferredAssistant: AssistantPreference = AssistantPreference.ASK_EVERY_TIME,
 ): List<LauncherCommand> {
     val trimmedQuery = query.trim()
     if (trimmedQuery.isEmpty()) return emptyList()
@@ -172,22 +174,32 @@ internal fun buildLauncherCommands(
             }
         }
 
-        assistantPrompt(trimmedQuery)?.takeIf { it.isNotBlank() }?.let { prompt ->
-            ASSISTANTS.filter { it.packageName in installedPackages }.forEach { assistant ->
-                add(
-                    LauncherCommand(
-                        key = "assistant:${assistant.packageName}",
-                        title = context.getString(R.string.command_ask_assistant, assistant.name),
-                        subtitle = prompt,
-                        icon = CommandIcon.ASSISTANT,
-                        score = -16 + assistant.rank,
-                        action = LauncherCommandAction.AskAssistant(
-                            packageName = assistant.packageName,
-                            prompt = prompt,
-                        ),
+        val chatGptPackage = AssistantPreference.CHATGPT.packageName!!
+        if (normalizedQuery in CODEX_KEYWORDS && chatGptPackage in installedPackages) {
+            add(
+                LauncherCommand(
+                    key = "assistant:codex",
+                    title = context.getString(R.string.command_open_codex),
+                    subtitle = context.getString(R.string.command_open_codex_summary),
+                    icon = CommandIcon.ASSISTANT,
+                    score = -24,
+                    action = LauncherCommandAction.OpenAssistant(
+                        chatGptPackage,
                     ),
-                )
-            }
+                ),
+            )
+        }
+
+        assistantPrompt(trimmedQuery)?.takeIf { it.prompt.isNotBlank() }?.let { parsed ->
+            addAll(
+                buildAssistantCommands(
+                    context = context,
+                    prompt = parsed.prompt,
+                    installedPackages = installedPackages,
+                    preferredAssistant = preferredAssistant,
+                    targetPackage = parsed.packageName,
+                ),
+            )
         }
 
         if (hasContactsPermission) {
@@ -228,6 +240,53 @@ internal fun buildLauncherCommands(
             )
         }
     }.distinctBy(LauncherCommand::key).sortedBy(LauncherCommand::score)
+}
+
+internal fun buildAssistantCommands(
+    context: Context,
+    prompt: String,
+    installedPackages: Set<String>,
+    preferredAssistant: AssistantPreference,
+    targetPackage: String? = null,
+): List<LauncherCommand> {
+    if (prompt.isBlank()) return emptyList()
+    val available = ASSISTANTS.filter { it.packageName in installedPackages }
+    val selectedPackages = selectAssistantPackages(
+        installedPackages = installedPackages,
+        preferredAssistant = preferredAssistant,
+        targetPackage = targetPackage,
+    )
+    val selected = available.filter { it.packageName in selectedPackages }
+    return selected.map { assistant ->
+        LauncherCommand(
+            key = "assistant:${assistant.packageName}",
+            title = context.getString(R.string.command_ask_assistant, assistant.name),
+            subtitle = prompt,
+            icon = CommandIcon.ASSISTANT,
+            score = -16 + assistant.rank,
+            action = LauncherCommandAction.AskAssistant(
+                packageName = assistant.packageName,
+                prompt = prompt,
+            ),
+        )
+    }
+}
+
+internal fun selectAssistantPackages(
+    installedPackages: Set<String>,
+    preferredAssistant: AssistantPreference,
+    targetPackage: String? = null,
+): List<String> {
+    val available = ASSISTANTS
+        .map(Assistant::packageName)
+        .filter { it in installedPackages }
+    return when {
+        targetPackage != null -> available.filter { it == targetPackage }
+        preferredAssistant.packageName != null -> available.filter {
+            it == preferredAssistant.packageName
+        }.ifEmpty { available.take(1) }
+        else -> available
+    }
 }
 
 internal data class Calculation(
@@ -410,10 +469,24 @@ private fun convertTemperature(value: Double, source: String, target: String): D
     }
 }
 
-private fun assistantPrompt(query: String): String? {
+private data class AssistantPrompt(
+    val prompt: String,
+    val packageName: String?,
+)
+
+private fun assistantPrompt(query: String): AssistantPrompt? {
     val lowered = query.lowercase(Locale.ROOT)
+    val explicit = ASSISTANT_TARGET_PREFIXES.firstOrNull { (prefix, _) ->
+        lowered.startsWith(prefix)
+    }
+    if (explicit != null) {
+        return AssistantPrompt(
+            prompt = query.drop(explicit.first.length).trim(),
+            packageName = explicit.second,
+        )
+    }
     val prefix = ASSISTANT_PREFIXES.firstOrNull(lowered::startsWith) ?: return null
-    return query.drop(prefix.length).trim()
+    return AssistantPrompt(query.drop(prefix.length).trim(), packageName = null)
 }
 
 private fun formatNumber(value: Double): String = NumberFormat.getNumberInstance().apply {
@@ -442,6 +515,13 @@ private val NOTIFICATION_KEYWORDS = listOf(
     "notification", "notifications", "notificacao", "notificacoes", "media", "music", "musica",
 )
 private val ASSISTANT_PREFIXES = listOf("ask ", "pergunte ", "pergunta ", "ai ", "ia ", "?")
+private val ASSISTANT_TARGET_PREFIXES = listOf(
+    "chatgpt " to "com.openai.chatgpt",
+    "gpt " to "com.openai.chatgpt",
+    "gemini " to "com.google.android.apps.bard",
+    "claude " to "com.anthropic.claude",
+)
+private val CODEX_KEYWORDS = setOf("codex", "code", "codigo", "programar")
 private val ASSISTANTS = listOf(
     Assistant("ChatGPT", "com.openai.chatgpt", 0),
     Assistant("Gemini", "com.google.android.apps.bard", 1),

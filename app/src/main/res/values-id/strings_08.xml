@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Buka Codex</string>
+    <string name="command_open_codex_summary">Lanjutkan pekerjaan pemrograman di aplikasi ChatGPT</string>
+    <string name="settings_ai_assistant">Asisten AI</string>
+    <string name="settings_ai_assistant_summary">Hanya digunakan saat pencarian lokal tidak menemukan hasil. Pertanyaan Anda diteruskan ke aplikasi terpasang.</string>
+    <string name="onboarding_ai_assistant_summary">Pilih aplikasi terpasang yang menerima pertanyaan saat pencarian lokal tidak menemukan apa pun.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Selalu tanyakan</string>
+    <string name="assistant_not_installed">Belum terpasang</string>
+    <string name="settings_portability">Cadangan</string>
+    <string name="settings_export">Ekspor setelan</string>
+    <string name="settings_export_summary">Simpan preferensi tampilan, gestur, pencarian, dan modul opsional yang portabel.</string>
+    <string name="settings_import">Impor setelan</string>
+    <string name="settings_import_summary">Pulihkan file setelan Barely. Widget, izin, profil, dan riwayat pribadi tidak disertakan.</string>
+    <string name="settings_export_complete">Setelan diekspor</string>
+    <string name="settings_export_failed">Setelan tidak dapat diekspor</string>
+    <string name="settings_import_complete">Setelan diimpor</string>
+    <string name="settings_import_failed">File setelan ini tidak dapat diimpor</string>
+    <string name="settings_double_tap">Ketuk dua kali</string>
+    <string name="settings_double_tap_action_summary">Pilih tindakan saat mengetuk dua kali area Beranda yang kosong.</string>
+    <string name="settings_swipe_down">Usap ke bawah</string>
+    <string name="settings_swipe_down_action_summary">Pilih tindakan saat menarik Beranda ke bawah.</string>
+    <string name="gesture_action_none">Tidak ada</string>
+    <string name="gesture_action_lock">Kunci layar</string>
+    <string name="gesture_action_notifications">Notifikasi</string>
+    <string name="gesture_action_search">Cari</string>
+    <string name="gesture_action_apps">Semua aplikasi</string>
+</resources>

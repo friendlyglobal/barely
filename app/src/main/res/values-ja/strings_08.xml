@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Codexを開く</string>
+    <string name="command_open_codex_summary">ChatGPTアプリでコーディングを続けます</string>
+    <string name="settings_ai_assistant">AIアシスタント</string>
+    <string name="settings_ai_assistant_summary">ローカル検索で結果がない場合のみ使用します。質問はインストール済みアプリに渡されます。</string>
+    <string name="onboarding_ai_assistant_summary">ローカル検索で見つからない場合に質問を渡すアプリを選びます。</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">毎回確認</string>
+    <string name="assistant_not_installed">未インストール</string>
+    <string name="settings_portability">バックアップ</string>
+    <string name="settings_export">設定をエクスポート</string>
+    <string name="settings_export_summary">外観、ジェスチャー、検索、オプション機能の設定を保存します。</string>
+    <string name="settings_import">設定をインポート</string>
+    <string name="settings_import_summary">Barely設定ファイルを復元します。ウィジェット、権限、プロフィール、個人履歴は含まれません。</string>
+    <string name="settings_export_complete">設定をエクスポートしました</string>
+    <string name="settings_export_failed">設定をエクスポートできませんでした</string>
+    <string name="settings_import_complete">設定をインポートしました</string>
+    <string name="settings_import_failed">この設定ファイルをインポートできませんでした</string>
+    <string name="settings_double_tap">ダブルタップ</string>
+    <string name="settings_double_tap_action_summary">ホームの空いている場所をダブルタップしたときの動作を選びます。</string>
+    <string name="settings_swipe_down">下にスワイプ</string>
+    <string name="settings_swipe_down_action_summary">ホームを下に引いたときの動作を選びます。</string>
+    <string name="gesture_action_none">何もしない</string>
+    <string name="gesture_action_lock">画面をロック</string>
+    <string name="gesture_action_notifications">通知</string>
+    <string name="gesture_action_search">検索</string>
+    <string name="gesture_action_apps">すべてのアプリ</string>
+</resources>

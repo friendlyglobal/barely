@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_open_codex">Apri Codex</string>
+    <string name="command_open_codex_summary">Continua a programmare nell’app ChatGPT</string>
+    <string name="settings_ai_assistant">Assistente IA</string>
+    <string name="settings_ai_assistant_summary">Usato solo quando la ricerca locale non trova risultati. La domanda viene inviata all’app installata.</string>
+    <string name="onboarding_ai_assistant_summary">Scegli quale app installata riceve una domanda quando la ricerca locale non trova nulla.</string>
+    <string name="assistant_chatgpt">ChatGPT</string>
+    <string name="assistant_gemini">Gemini</string>
+    <string name="assistant_claude">Claude</string>
+    <string name="assistant_ask_every_time">Chiedi sempre</string>
+    <string name="assistant_not_installed">Non installata</string>
+    <string name="settings_portability">Backup</string>
+    <string name="settings_export">Esporta impostazioni</string>
+    <string name="settings_export_summary">Salva preferenze portatili di aspetto, gesti, ricerca e moduli opzionali.</string>
+    <string name="settings_import">Importa impostazioni</string>
+    <string name="settings_import_summary">Ripristina un file Barely. Widget, autorizzazioni, profili e cronologia privata sono esclusi.</string>
+    <string name="settings_export_complete">Impostazioni esportate</string>
+    <string name="settings_export_failed">Impossibile esportare le impostazioni</string>
+    <string name="settings_import_complete">Impostazioni importate</string>
+    <string name="settings_import_failed">Impossibile importare questo file</string>
+    <string name="settings_double_tap">Doppio tocco</string>
+    <string name="settings_double_tap_action_summary">Scegli cosa accade toccando due volte un’area vuota della Home.</string>
+    <string name="settings_swipe_down">Scorri verso il basso</string>
+    <string name="settings_swipe_down_action_summary">Scegli cosa accade trascinando la Home verso il basso.</string>
+    <string name="gesture_action_none">Niente</string>
+    <string name="gesture_action_lock">Blocca schermo</string>
+    <string name="gesture_action_notifications">Notifiche</string>
+    <string name="gesture_action_search">Cerca</string>
+    <string name="gesture_action_apps">Tutte le app</string>
+</resources>
