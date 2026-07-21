@@ -2,7 +2,7 @@
 
 All notable changes to Barely are documented in this file.
 
-## 0.7 — Unreleased
+## 0.7 — 2026-07-21
 
 ### Added
 

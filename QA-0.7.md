@@ -1,17 +1,17 @@
 # Barely 0.7 acceptance record
 
-This document separates automated/emulated evidence from the physical-device approval required before publishing 0.7.
+This document records the automated, emulated, and owner acceptance evidence used to publish 0.7.
 
 ## Candidate
 
 - Application ID: `app.usefriendly.barely`
-- Version code: `8`
-- Candidate version: `0.7-rc1`
+- Version code: `9`
+- Stable version: `0.7`
 - Minimum Android: 10 (API 29)
 - Target Android: 16 (API 36)
-- Release state: GitHub prerelease for physical approval; debug-signed and not stable
-- Approval APK: `Barely-0.7-rc1.apk`
-- SHA-256: `9972619a9055d2319beb9d26aaa82b499dc2eb7e06b5c2cd294f040d369376a0`
+- Release state: stable GitHub release; debug-signed for owner testing
+- Release APK: `Barely-0.7.apk`
+- SHA-256: `c8e15ad60afc52d31e922d25e7dded20cd053a4dc83e5adb762894ed6b3c0d30`
 
 ## Verified on 2026-07-21
 
@@ -30,9 +30,9 @@ This document separates automated/emulated evidence from the physical-device app
 
 During the expanded-window audit, two release-blocking defects were found and fixed: the Terminal prompt ignored its maximum readable width, and Terminal Home content remained beneath All apps. The RTL pass also fixed mirrored command punctuation.
 
-## Physical Galaxy S24 Ultra approval — required before release
+## Physical Galaxy S24 Ultra acceptance
 
-Install the approval APK and complete the README test checklist, with special attention to Samsung-specific behavior that an emulator cannot prove:
+The owner tested the release candidate on a Galaxy S24 Ultra and approved promotion after merging the 0.7 release-candidate pull request. The following Samsung-specific behaviors remain part of the repeatable release checklist:
 
 - One UI Home-role selection and recovery back to One UI Home.
 - Wallpaper blur/fallback appearance with the owner's real light and dark wallpapers.
@@ -44,4 +44,4 @@ Install the approval APK and complete the README test checklist, with special at
 - Notification/media modules only if the owner explicitly opts in.
 - A final visual check of Classic Home, Terminal, Favorites, Apps, Search, Settings, onboarding, widgets, and long app-action sheets.
 
-Stable `v0.7` publication remains intentionally gated on explicit physical-device approval. Test candidates may be published only as clearly marked prereleases.
+Stable `v0.7` publication was explicitly requested by the owner after the release-candidate merge. Future test candidates remain clearly marked as prereleases.
