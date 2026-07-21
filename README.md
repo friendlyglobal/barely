@@ -150,7 +150,7 @@ To return to Samsung’s launcher, select **One UI Home** from the same system p
 The clean home page works without Accessibility. This one optional service is needed only because Android does not let an ordinary third-party launcher lock the screen or open notifications directly.
 
 1. On Barely’s wallpaper page, double-tap or swipe down once.
-2. Android opens **Settings > Accessibility**. Select **Barely gestures** and enable it.
+2. Android opens the **Barely gestures** service page directly when the device permits it. On Samsung it falls back to **Accessibility > Installed apps**; other devices open Accessibility with **Barely gestures** highlighted. Tap **Barely gestures** and enable the service if one final tap is required.
 3. If Samsung blocks the switch for a sideloaded APK, open **Settings > Apps > Barely**, use the three-dot menu, choose **Allow restricted settings**, then return to Accessibility.
 
 The service declares `canRetrieveWindowContent=false` and disables accessibility event collection when connected. It performs only Android’s global **Lock screen** and **Notifications** actions. Disabling the service removes both gestures without affecting the launcher.

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.ComponentName
 import android.content.Intent
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -415,9 +416,7 @@ class MainActivity : ComponentActivity() {
             R.string.enable_accessibility_gestures,
             Toast.LENGTH_LONG,
         ).show()
-        runCatching {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
+        openAccessibilitySettings()
     }
 
     private fun executeCommand(command: LauncherCommand) {
@@ -497,7 +496,30 @@ class MainActivity : ComponentActivity() {
 
     private fun openAccessibilitySettings() {
         perform(getString(R.string.error_command)) {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            val serviceComponent = ComponentName(
+                this,
+                LauncherAccessibilityService::class.java,
+            )
+            val componentKey = serviceComponent.flattenToString()
+            val fragmentArguments = Bundle().apply {
+                putString(SETTINGS_FRAGMENT_ARGUMENT_KEY, componentKey)
+            }
+            fun Intent.withServiceHint(): Intent =
+                putExtra(SETTINGS_FRAGMENT_ARGUMENT_KEY, componentKey)
+                    .putExtra(SETTINGS_SHOW_FRAGMENT_ARGUMENTS, fragmentArguments)
+
+            val candidates = listOf(
+                Intent(ACTION_ACCESSIBILITY_DETAILS_SETTINGS)
+                    .putExtra(Intent.EXTRA_COMPONENT_NAME, componentKey)
+                    .withServiceHint(),
+                Intent(SAMSUNG_ACCESSIBILITY_INSTALLED_SERVICES).withServiceHint(),
+                Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).withServiceHint(),
+            )
+            val opened = candidates.any { intent ->
+                intent.resolveActivity(packageManager) != null &&
+                    runCatching { startActivity(intent) }.isSuccess
+            }
+            check(opened) { "No Accessibility settings activity is available" }
         }
     }
 
@@ -639,6 +661,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
+        const val ACTION_ACCESSIBILITY_DETAILS_SETTINGS =
+            "android.settings.ACCESSIBILITY_DETAILS_SETTINGS"
+        const val SAMSUNG_ACCESSIBILITY_INSTALLED_SERVICES =
+            "com.samsung.accessibility.installed_service"
+        const val SETTINGS_FRAGMENT_ARGUMENT_KEY = ":settings:fragment_args_key"
+        const val SETTINGS_SHOW_FRAGMENT_ARGUMENTS = ":settings:show_fragment_args"
         const val PENDING_WIDGET_ID = "pending_widget_id"
     }
 }
