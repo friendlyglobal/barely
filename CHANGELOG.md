@@ -2,7 +2,7 @@
 
 All notable changes to Barely are documented in this file.
 
-## 0.5 — Unreleased
+## 0.5 — 2026-07-21
 
 ### Added
 
@@ -16,11 +16,6 @@ All notable changes to Barely are documented in this file.
 - Localized every new 0.5 settings, search, and widget-catalog surface across all thirteen supported system languages.
 - Promoted launcher settings from a partial bottom sheet to a full-screen, independently scrollable page.
 - Made app actions fully expanded and internally scrollable, with Favorite, App info, and Uninstall kept before long shortcut lists.
-
-### Planned before release
-
-- Prioritized the production signing strategy before broader adoption.
-- Continue the 0.5 delivery with manual ordering, hidden apps, aliases, and system-backed commands.
 
 ## 0.4 — 2026-07-21
 

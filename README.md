@@ -4,7 +4,7 @@ Barely is a minimal, wallpaper-first Android launcher built with Kotlin and Jetp
 
 ## Download
 
-Download the latest APK from [GitHub Releases](https://github.com/friendlyglobal/launchly/releases/latest).
+Download the latest APK from [GitHub Releases](https://github.com/friendlyglobal/barely/releases/latest).
 
 The current release is a debug-signed prototype intended for testing. Android may display an additional warning when installing it outside Google Play.
 
