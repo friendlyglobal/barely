@@ -91,19 +91,19 @@ internal object BarelyVisualTokens {
     const val frostedBlurRadiusDp = 34
     const val searchBlurRadiusDp = 48
 
-    const val pageScrimTopWithBlur = 0.24f
-    const val pageScrimMiddleWithBlur = 0.20f
-    const val pageScrimBottomWithBlur = 0.38f
-    const val pageScrimTopFallback = 0.22f
-    const val pageScrimMiddleFallback = 0.24f
-    const val pageScrimBottomFallback = 0.46f
+    const val pageScrimTopWithBlur = 0.30f
+    const val pageScrimMiddleWithBlur = 0.16f
+    const val pageScrimBottomWithBlur = 0.40f
+    const val pageScrimTopFallback = 0.38f
+    const val pageScrimMiddleFallback = 0.16f
+    const val pageScrimBottomFallback = 0.52f
 
     const val searchScrimTopWithBlur = 0.36f
     const val searchScrimMiddleWithBlur = 0.44f
     const val searchScrimBottomWithBlur = 0.60f
-    const val searchScrimTopFallback = 0.42f
-    const val searchScrimMiddleFallback = 0.50f
-    const val searchScrimBottomFallback = 0.66f
+    const val searchScrimTopFallback = 0.46f
+    const val searchScrimMiddleFallback = 0.34f
+    const val searchScrimBottomFallback = 0.68f
 }
 
 internal object BarelyMotionTokens {

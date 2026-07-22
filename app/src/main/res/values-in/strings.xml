@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">Layar utama. Geser ke atas untuk mencari, ke bawah untuk notifikasi, atau ketuk dua kali untuk mengunci.</string>
     <string name="favorites">Favorit</string>
     <string name="search">Cari</string>
     <string name="apps">Aplikasi</string>
     <string name="no_favorites">Belum ada favorit</string>
-    <string name="favorites_empty_message">Tekan lama aplikasi untuk menambahkannya ke favorit.</string>
+    <string name="favorites_empty_message">Beri bintang pada hasil pencarian atau tekan lama aplikasi untuk menambahkannya di sini.</string>
     <string name="activating_shortcuts">Mengaktifkan pintasan…</string>
     <string name="use_as_home">Gunakan sebagai layar utama</string>
     <string name="android_granting_shortcuts">Android sedang memberikan akses pintasan.</string>

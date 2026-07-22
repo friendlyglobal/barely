@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">홈 화면입니다. 위로 밀어 검색하고 아래로 밀어 알림을 열거나 두 번 눌러 잠그세요.</string>
     <string name="favorites">즐겨찾기</string>
     <string name="search">검색</string>
     <string name="apps">앱</string>
     <string name="no_favorites">즐겨찾기가 없습니다</string>
-    <string name="favorites_empty_message">앱을 길게 눌러 즐겨찾기에 추가하세요.</string>
+    <string name="favorites_empty_message">검색 결과에 별표를 표시하거나 앱을 길게 눌러 여기에 추가하세요.</string>
     <string name="activating_shortcuts">바로가기 활성화 중…</string>
     <string name="use_as_home">홈 화면으로 사용</string>
     <string name="android_granting_shortcuts">Android에서 바로가기 접근 권한을 부여하고 있습니다.</string>
