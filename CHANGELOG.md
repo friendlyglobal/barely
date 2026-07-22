@@ -2,6 +2,18 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.0.0 — 2026-07-22
+
+### Stable
+
+- Froze the wallpaper-first Classic and Command experience after the 0.9 release gates; no new permission, backend, analytics, or account system was added.
+- Updated stable AndroidX Core, Activity, and Coroutines dependencies and retained the pinned Compose/Material versions required by the current UI APIs.
+- Regenerated the Gradle wrapper from Gradle 9.3.1, verified its official wrapper JAR checksum, and pinned the distribution SHA-256.
+- Pinned every GitHub Action to a reviewed commit and added weekly Dependabot checks for Gradle and workflow dependencies.
+- Corrected Indonesian resource packaging and removed obsolete Android version qualifiers from adaptive launcher icons.
+- Added final upgrade, rollback, signing, and recovery documentation for daily-driver installs.
+- Updated the application to version code 14 and version name 1.0.0.
+
 ## 0.9.0 — 2026-07-21
 
 ### Changed

@@ -11,10 +11,6 @@
     <string name="launcher_settings">Barely-Einstellungen</string>
     <string name="barely_tagline">Kaum sichtbar. Immer bereit.</string>
     <string name="settings_gestures">Gesten</string>
-    <string name="settings_double_tap_lock">Doppeltippen zum Sperren</string>
-    <string name="settings_double_tap_lock_summary">Doppeltippe auf die leere Startseite, um den Bildschirm zu sperren.</string>
-    <string name="settings_swipe_notifications">Für Benachrichtigungen nach unten wischen</string>
-    <string name="settings_swipe_notifications_summary">Ziehe auf der leeren Startseite nach unten, um Benachrichtigungen zu öffnen.</string>
     <string name="settings_appearance">Darstellung</string>
     <string name="settings_frosted_wallpaper">Mattiertes Hintergrundbild</string>
     <string name="settings_frosted_wallpaper_summary">Weichzeichnet das Hintergrundbild hinter Favoriten, Apps und Suche, wenn Android dies unterstützt.</string>

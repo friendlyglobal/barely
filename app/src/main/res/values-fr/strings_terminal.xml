@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Choisissez les pages classiques ou l’invite volontaire du Mode Commande.</string>
     <string name="settings_terminal_background">Arrière-plan du Mode Commande</string>
     <string name="settings_terminal_background_summary">Choisissez une teinte et la visibilité du fond d’écran. Tout reste sur cet appareil.</string>
-    <string name="settings_terminal_color">Couleur d’arrière-plan du Mode Commande</string>
     <string name="settings_terminal_color_option">Couleur d’arrière-plan %1$d sur %2$d</string>
     <string name="settings_terminal_opacity">Opacité</string>
     <string name="settings_terminal_wallpaper">Fond d’écran</string>

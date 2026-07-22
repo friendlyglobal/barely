@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">Aplikasi dan pintasan</string>
     <string name="clear_search">Hapus</string>
     <string name="shortcuts">Pintasan</string>
-    <string name="find_anything">Temukan apa saja</string>
-    <string name="search_hint">Ketik nama aplikasi atau tindakan yang diterbitkannya.</string>
     <string name="nothing_found">Tidak ada hasil</string>
     <string name="try_another_name">Coba nama lain.</string>
     <string name="set_default_to_search_shortcuts">Tetapkan launcher ini sebagai default untuk menyertakan pintasan.</string>

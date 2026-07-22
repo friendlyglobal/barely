@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Elige las páginas clásicas o el indicador intencional del Modo Comando.</string>
     <string name="settings_terminal_background">Fondo del Modo Comando</string>
     <string name="settings_terminal_background_summary">Elige un color y cuánto se ve el fondo de pantalla. Todo permanece en este dispositivo.</string>
-    <string name="settings_terminal_color">Color de fondo del Modo Comando</string>
     <string name="settings_terminal_color_option">Color de fondo %1$d de %2$d</string>
     <string name="settings_terminal_opacity">Opacidad</string>
     <string name="settings_terminal_wallpaper">Fondo de pantalla</string>

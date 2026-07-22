@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">ऐप्स और शॉर्टकट</string>
     <string name="clear_search">साफ़ करें</string>
     <string name="shortcuts">शॉर्टकट</string>
-    <string name="find_anything">कुछ भी खोजें</string>
-    <string name="search_hint">किसी ऐप या उसके द्वारा उपलब्ध कराई गई कार्रवाई का नाम लिखें।</string>
     <string name="nothing_found">कुछ नहीं मिला</string>
     <string name="try_another_name">कोई दूसरा नाम आज़माएँ।</string>
     <string name="set_default_to_search_shortcuts">शॉर्टकट खोजने के लिए इस लॉन्चर को डिफ़ॉल्ट बनाएं।</string>

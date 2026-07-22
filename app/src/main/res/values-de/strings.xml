@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">Apps und Verknüpfungen</string>
     <string name="clear_search">Löschen</string>
     <string name="shortcuts">Verknüpfungen</string>
-    <string name="find_anything">Alles finden</string>
-    <string name="search_hint">Den Namen einer App oder einer von ihr angebotenen Aktion eingeben.</string>
     <string name="nothing_found">Nichts gefunden</string>
     <string name="try_another_name">Einen anderen Namen versuchen.</string>
     <string name="set_default_to_search_shortcuts">Diesen Launcher als Standard festlegen, um Verknüpfungen einzubeziehen.</string>

@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">App e scorciatoie</string>
     <string name="clear_search">Cancella</string>
     <string name="shortcuts">Scorciatoie</string>
-    <string name="find_anything">Trova qualsiasi cosa</string>
-    <string name="search_hint">Digita il nome di un’app o di un’azione che mette a disposizione.</string>
     <string name="nothing_found">Nessun risultato</string>
     <string name="try_another_name">Prova un altro nome.</string>
     <string name="set_default_to_search_shortcuts">Imposta questo launcher come predefinito per includere le scorciatoie.</string>

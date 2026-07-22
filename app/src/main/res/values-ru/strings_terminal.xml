@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Выберите классические страницы или осознанную строку Командного режима.</string>
     <string name="settings_terminal_background">Фон Командного режима</string>
     <string name="settings_terminal_background_summary">Выберите цвет и степень видимости обоев. Все настройки хранятся только на устройстве.</string>
-    <string name="settings_terminal_color">Цвет фона Командного режима</string>
     <string name="settings_terminal_color_option">Цвет фона %1$d из %2$d</string>
     <string name="settings_terminal_opacity">Непрозрачность</string>
     <string name="settings_terminal_wallpaper">Обои</string>

@@ -11,10 +11,6 @@
     <string name="launcher_settings">Barely 설정</string>
     <string name="barely_tagline">거의 보이지 않게. 언제나 준비.</string>
     <string name="settings_gestures">제스처</string>
-    <string name="settings_double_tap_lock">두 번 탭하여 잠금</string>
-    <string name="settings_double_tap_lock_summary">빈 홈 화면을 두 번 탭하여 화면을 잠급니다.</string>
-    <string name="settings_swipe_notifications">아래로 밀어 알림 열기</string>
-    <string name="settings_swipe_notifications_summary">빈 홈 화면에서 아래로 당겨 알림을 엽니다.</string>
     <string name="settings_appearance">화면 스타일</string>
     <string name="settings_frosted_wallpaper">배경화면 흐림</string>
     <string name="settings_frosted_wallpaper_summary">Android에서 지원하는 경우 즐겨찾기, 앱, 검색 뒤의 배경화면을 흐리게 합니다.</string>

@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">Приложения и ярлыки</string>
     <string name="clear_search">Очистить</string>
     <string name="shortcuts">Ярлыки</string>
-    <string name="find_anything">Найдите что угодно</string>
-    <string name="search_hint">Введите название приложения или опубликованного им действия.</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="try_another_name">Попробуйте другое название.</string>
     <string name="set_default_to_search_shortcuts">Выберите этот лаунчер по умолчанию, чтобы искать ярлыки.</string>

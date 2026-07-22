@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Choose the Classic pages or the intentional Command prompt.</string>
     <string name="settings_terminal_background">Command background</string>
     <string name="settings_terminal_background_summary">Choose a tint and how much wallpaper shows through. Everything stays on this device.</string>
-    <string name="settings_terminal_color">Command background color</string>
     <string name="settings_terminal_color_option">Background color %1$d of %2$d</string>
     <string name="settings_terminal_opacity">Opacity</string>
     <string name="settings_terminal_wallpaper">Wallpaper</string>

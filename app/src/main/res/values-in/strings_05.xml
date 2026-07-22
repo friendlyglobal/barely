@@ -11,10 +11,6 @@
     <string name="launcher_settings">Setelan Barely</string>
     <string name="barely_tagline">Hampir tak terlihat. Selalu siap.</string>
     <string name="settings_gestures">Gestur</string>
-    <string name="settings_double_tap_lock">Ketuk dua kali untuk mengunci</string>
-    <string name="settings_double_tap_lock_summary">Ketuk dua kali halaman Beranda yang kosong untuk mengunci layar.</string>
-    <string name="settings_swipe_notifications">Geser untuk notifikasi</string>
-    <string name="settings_swipe_notifications_summary">Tarik ke bawah di halaman Beranda yang kosong untuk membuka notifikasi.</string>
     <string name="settings_appearance">Tampilan</string>
     <string name="settings_frosted_wallpaper">Wallpaper buram</string>
     <string name="settings_frosted_wallpaper_summary">Buramkan wallpaper di belakang Favorit, Aplikasi, dan Pencarian jika didukung Android.</string>

@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">क्लासिक पेज या कमांड मोड का उद्देश्यपूर्ण प्रॉम्प्ट चुनें।</string>
     <string name="settings_terminal_background">कमांड मोड बैकग्राउंड</string>
     <string name="settings_terminal_background_summary">रंग और वॉलपेपर की दिखाई देने वाली मात्रा चुनें। सब कुछ इसी डिवाइस पर रहता है।</string>
-    <string name="settings_terminal_color">कमांड मोड बैकग्राउंड का रंग</string>
     <string name="settings_terminal_color_option">बैकग्राउंड रंग %2$d में से %1$d</string>
     <string name="settings_terminal_opacity">अपारदर्शिता</string>
     <string name="settings_terminal_wallpaper">वॉलपेपर</string>

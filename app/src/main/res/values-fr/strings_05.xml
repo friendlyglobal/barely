@@ -11,10 +11,6 @@
     <string name="launcher_settings">Paramètres de Barely</string>
     <string name="barely_tagline">À peine visible. Toujours prêt.</string>
     <string name="settings_gestures">Gestes</string>
-    <string name="settings_double_tap_lock">Appuyer deux fois pour verrouiller</string>
-    <string name="settings_double_tap_lock_summary">Appuyez deux fois sur l’écran d’accueil vide pour le verrouiller.</string>
-    <string name="settings_swipe_notifications">Balayer pour les notifications</string>
-    <string name="settings_swipe_notifications_summary">Tirez vers le bas sur l’écran d’accueil vide pour ouvrir les notifications.</string>
     <string name="settings_appearance">Apparence</string>
     <string name="settings_frosted_wallpaper">Fond d’écran dépoli</string>
     <string name="settings_frosted_wallpaper_summary">Floute le fond derrière Favoris, Applis et Recherche lorsque Android le permet.</string>

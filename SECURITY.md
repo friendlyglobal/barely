@@ -29,6 +29,8 @@ The Gradle release build never falls back to the debug key. It signs only when a
 
 Run `scripts/verify-release.sh` to build, test, lint, verify the APK signature, and emit APK/AAB checksums. Keep the keystore and its recovery material in separate encrypted backups. Losing the signing key prevents updates to existing installations; changing it requires a new application identity or a supported Play App Signing key upgrade.
 
+Barely 1.0 uses the permanent certificate SHA-256 `AF:B1:8D:2A:20:0A:0B:D8:27:30:33:CC:14:74:86:2B:86:84:70:B8:74:A8:96:A1:E7:D3:D4:99:C5:46:DD:48`. The local JKS is outside the repository with mode 600, its password is stored in macOS Keychain, and the manual signed-release workflow uses encrypted GitHub Actions secrets. None of those secrets are present in source, pull-request CI, logs, or release assets.
+
 ## Reporting a vulnerability
 
 Please use GitHub's private **Security advisories > Report a vulnerability** flow for `friendlyglobal/barely`. Do not include contacts, notification contents, exported settings, keystores, passwords, or other personal data in a public issue.

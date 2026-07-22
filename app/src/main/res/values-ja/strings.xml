@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">アプリとショートカット</string>
     <string name="clear_search">消去</string>
     <string name="shortcuts">ショートカット</string>
-    <string name="find_anything">何でも検索</string>
-    <string name="search_hint">アプリ名または公開されている操作名を入力します。</string>
     <string name="nothing_found">見つかりませんでした</string>
     <string name="try_another_name">別の名前を試してください。</string>
     <string name="set_default_to_search_shortcuts">ショートカットを検索するには、このランチャーをデフォルトに設定してください。</string>

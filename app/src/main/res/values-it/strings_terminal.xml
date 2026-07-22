@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Scegli le pagine classiche o il prompt intenzionale della Modalità Comando.</string>
     <string name="settings_terminal_background">Sfondo della Modalità Comando</string>
     <string name="settings_terminal_background_summary">Scegli un colore e quanto lasciare visibile lo sfondo. Tutto resta su questo dispositivo.</string>
-    <string name="settings_terminal_color">Colore di sfondo della Modalità Comando</string>
     <string name="settings_terminal_color_option">Colore di sfondo %1$d di %2$d</string>
     <string name="settings_terminal_opacity">Opacità</string>
     <string name="settings_terminal_wallpaper">Sfondo</string>

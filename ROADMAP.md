@@ -122,11 +122,11 @@ Goal: finish form-factor coverage, stop adding broad features, and produce a tru
 
 Goal: ship a launcher that can be trusted as the daily Home app.
 
-- Stable application ID and production signing key.
-- Reliable upgrades with documented migration and rollback behavior.
-- Wallpaper-first Home, fast local search, favorites, widgets, shortcuts, profiles, and optional system modules all meeting the 0.9 quality gates.
-- Complete English documentation plus the twelve supported system-locale translations.
-- No beta-only UI, placeholder package names, debug signing, or undocumented sensitive access.
+- [x] Stable `app.usefriendly.barely` application ID and environment-only production signing flow.
+- [x] Reliable settings upgrades with documented signing migration and rollback behavior.
+- [x] Wallpaper-first Home, fast local search, favorites, widgets, shortcuts, profiles, and optional system modules meeting the automated 0.9 quality gates.
+- [x] Complete English documentation plus key-parity across the twelve supported system-locale translations.
+- [x] No beta-only UI, placeholder package names, debug-signing fallback, or undocumented sensitive access in the production build.
 
 ## Deliberately out of scope
 

@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">앱 및 바로가기</string>
     <string name="clear_search">지우기</string>
     <string name="shortcuts">바로가기</string>
-    <string name="find_anything">무엇이든 찾아보세요</string>
-    <string name="search_hint">앱 이름이나 앱에서 제공하는 작업을 입력하세요.</string>
     <string name="nothing_found">검색 결과 없음</string>
     <string name="try_another_name">다른 이름을 입력해 보세요.</string>
     <string name="set_default_to_search_shortcuts">바로가기를 검색하려면 이 런처를 기본값으로 설정하세요.</string>
