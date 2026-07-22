@@ -128,6 +128,18 @@ Goal: ship a launcher that can be trusted as the daily Home app.
 - [x] Complete English documentation plus key-parity across the twelve supported system-locale translations.
 - [x] No beta-only UI, placeholder package names, debug-signing fallback, or undocumented sensitive access in the production build.
 
+## 1.1 — One-page widgets
+
+Goal: make the existing Favorites/Widgets page feel native and dependable without adding another top-level surface.
+
+- [x] Keep all hosted widgets on the single page left of Home, below favorites on compact windows and beside them in the existing foldable two-pane layout.
+- [x] Separate live frame preview from provider option commits so resize stays responsive without repeatedly reinflating `RemoteViews`.
+- [x] Preserve internal widget scrolling and return the gesture to the outer page only at the widget's own edge.
+- [x] Open contextual widget actions on press-and-hold, expose provider reconfiguration only when Android marks it supported, and prevent the release gesture from opening provider content.
+- [x] Protect focused resize handles from Android edge gestures without claiming the whole screen edge.
+- [x] Retain deterministic four-column packing for compatible widgets side by side.
+- [x] Cover resize commit policy and packing with local tests, then run lint, debug, optimized release, upgrade, and emulator runtime gates.
+
 ## Deliberately out of scope
 
 - A built-in online AI client, bundled API keys, or a Barely server.

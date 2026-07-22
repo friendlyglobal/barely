@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">Riduci larghezza widget</string>
     <string name="increase_widget_height">Aumenta altezza widget</string>
     <string name="decrease_widget_height">Riduci altezza widget</string>
+    <string name="resize_and_arrange_widget">Ridimensiona e organizza</string>
+    <string name="widget_settings">Impostazioni widget</string>
+    <string name="error_configure_widget">Impossibile aprire le impostazioni del widget</string>
 </resources>

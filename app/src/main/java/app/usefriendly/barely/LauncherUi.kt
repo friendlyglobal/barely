@@ -37,6 +37,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -113,6 +114,8 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -195,6 +198,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Velocity
 import androidx.core.view.WindowCompat
@@ -476,6 +480,8 @@ fun LauncherScreen(
     onAppInfo: (LauncherApp) -> Unit,
     onUninstall: (LauncherApp) -> Unit,
     onAddWidget: (AppWidgetProviderInfo) -> Unit,
+    onConfigureWidget: (Int) -> Unit,
+    onWidgetAppInfo: (String) -> Unit,
     onRemoveWidget: (Int) -> Unit,
     onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
     onMoveWidget: (Int, Int) -> Unit,
@@ -731,6 +737,8 @@ fun LauncherScreen(
                         onLaunchShortcut = onLaunchShortcut,
                         onLongPress = { selectedApp = it },
                         onAddWidget = { widgetPickerVisible = true },
+                        onConfigureWidget = onConfigureWidget,
+                        onWidgetAppInfo = onWidgetAppInfo,
                         onRemoveWidget = onRemoveWidget,
                         onUpdateWidget = onUpdateWidget,
                         onMoveWidget = onMoveWidget,
@@ -2035,6 +2043,8 @@ private fun FavoritesPage(
     onLaunchShortcut: (LauncherShortcut) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
     onAddWidget: () -> Unit,
+    onConfigureWidget: (Int) -> Unit,
+    onWidgetAppInfo: (String) -> Unit,
     onRemoveWidget: (Int) -> Unit,
     onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
     onMoveWidget: (Int, Int) -> Unit,
@@ -2087,6 +2097,8 @@ private fun FavoritesPage(
                                 onEditingWidgetsChanged(!editingWidgets)
                             },
                             onAddWidget = onAddWidget,
+                            onConfigureWidget = onConfigureWidget,
+                            onWidgetAppInfo = onWidgetAppInfo,
                             onRemoveWidget = onRemoveWidget,
                             onUpdateWidget = onUpdateWidget,
                             onMoveWidget = onMoveWidget,
@@ -2116,6 +2128,8 @@ private fun FavoritesPage(
                             onEditingWidgetsChanged(!editingWidgets)
                         },
                         onAddWidget = onAddWidget,
+                        onConfigureWidget = onConfigureWidget,
+                        onWidgetAppInfo = onWidgetAppInfo,
                         onRemoveWidget = onRemoveWidget,
                         onUpdateWidget = onUpdateWidget,
                         onMoveWidget = onMoveWidget,
@@ -2305,6 +2319,8 @@ private fun LazyListScope.widgetItems(
     editingWidgets: Boolean,
     onToggleEditing: () -> Unit,
     onAddWidget: () -> Unit,
+    onConfigureWidget: (Int) -> Unit,
+    onWidgetAppInfo: (String) -> Unit,
     onRemoveWidget: (Int) -> Unit,
     onUpdateWidget: (Int, Int, Int, WidgetHorizontalPosition) -> Unit,
     onMoveWidget: (Int, Int) -> Unit,
@@ -2393,6 +2409,14 @@ private fun LazyListScope.widgetItems(
                     canMoveUp = widgetIndex > 0,
                     canMoveDown = widgetIndex in 0 until widgets.lastIndex,
                     onRemove = { onRemoveWidget(widget.widgetId) },
+                    onEdit = {},
+                    onConfigure = { onConfigureWidget(widget.widgetId) },
+                    onAppInfo = {
+                        widgetManager.getAppWidgetInfo(widget.widgetId)
+                            ?.provider
+                            ?.packageName
+                            ?.let(onWidgetAppInfo)
+                    },
                     onMove = { direction -> onMoveWidget(widget.widgetId, direction) },
                     onUpdate = { widthSpan, heightDp, position ->
                         onUpdateWidget(widget.widgetId, widthSpan, heightDp, position)
@@ -2409,6 +2433,10 @@ private fun LazyListScope.widgetItems(
                     widgets = row,
                     widgetHost = widgetHost,
                     widgetManager = widgetManager,
+                    onEditWidget = onToggleEditing,
+                    onConfigureWidget = onConfigureWidget,
+                    onWidgetAppInfo = onWidgetAppInfo,
+                    onRemoveWidget = onRemoveWidget,
                 )
                 Spacer(Modifier.height(14.dp))
             }
@@ -2421,6 +2449,10 @@ private fun PackedWidgetRow(
     widgets: List<WidgetPlacement>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
+    onEditWidget: () -> Unit,
+    onConfigureWidget: (Int) -> Unit,
+    onWidgetAppInfo: (String) -> Unit,
+    onRemoveWidget: (Int) -> Unit,
 ) {
     val occupiedSpans = widgets.sumOf { widget ->
         widget.widthSpan.coerceIn(
@@ -2462,7 +2494,15 @@ private fun PackedWidgetRow(
                     fillContainer = true,
                     canMoveUp = false,
                     canMoveDown = false,
-                    onRemove = {},
+                    onRemove = { onRemoveWidget(widget.widgetId) },
+                    onEdit = onEditWidget,
+                    onConfigure = { onConfigureWidget(widget.widgetId) },
+                    onAppInfo = {
+                        widgetManager.getAppWidgetInfo(widget.widgetId)
+                            ?.provider
+                            ?.packageName
+                            ?.let(onWidgetAppInfo)
+                    },
                     onMove = { _ -> },
                     onUpdate = { _, _, _ -> },
                 )
@@ -2482,6 +2522,9 @@ private fun HostedWidget(
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onRemove: () -> Unit,
+    onEdit: () -> Unit,
+    onConfigure: () -> Unit,
+    onAppInfo: () -> Unit,
     onMove: (Int) -> Unit,
     onUpdate: (Int, Int, WidgetHorizontalPosition) -> Unit,
 ) {
@@ -2489,7 +2532,7 @@ private fun HostedWidget(
     val density = LocalDensity.current
     val widgetId = placement.widgetId
     val info = remember(widgetId) { widgetManager.getAppWidgetInfo(widgetId) } ?: return
-    val hostView = remember(widgetId, info) {
+    val hostView = remember(widgetId) {
         widgetHost.createView(context, widgetId, info)
     }
     val resizeWidgetDescription = stringResource(R.string.resize_widget)
@@ -2497,12 +2540,25 @@ private fun HostedWidget(
     val decreaseWidgetWidth = stringResource(R.string.decrease_widget_width)
     val increaseWidgetHeight = stringResource(R.string.increase_widget_height)
     val decreaseWidgetHeight = stringResource(R.string.decrease_widget_height)
+    var widgetMenuExpanded by remember(widgetId) { mutableStateOf(false) }
+    val canReconfigure = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+        info.configure != null &&
+        info.widgetFeatures.and(AppWidgetProviderInfo.WIDGET_FEATURE_RECONFIGURABLE) != 0
+
+    DisposableEffect(hostView, editing) {
+        hostView.setBarelyWidgetLongClickListener(
+            if (editing) null else ({ widgetMenuExpanded = true }),
+        )
+        onDispose { hostView.setBarelyWidgetLongClickListener(null) }
+    }
+    LaunchedEffect(editing) {
+        if (editing) widgetMenuExpanded = false
+    }
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
-            .animateContentSize(),
+            .padding(horizontal = 4.dp),
     ) {
         val supportsHorizontalResize =
             info.resizeMode.and(AppWidgetProviderInfo.RESIZE_HORIZONTAL) != 0
@@ -2558,6 +2614,8 @@ private fun HostedWidget(
                 },
             )
         }
+        var horizontalResizeActive by remember(widgetId) { mutableStateOf(false) }
+        var verticalResizeActive by remember(widgetId) { mutableStateOf(false) }
         val widthSpan = (previewWidthDp / cellWidth.value).roundToInt().coerceIn(
             minimumWidthSpan,
             WidgetPlacement.MAX_WIDGET_SPAN,
@@ -2609,8 +2667,56 @@ private fun HostedWidget(
         val shape = BarelyVisualTokens.widgetShape
         val widthDp = widgetWidth.value.coerceAtLeast(1f)
         val heightDp = widgetHeight.value.coerceAtLeast(1f)
+        val committedWidthDp = if (fillContainer) {
+            maxWidth.value
+        } else {
+            cellWidth.value * placement.widthSpan.coerceIn(
+                minimumWidthSpan,
+                WidgetPlacement.MAX_WIDGET_SPAN,
+            )
+        }.coerceAtLeast(1f)
+        val committedHeightDp = if (
+            supportsVerticalResize && placement.heightDp != WidgetPlacement.AUTO_WIDGET_HEIGHT
+        ) {
+            placement.heightDp.toFloat()
+        } else {
+            preferredHeight.value
+        }.coerceAtLeast(1f)
+        val resizeActive = horizontalResizeActive || verticalResizeActive
+        val providerSize = resolveWidgetProviderSize(
+            committed = WidgetProviderSize(
+                widthDp = committedWidthDp.roundToInt(),
+                heightDp = committedHeightDp.roundToInt(),
+            ),
+            preview = WidgetProviderSize(
+                widthDp = widthDp.roundToInt(),
+                heightDp = heightDp.roundToInt(),
+            ),
+            resizeActive = resizeActive,
+        )
         val reorderThresholdPx = with(density) { 36.dp.toPx() }
         var reorderDrag by remember(widgetId) { mutableFloatStateOf(0f) }
+
+        LaunchedEffect(
+            hostView,
+            providerSize,
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                hostView.updateAppWidgetSize(
+                    Bundle.EMPTY,
+                    listOf(SizeF(providerSize.widthDp.toFloat(), providerSize.heightDp.toFloat())),
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                hostView.updateAppWidgetSize(
+                    null,
+                    providerSize.widthDp,
+                    providerSize.heightDp,
+                    providerSize.widthDp,
+                    providerSize.heightDp,
+                )
+            }
+        }
 
         Column(Modifier.fillMaxWidth()) {
             Box(
@@ -2639,32 +2745,92 @@ private fun HostedWidget(
                     AndroidView(
                         factory = { hostView },
                         modifier = Modifier.fillMaxSize(),
-                        update = { view ->
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                view.updateAppWidgetSize(
-                                    Bundle.EMPTY,
-                                    listOf(SizeF(widthDp, heightDp)),
-                                )
-                            } else {
-                                @Suppress("DEPRECATION")
-                                view.updateAppWidgetSize(
-                                    null,
-                                    widthDp.roundToInt(),
-                                    heightDp.roundToInt(),
-                                    widthDp.roundToInt(),
-                                    heightDp.roundToInt(),
+                    )
+
+                    Box(Modifier.align(Alignment.TopEnd)) {
+                        DropdownMenu(
+                            expanded = widgetMenuExpanded,
+                            onDismissRequest = { widgetMenuExpanded = false },
+                            offset = DpOffset(x = 0.dp, y = widgetHeight + 12.dp),
+                            modifier = Modifier
+                                .widthIn(min = 236.dp)
+                                .clip(BarelyVisualTokens.floatingPanelShape)
+                                .background(Color(0xFF17181C)),
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.resize_and_arrange_widget)) },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Edit, contentDescription = null)
+                                },
+                                onClick = {
+                                    widgetMenuExpanded = false
+                                    onEdit()
+                                },
+                            )
+                            if (canReconfigure) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.widget_settings)) },
+                                    leadingIcon = {
+                                        Icon(Icons.Outlined.Settings, contentDescription = null)
+                                    },
+                                    onClick = {
+                                        widgetMenuExpanded = false
+                                        onConfigure()
+                                    },
                                 )
                             }
-                        },
-                    )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.app_info)) },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Info, contentDescription = null)
+                                },
+                                onClick = {
+                                    widgetMenuExpanded = false
+                                    onAppInfo()
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        stringResource(R.string.remove_widget),
+                                        color = MaterialTheme.colorScheme.error,
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.DeleteOutline,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                    )
+                                },
+                                onClick = {
+                                    widgetMenuExpanded = false
+                                    onRemove()
+                                },
+                            )
+                        }
+                    }
+
+                    if (editing) {
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .pointerInput(widgetId) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            awaitPointerEvent().changes.forEach { it.consume() }
+                                        }
+                                    }
+                                },
+                        )
+                    }
 
                     if (editing && supportsHorizontalResize) {
                         Box(
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .fillMaxHeight()
-                                .width(24.dp)
-                                .padding(bottom = 18.dp)
+                                .size(width = 48.dp, height = 72.dp)
+                                .systemGestureExclusion()
                                 .semantics {
                                     contentDescription = resizeWidgetDescription
                                     customActions = buildList {
@@ -2694,6 +2860,7 @@ private fun HostedWidget(
                                     var dragDistancePx = 0f
                                     detectDragGestures(
                                         onDragStart = {
+                                            horizontalResizeActive = true
                                             startWidthDp = previewWidthDp
                                             dragDistancePx = 0f
                                         },
@@ -2715,6 +2882,7 @@ private fun HostedWidget(
                                                 WidgetPlacement.MAX_WIDGET_SPAN,
                                             )
                                             previewWidthDp = cellWidth.value * resizedSpan
+                                            horizontalResizeActive = false
                                             onUpdate(
                                                 resizedSpan,
                                                 previewHeightDp.roundToInt(),
@@ -2722,6 +2890,7 @@ private fun HostedWidget(
                                             )
                                         },
                                         onDragCancel = {
+                                            horizontalResizeActive = false
                                             previewWidthDp = cellWidth.value *
                                                 placement.widthSpan.coerceIn(
                                                     minimumWidthSpan,
@@ -2747,9 +2916,8 @@ private fun HostedWidget(
                         Box(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .fillMaxWidth()
-                                .height(24.dp)
-                                .padding(end = 18.dp)
+                                .size(width = 72.dp, height = 48.dp)
+                                .systemGestureExclusion()
                                 .semantics {
                                     contentDescription = resizeWidgetDescription
                                     customActions = buildList {
@@ -2783,6 +2951,7 @@ private fun HostedWidget(
                                     var dragDistancePx = 0f
                                     detectDragGestures(
                                         onDragStart = {
+                                            verticalResizeActive = true
                                             startHeightDp = previewHeightDp
                                             dragDistancePx = 0f
                                         },
@@ -2797,6 +2966,7 @@ private fun HostedWidget(
                                             )
                                         },
                                         onDragEnd = {
+                                            verticalResizeActive = false
                                             onUpdate(
                                                 widthSpan,
                                                 previewHeightDp.roundToInt(),
@@ -2804,6 +2974,7 @@ private fun HostedWidget(
                                             )
                                         },
                                         onDragCancel = {
+                                            verticalResizeActive = false
                                             previewHeightDp = if (
                                                 placement.heightDp !=
                                                 WidgetPlacement.AUTO_WIDGET_HEIGHT

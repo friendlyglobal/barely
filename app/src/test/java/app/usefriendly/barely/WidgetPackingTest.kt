@@ -36,6 +36,28 @@ class WidgetPackingTest {
         assertEquals(listOf(listOf(1), listOf(2, 3)), packWidgetRows(widgets).ids())
     }
 
+    @Test
+    fun `provider size remains committed during live resize`() {
+        val committed = WidgetProviderSize(widthDp = 360, heightDp = 180)
+        val preview = WidgetProviderSize(widthDp = 224, heightDp = 296)
+
+        assertEquals(
+            committed,
+            resolveWidgetProviderSize(committed, preview, resizeActive = true),
+        )
+    }
+
+    @Test
+    fun `provider receives final preview after resize`() {
+        val committed = WidgetProviderSize(widthDp = 360, heightDp = 180)
+        val preview = WidgetProviderSize(widthDp = 224, heightDp = 296)
+
+        assertEquals(
+            preview,
+            resolveWidgetProviderSize(committed, preview, resizeActive = false),
+        )
+    }
+
     private fun List<List<WidgetPlacement>>.ids(): List<List<Int>> =
         map { row -> row.map(WidgetPlacement::widgetId) }
 }

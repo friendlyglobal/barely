@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">تقليل عرض الأداة</string>
     <string name="increase_widget_height">زيادة ارتفاع الأداة</string>
     <string name="decrease_widget_height">تقليل ارتفاع الأداة</string>
+    <string name="resize_and_arrange_widget">تغيير الحجم والترتيب</string>
+    <string name="widget_settings">إعدادات الأداة</string>
+    <string name="error_configure_widget">تعذر فتح إعدادات الأداة</string>
 </resources>
