@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">그리드에 이름 표시</string>
+    <string name="settings_show_app_grid_labels_summary">아이콘 아래에 앱 이름을 표시합니다. 아이콘만 보려면 끄세요.</string>
     <string name="settings_all_apps">모든 앱</string>
     <string name="settings_app_layout">레이아웃</string>
     <string name="settings_app_layout_summary">차분한 목록 또는 컴팩트한 그리드를 선택하세요.</string>

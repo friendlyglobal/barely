@@ -58,6 +58,7 @@ internal object BarelyVisualTokens {
     val contentHorizontalPadding = 20.dp
     val controlHorizontalPadding = 18.dp
     val bottomCommandSpacing = 20.dp
+    val commandBarHeight = 64.dp
 
     // Shape scale: compact rows -> controls -> cards -> floating panels -> sheets.
     val compactRowShape = RoundedCornerShape(14.dp)
@@ -93,9 +94,9 @@ internal object BarelyVisualTokens {
     const val pageScrimTopWithBlur = 0.24f
     const val pageScrimMiddleWithBlur = 0.20f
     const val pageScrimBottomWithBlur = 0.38f
-    const val pageScrimTopFallback = 0.32f
-    const val pageScrimMiddleFallback = 0.30f
-    const val pageScrimBottomFallback = 0.52f
+    const val pageScrimTopFallback = 0.22f
+    const val pageScrimMiddleFallback = 0.24f
+    const val pageScrimBottomFallback = 0.46f
 
     const val searchScrimTopWithBlur = 0.36f
     const val searchScrimMiddleWithBlur = 0.44f

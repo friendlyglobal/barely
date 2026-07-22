@@ -124,6 +124,7 @@
     <string name="settings_appearance">Appearance</string>
     <string name="settings_frosted_wallpaper">Frosted wallpaper</string>
     <string name="settings_frosted_wallpaper_summary">Blur the wallpaper behind Favorites, Apps, and Search when Android supports it.</string>
+    <string name="settings_frosted_wallpaper_unavailable_summary">System blur is unavailable right now. Barely will use a lighter translucent fallback.</string>
     <string name="settings_optional_modules">Optional modules</string>
     <string name="settings_notification_dots">Notification dots</string>
     <string name="settings_media_controls">Media controls</string>

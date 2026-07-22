@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">सिस्टम ब्लर अभी उपलब्ध नहीं है। Barely हल्का पारदर्शी बैकग्राउंड इस्तेमाल करेगा।</string>
     <string name="navigate_back">वापस जाएँ</string>
     <string name="choose_widget">विजेट चुनें</string>
     <string name="widget_picker_summary">ऐप के अनुसार समूहित, उपलब्ध होने पर असली प्रीव्यू के साथ</string>

@@ -46,6 +46,7 @@ internal object BarelyDefaults {
     const val TERMINAL_AESTHETIC: Boolean = false
     val APP_DRAWER_LAYOUT: AppDrawerLayout = AppDrawerLayout.LIST
     const val SHOW_APP_ICONS: Boolean = false
+    const val SHOW_APP_GRID_LABELS: Boolean = true
     const val APP_GRID_COLUMNS: Int = 4
     const val APP_GRID_ROWS: Int = 6
 }
@@ -62,6 +63,7 @@ data class LauncherSettings(
     val frostedWallpaper: Boolean = true,
     val appDrawerLayout: AppDrawerLayout = BarelyDefaults.APP_DRAWER_LAYOUT,
     val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
+    val showAppGridLabels: Boolean = BarelyDefaults.SHOW_APP_GRID_LABELS,
     val appGridColumns: Int = BarelyDefaults.APP_GRID_COLUMNS,
     val appGridRows: Int = BarelyDefaults.APP_GRID_ROWS,
     val notificationDots: Boolean = false,

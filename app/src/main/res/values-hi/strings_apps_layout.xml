@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">ग्रिड में नाम दिखाएँ</string>
+    <string name="settings_show_app_grid_labels_summary">आइकन के नीचे ऐप के नाम रखें। केवल आइकन वाले ग्रिड के लिए इसे बंद करें।</string>
     <string name="settings_all_apps">सभी ऐप्स</string>
     <string name="settings_app_layout">लेआउट</string>
     <string name="settings_app_layout_summary">सरल सूची या कॉम्पैक्ट ग्रिड चुनें।</string>

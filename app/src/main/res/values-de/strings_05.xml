@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">Die Systemunschärfe ist derzeit nicht verfügbar. Barely verwendet einen leichteren transparenten Hintergrund.</string>
     <string name="navigate_back">Zurück</string>
     <string name="choose_widget">Widget auswählen</string>
     <string name="widget_picker_summary">Nach App gruppiert, mit echten Vorschauen, wenn verfügbar</string>

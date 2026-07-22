@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">Показывать названия в сетке</string>
+    <string name="settings_show_app_grid_labels_summary">Оставляет названия под значками. Отключите для сетки только со значками.</string>
     <string name="settings_all_apps">Все приложения</string>
     <string name="settings_app_layout">Макет</string>
     <string name="settings_app_layout_summary">Выберите спокойный список или компактную сетку.</string>

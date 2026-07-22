@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">在网格中显示名称</string>
+    <string name="settings_show_app_grid_labels_summary">在图标下保留应用名称。关闭后仅显示图标。</string>
     <string name="settings_all_apps">所有应用</string>
     <string name="settings_app_layout">布局</string>
     <string name="settings_app_layout_summary">选择简洁列表或紧凑网格。</string>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">Mostrar nombres en la cuadrícula</string>
+    <string name="settings_show_app_grid_labels_summary">Mantén los nombres bajo los iconos. Desactívalo para ver solo iconos.</string>
     <string name="settings_all_apps">Todas las apps</string>
     <string name="settings_app_layout">Diseño</string>
     <string name="settings_app_layout_summary">Elige una lista tranquila o una cuadrícula compacta.</string>

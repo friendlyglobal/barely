@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">La sfocatura di sistema non è disponibile. Barely userà uno sfondo traslucido più leggero.</string>
     <string name="navigate_back">Indietro</string>
     <string name="choose_widget">Scegli un widget</string>
     <string name="widget_picker_summary">Raggruppati per app, con anteprime reali quando disponibili</string>

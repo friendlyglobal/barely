@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">Tampilkan nama di grid</string>
+    <string name="settings_show_app_grid_labels_summary">Pertahankan nama aplikasi di bawah ikon. Matikan untuk grid khusus ikon.</string>
     <string name="settings_all_apps">Semua aplikasi</string>
     <string name="settings_app_layout">Tata letak</string>
     <string name="settings_app_layout_summary">Pilih daftar yang tenang atau kisi ringkas.</string>

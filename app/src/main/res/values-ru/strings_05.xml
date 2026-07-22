@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">Системное размытие сейчас недоступно. Barely использует более лёгкий полупрозрачный фон.</string>
     <string name="navigate_back">Назад</string>
     <string name="choose_widget">Выберите виджет</string>
     <string name="widget_picker_summary">Сгруппированы по приложениям, с настоящими предпросмотрами, когда они доступны</string>

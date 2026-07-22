@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">Le flou système est indisponible actuellement. Barely utilisera un fond translucide plus léger.</string>
     <string name="navigate_back">Retour</string>
     <string name="choose_widget">Choisir un widget</string>
     <string name="widget_picker_summary">Regroupés par appli, avec de vrais aperçus lorsqu’ils sont disponibles</string>

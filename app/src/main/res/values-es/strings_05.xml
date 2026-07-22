@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">El desenfoque del sistema no está disponible ahora. Barely usará un fondo translúcido más ligero.</string>
     <string name="navigate_back">Volver</string>
     <string name="choose_widget">Elegir un widget</string>
     <string name="widget_picker_summary">Agrupados por app, con vistas previas reales cuando estén disponibles</string>

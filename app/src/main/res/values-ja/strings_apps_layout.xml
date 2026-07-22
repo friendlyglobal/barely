@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">グリッドに名前を表示</string>
+    <string name="settings_show_app_grid_labels_summary">アイコンの下にアプリ名を表示します。アイコンだけにする場合はオフにします。</string>
     <string name="settings_all_apps">すべてのアプリ</string>
     <string name="settings_app_layout">レイアウト</string>
     <string name="settings_app_layout_summary">落ち着いたリストまたはコンパクトなグリッドを選びます。</string>
