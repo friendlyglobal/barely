@@ -23,8 +23,8 @@ android {
         applicationId = "app.usefriendly.barely"
         minSdk = 29
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.1.0"
+        versionCode = 16
+        versionName = "1.2.0"
     }
 
     buildFeatures {

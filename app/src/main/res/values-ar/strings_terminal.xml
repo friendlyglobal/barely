@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">يمكنك تبديل الوضع في أي وقت من إعدادات Barely.</string>
     <string name="onboarding_continue">متابعة</string>
     <string name="home_mode_classic">كلاسيكي</string>
-    <string name="home_mode_classic_summary">شاشة خلفية مع المفضلة والتطبيقات على بُعد تمريرة.</string>
+    <string name="home_mode_classic_summary">شاشة أوامر مع المفضلة والأدوات والتطبيقات على بُعد تمريرة.</string>
     <string name="home_mode_terminal">وضع الأوامر</string>
     <string name="home_mode_terminal_summary">افتح التطبيقات بقصد عبر كتابة اسمها أو أمر.</string>
     <string name="terminal_prompt_hint">اكتب تطبيقًا أو أمرًا</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">فتح إعدادات Barely</string>
     <string name="terminal_command_settings_summary">غيّر نمط الشاشة والإيماءات والخصوصية والوحدات الاختيارية</string>
     <string name="terminal_command_classic">التبديل إلى الشاشة الكلاسيكية</string>
-    <string name="terminal_command_classic_summary">العودة إلى الخلفية وصفحتي المفضلة والتطبيقات</string>
+    <string name="terminal_command_classic_summary">العودة إلى حقل الأوامر المشترك مع صفحات المفضلة والأدوات والتطبيقات</string>
     <string name="settings_home_mode">نمط الشاشة الرئيسية</string>
-    <string name="settings_home_mode_summary">اختر الصفحات الكلاسيكية أو موجه وضع الأوامر المقصود.</string>
-    <string name="settings_terminal_background">خلفية وضع الأوامر</string>
+    <string name="settings_home_mode_summary">اختر حقل الأوامر نفسه مع صفحات المشغّل أو الحقل وحده.</string>
+    <string name="settings_terminal_background">خلفية الشاشة الرئيسية</string>
     <string name="settings_terminal_background_summary">اختر لونًا ودرجة ظهور خلفية الشاشة. تبقى جميع الإعدادات على هذا الجهاز.</string>
     <string name="settings_terminal_color_option">لون الخلفية %1$d من %2$d</string>
     <string name="settings_terminal_opacity">التعتيم</string>

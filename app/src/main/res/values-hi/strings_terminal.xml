@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">आप Barely की सेटिंग में कभी भी मोड बदल सकते हैं।</string>
     <string name="onboarding_continue">जारी रखें</string>
     <string name="home_mode_classic">क्लासिक</string>
-    <string name="home_mode_classic_summary">वॉलपेपर होम, जहाँ पसंदीदा और ऐप्स बस एक स्वाइप दूर हैं।</string>
+    <string name="home_mode_classic_summary">कमांड होम, जहाँ पसंदीदा, विजेट और ऐप्स बस एक स्वाइप दूर हैं।</string>
     <string name="home_mode_terminal">कमांड मोड</string>
     <string name="home_mode_terminal_summary">नाम या कमांड लिखकर सोच-समझकर ऐप खोलें।</string>
     <string name="terminal_prompt_hint">ऐप या कमांड लिखें</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Barely की सेटिंग खोलें</string>
     <string name="terminal_command_settings_summary">होम मोड, जेस्चर, गोपनीयता और वैकल्पिक मॉड्यूल बदलें</string>
     <string name="terminal_command_classic">क्लासिक होम पर जाएँ</string>
-    <string name="terminal_command_classic_summary">पसंदीदा और ऐप्स पेज वाले वॉलपेपर होम पर लौटें</string>
+    <string name="terminal_command_classic_summary">पसंदीदा, विजेट और ऐप पेज वाले साझा प्रॉम्प्ट पर लौटें</string>
     <string name="settings_home_mode">होम शैली</string>
-    <string name="settings_home_mode_summary">क्लासिक पेज या कमांड मोड का उद्देश्यपूर्ण प्रॉम्प्ट चुनें।</string>
-    <string name="settings_terminal_background">कमांड मोड बैकग्राउंड</string>
+    <string name="settings_home_mode_summary">लॉन्चर पेज के साथ वही प्रॉम्प्ट या केवल प्रॉम्प्ट चुनें।</string>
+    <string name="settings_terminal_background">होम बैकग्राउंड</string>
     <string name="settings_terminal_background_summary">रंग और वॉलपेपर की दिखाई देने वाली मात्रा चुनें। सब कुछ इसी डिवाइस पर रहता है।</string>
     <string name="settings_terminal_color_option">बैकग्राउंड रंग %2$d में से %1$d</string>
     <string name="settings_terminal_opacity">अपारदर्शिता</string>

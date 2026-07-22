@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">Du kannst den Modus jederzeit in den Barely-Einstellungen wechseln.</string>
     <string name="onboarding_continue">Weiter</string>
     <string name="home_mode_classic">Klassisch</string>
-    <string name="home_mode_classic_summary">Hintergrund-Home mit Favoriten und Apps nur eine Wischbewegung entfernt.</string>
+    <string name="home_mode_classic_summary">Befehls-Home mit Favoriten, Widgets und Apps nur eine Wischbewegung entfernt.</string>
     <string name="home_mode_terminal">Befehlsmodus</string>
     <string name="home_mode_terminal_summary">Öffne Apps bewusst, indem du ihren Namen oder einen Befehl eingibst.</string>
     <string name="terminal_prompt_hint">App oder Befehl eingeben</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Barely-Einstellungen öffnen</string>
     <string name="terminal_command_settings_summary">Home-Modus, Gesten, Datenschutz und optionale Module ändern</string>
     <string name="terminal_command_classic">Zum klassischen Home wechseln</string>
-    <string name="terminal_command_classic_summary">Zum Hintergrund-Home mit Favoriten- und Apps-Seiten zurückkehren</string>
+    <string name="terminal_command_classic_summary">Zur gemeinsamen Eingabe mit Favoriten-, Widget- und Apps-Seiten zurückkehren</string>
     <string name="settings_home_mode">Home-Stil</string>
-    <string name="settings_home_mode_summary">Wähle die klassischen Seiten oder die bewusste Eingabe im Befehlsmodus.</string>
-    <string name="settings_terminal_background">Hintergrund des Befehlsmodus</string>
+    <string name="settings_home_mode_summary">Wähle dieselbe Eingabe mit Launcher-Seiten oder nur die Eingabe.</string>
+    <string name="settings_terminal_background">Home-Hintergrund</string>
     <string name="settings_terminal_background_summary">Wähle eine Farbe und wie stark das Hintergrundbild sichtbar bleibt. Alles bleibt auf diesem Gerät.</string>
     <string name="settings_terminal_color_option">Hintergrundfarbe %1$d von %2$d</string>
     <string name="settings_terminal_opacity">Deckkraft</string>

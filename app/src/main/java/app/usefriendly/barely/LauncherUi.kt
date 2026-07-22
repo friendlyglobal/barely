@@ -622,16 +622,16 @@ fun LauncherScreen(
     }
 
     val terminalBackgroundColor = Color(launcherSettings.terminalBackgroundColor)
-    val darkSystemBarIcons = if (
-        launcherSettings.homeMode == LauncherHomeMode.TERMINAL && !terminalAppsVisible
-    ) {
+    val sharedHomeVisible = when (launcherSettings.homeMode) {
+        LauncherHomeMode.TERMINAL -> !terminalAppsVisible
+        LauncherHomeMode.CLASSIC -> pagerState.settledPage == HOME_PAGE && !searchVisible
+    }
+    val darkSystemBarIcons = if (sharedHomeVisible) {
         if (launcherSettings.terminalBackgroundOpacity < 0.3f) {
             wallpaperSupportsDarkText
         } else {
             terminalBackgroundColor.luminance() > 0.58f
         }
-    } else if (pagerState.settledPage == HOME_PAGE && !searchVisible) {
-        wallpaperSupportsDarkText
     } else {
         false
     }
@@ -672,6 +672,8 @@ fun LauncherScreen(
                         }
                         true
                     }
+
+                    pagerState.currentPage == HOME_PAGE -> false
 
                     event.key == Key.DirectionUp ||
                         (event.isCtrlPressed && event.key == Key.K) ||
@@ -747,7 +749,32 @@ fun LauncherScreen(
                         onEditingWidgetsChanged = { editingWidgets = it },
                     )
 
-                    HOME_PAGE -> WallpaperPage(
+                    HOME_PAGE -> SharedHomePage(
+                        apps = snapshot.apps.filterNot { app ->
+                            app.isPrivate && snapshot.privateSpace?.isLocked != false
+                        },
+                        shortcuts = snapshot.shortcuts.filterNot { shortcut ->
+                            shortcut.owner.isPrivate && snapshot.privateSpace?.isLocked != false
+                        },
+                        contacts = contacts,
+                        hasContactsPermission = hasContactsPermission,
+                        hasNotificationAccess = hasNotificationAccess,
+                        notificationDotsEnabled = launcherSettings.notificationDots,
+                        mediaControlsEnabled = launcherSettings.mediaControls,
+                        preferredAssistant = launcherSettings.preferredAssistant,
+                        launcherSearchLearning = if (launcherSettings.localSuggestions) {
+                            launcherSearchLearning
+                        } else {
+                            emptyList()
+                        },
+                        homeRequestId = homeRequestId,
+                        backgroundColor = terminalBackgroundColor,
+                        backgroundOpacity = launcherSettings.terminalBackgroundOpacity,
+                        topActionBackdrop = false,
+                        cornerRadius = launcherSettings.terminalCornerRadius,
+                        terminalAesthetic = false,
+                        showTopActions = false,
+                        allowSwitchToClassic = false,
                         showGestureCoach = showGestureCoach,
                         doubleTapEnabled = launcherSettings.doubleTapAction !=
                             LauncherGestureAction.NONE,
@@ -759,9 +786,19 @@ fun LauncherScreen(
                         onSwipeDown = {
                             runHomeGesture(launcherSettings.swipeDownAction)
                         },
-                        onSearch = {
-                            openSearch()
+                        onLaunchApp = onLaunchApp,
+                        onLongPress = { selectedApp = it },
+                        onLaunchShortcut = onLaunchShortcut,
+                        onExecuteCommand = onExecuteCommand,
+                        onAppSearchCommitted = onAppSearchCommitted,
+                        onShortcutSearchCommitted = onShortcutSearchCommitted,
+                        onClearLocalHistory = onClearLocalHistory,
+                        onOpenApps = {
+                            scope.launch { pagerState.animateScrollToPage(APPS_PAGE) }
                         },
+                        onOpenSettings = { settingsVisible = true },
+                        onSwitchToClassic = {},
+                        onInteraction = onGestureCoachSeen,
                     )
 
                     APPS_PAGE -> AppsPage(
@@ -867,7 +904,7 @@ fun LauncherScreen(
                 enter = fadeIn(tween(BarelyMotionTokens.fast)),
                 exit = fadeOut(tween(BarelyMotionTokens.instant)),
             ) {
-                TerminalHomePage(
+                SharedHomePage(
                     apps = snapshot.apps.filterNot { app ->
                         app.isPrivate && snapshot.privateSpace?.isLocked != false
                     },
@@ -891,6 +928,9 @@ fun LauncherScreen(
                     topActionBackdrop = launcherSettings.terminalTopActionBackdrop,
                     cornerRadius = launcherSettings.terminalCornerRadius,
                     terminalAesthetic = launcherSettings.terminalAesthetic,
+                    showTopActions = true,
+                    allowSwitchToClassic = true,
+                    showGestureCoach = false,
                     doubleTapEnabled = launcherSettings.doubleTapAction !=
                         LauncherGestureAction.NONE,
                     swipeDownEnabled = launcherSettings.swipeDownAction !=
@@ -915,6 +955,7 @@ fun LauncherScreen(
                     onSwipeDown = {
                         runHomeGesture(launcherSettings.swipeDownAction)
                     },
+                    onInteraction = {},
                 )
             }
             AnimatedVisibility(
@@ -1020,97 +1061,7 @@ fun LauncherScreen(
 }
 
 @Composable
-private fun WallpaperPage(
-    showGestureCoach: Boolean,
-    doubleTapEnabled: Boolean,
-    swipeDownEnabled: Boolean,
-    onSearch: () -> Unit,
-    onDoubleTap: () -> Unit,
-    onSwipeDown: () -> Unit,
-) {
-    val threshold = with(LocalDensity.current) { 72.dp.toPx() }
-    var dragDistance by remember { mutableFloatStateOf(0f) }
-    val homeContentDescription = stringResource(R.string.home_content_description)
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .semantics {
-                contentDescription = homeContentDescription
-            }
-            .pointerInput(onDoubleTap, doubleTapEnabled) {
-                detectTapGestures(
-                    onDoubleTap = if (doubleTapEnabled) {
-                        { _: Offset -> onDoubleTap() }
-                    } else {
-                        null
-                    },
-                )
-            }
-            .pointerInput(threshold) {
-                detectVerticalDragGestures(
-                    onDragStart = { dragDistance = 0f },
-                    onVerticalDrag = { change, amount ->
-                        dragDistance += amount
-                        change.consume()
-                    },
-                    onDragEnd = {
-                        when {
-                            dragDistance < -threshold -> onSearch()
-                            dragDistance > threshold && swipeDownEnabled -> {
-                                onSwipeDown()
-                            }
-                        }
-                        dragDistance = 0f
-                    },
-                    onDragCancel = { dragDistance = 0f },
-                )
-            },
-    ) {
-        AnimatedVisibility(
-            visible = showGestureCoach,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(horizontal = 28.dp, vertical = 24.dp),
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Surface(
-                shape = BarelyVisualTokens.sheetShape,
-                color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceRaised),
-                contentColor = Color.White,
-                tonalElevation = BarelyVisualTokens.raisedElevation,
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 26.dp, vertical = 17.dp),
-                    horizontalArrangement = Arrangement.spacedBy(18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    GestureLabel(stringResource(R.string.favorites), "←")
-                    GestureLabel(stringResource(R.string.search), "↑")
-                    GestureLabel(stringResource(R.string.apps), "→")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun GestureLabel(label: String, arrow: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            arrow,
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(label, style = MaterialTheme.typography.labelMedium)
-    }
-}
-
-@Composable
-private fun TerminalHomePage(
+private fun SharedHomePage(
     apps: List<LauncherApp>,
     shortcuts: List<LauncherShortcut>,
     contacts: List<LauncherContact>,
@@ -1126,6 +1077,9 @@ private fun TerminalHomePage(
     topActionBackdrop: Boolean,
     cornerRadius: Int,
     terminalAesthetic: Boolean,
+    showTopActions: Boolean,
+    allowSwitchToClassic: Boolean,
+    showGestureCoach: Boolean,
     doubleTapEnabled: Boolean,
     swipeDownEnabled: Boolean,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -1140,6 +1094,7 @@ private fun TerminalHomePage(
     onSwitchToClassic: () -> Unit,
     onDoubleTap: () -> Unit,
     onSwipeDown: () -> Unit,
+    onInteraction: () -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableIntStateOf(0) }
@@ -1193,9 +1148,14 @@ private fun TerminalHomePage(
         mediaControlsEnabled,
         preferredAssistant,
         launcherSearchLearning,
+        allowSwitchToClassic,
     ) {
         if (query.trimStart().startsWith(':')) {
-            terminalBuiltInSuggestions(context, query)
+            terminalBuiltInSuggestions(
+                context = context,
+                query = query,
+                allowSwitchToClassic = allowSwitchToClassic,
+            )
         } else {
             buildRankedLauncherResults(
                 context = context,
@@ -1346,6 +1306,7 @@ private fun TerminalHomePage(
 
         fun beginHistoryDrag() {
             if (!historyDragging) {
+                onInteraction()
                 historyDragProgress = animatedHistoryProgress
                 historyDragging = true
             }
@@ -1388,7 +1349,12 @@ private fun TerminalHomePage(
                 .background(backgroundColor.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)))
                 .pointerInput(doubleTapEnabled, onDoubleTap) {
                     detectTapGestures(
-                        onDoubleTap = { if (doubleTapEnabled) onDoubleTap() },
+                        onDoubleTap = {
+                            if (doubleTapEnabled) {
+                                onInteraction()
+                                onDoubleTap()
+                            }
+                        },
                     )
                 }
                 .draggable(
@@ -1411,7 +1377,7 @@ private fun TerminalHomePage(
         )
 
         AnimatedVisibility(
-            visible = animatedHistoryProgress < 0.999f,
+            visible = showTopActions && animatedHistoryProgress < 0.999f,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .statusBarsPadding()
@@ -1493,6 +1459,16 @@ private fun TerminalHomePage(
                     ),
             ) {
                 AnimatedVisibility(
+                    visible = showGestureCoach && query.isBlank() && suggestions.isEmpty(),
+                    enter = fadeIn(tween(BarelyMotionTokens.standard)),
+                    exit = fadeOut(tween(BarelyMotionTokens.quick)),
+                ) {
+                    SharedHomeGestureCoach()
+                }
+                if (showGestureCoach && query.isBlank() && suggestions.isEmpty()) {
+                    Spacer(Modifier.height(12.dp))
+                }
+                AnimatedVisibility(
                 visible = suggestions.isNotEmpty(),
                 enter = fadeIn(tween(BarelyMotionTokens.fast)) +
                     slideInVertically(tween(BarelyMotionTokens.standard)) { it / 5 },
@@ -1543,7 +1519,10 @@ private fun TerminalHomePage(
                     }
                     BasicTextField(
                         value = query,
-                        onValueChange = { query = it.take(MAX_TERMINAL_QUERY_LENGTH) },
+                        onValueChange = {
+                            onInteraction()
+                            query = it.take(MAX_TERMINAL_QUERY_LENGTH)
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .focusRequester(inputFocusRequester),
@@ -1658,6 +1637,66 @@ private fun TerminalTopCommand(
             icon,
             contentDescription = null,
             modifier = Modifier.size(21.dp),
+        )
+    }
+}
+
+@Composable
+private fun SharedHomeGestureCoach() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = BarelyVisualTokens.compactRowShape,
+        color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceIdle),
+        contentColor = Color.White.copy(alpha = BarelyVisualTokens.contentMuted),
+        border = BorderStroke(
+            1.dp,
+            Color.White.copy(alpha = BarelyVisualTokens.outlineSubtle),
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SharedHomeGestureHint(
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                label = stringResource(R.string.favorites),
+            )
+            SharedHomeGestureHint(
+                icon = Icons.Outlined.History,
+                label = stringResource(R.string.recent_searches),
+            )
+            SharedHomeGestureHint(
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                label = stringResource(R.string.apps),
+                rotation = 180f,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SharedHomeGestureHint(
+    icon: ImageVector,
+    label: String,
+    rotation: Float = 0f,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            modifier = Modifier
+                .size(16.dp)
+                .graphicsLayer { rotationZ = rotation },
+        )
+        Text(
+            label,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }
@@ -4957,43 +4996,43 @@ private fun LauncherSettingsPage(
                     },
                 )
             }
+            item(key = "shared_home_background") {
+                TerminalBackgroundSettings(
+                    color = settings.terminalBackgroundColor,
+                    opacity = settings.terminalBackgroundOpacity,
+                    cornerRadius = settings.terminalCornerRadius,
+                    onColorChanged = { selectedColor ->
+                        onSettingsChanged(
+                            settings.copy(terminalBackgroundColor = selectedColor),
+                        )
+                    },
+                    onOpacityChanged = { selectedOpacity ->
+                        onSettingsChanged(
+                            settings.copy(terminalBackgroundOpacity = selectedOpacity),
+                        )
+                    },
+                    onCornerRadiusChanged = { radius ->
+                        onSettingsChanged(settings.copy(terminalCornerRadius = radius))
+                    },
+                    onReset = {
+                        onSettingsChanged(
+                            settings.copy(
+                                terminalBackgroundColor =
+                                    BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
+                                terminalBackgroundOpacity =
+                                    BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
+                                terminalTopActionBackdrop =
+                                    BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
+                                terminalCornerRadius =
+                                    BarelyDefaults.TERMINAL_CORNER_RADIUS,
+                                terminalAesthetic =
+                                    BarelyDefaults.TERMINAL_AESTHETIC,
+                            ),
+                        )
+                    },
+                )
+            }
             if (settings.homeMode == LauncherHomeMode.TERMINAL) {
-                item(key = "terminal_background") {
-                    TerminalBackgroundSettings(
-                        color = settings.terminalBackgroundColor,
-                        opacity = settings.terminalBackgroundOpacity,
-                        cornerRadius = settings.terminalCornerRadius,
-                        onColorChanged = { selectedColor ->
-                            onSettingsChanged(
-                                settings.copy(terminalBackgroundColor = selectedColor),
-                            )
-                        },
-                        onOpacityChanged = { selectedOpacity ->
-                            onSettingsChanged(
-                                settings.copy(terminalBackgroundOpacity = selectedOpacity),
-                            )
-                        },
-                        onCornerRadiusChanged = { radius ->
-                            onSettingsChanged(settings.copy(terminalCornerRadius = radius))
-                        },
-                        onReset = {
-                            onSettingsChanged(
-                                settings.copy(
-                                    terminalBackgroundColor =
-                                        BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
-                                    terminalBackgroundOpacity =
-                                        BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
-                                    terminalTopActionBackdrop =
-                                        BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
-                                    terminalCornerRadius =
-                                        BarelyDefaults.TERMINAL_CORNER_RADIUS,
-                                    terminalAesthetic =
-                                        BarelyDefaults.TERMINAL_AESTHETIC,
-                                ),
-                            )
-                        },
-                    )
-                }
                 item(key = "terminal_top_action_backdrop") {
                     SettingsSwitchItem(
                         title = stringResource(R.string.settings_terminal_action_backdrop),
@@ -5520,8 +5559,8 @@ private fun AppActionsSheet(
     onUninstall: () -> Unit,
 ) {
     val sheetState = rememberBottomSheetState(
-        SheetValue.Hidden,
-        setOf(SheetValue.PartiallyExpanded),
+        initialValue = SheetValue.Hidden,
+        enabledValues = appActionSheetEnabledValues(),
     )
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -5803,6 +5842,11 @@ private const val MAX_WIDGET_HEIGHT_DP = 480
 private const val MAX_TERMINAL_RESULTS = 3
 private const val MAX_TERMINAL_QUERY_LENGTH = 96
 
+internal fun appActionSheetEnabledValues(): Set<SheetValue> = setOf(
+    SheetValue.Hidden,
+    SheetValue.Expanded,
+)
+
 private enum class TerminalBuiltInAction {
     OPEN_APPS,
     OPEN_SETTINGS,
@@ -5830,40 +5874,53 @@ private sealed interface TerminalSuggestion {
 private fun terminalBuiltInSuggestions(
     context: android.content.Context,
     query: String,
+    allowSwitchToClassic: Boolean,
 ): List<TerminalSuggestion> {
     val normalizedQuery = query.trim().lowercase()
-    return listOf(
-        TerminalSuggestion.BuiltIn(
-            command = ":apps",
-            title = context.getString(R.string.terminal_command_apps),
-            subtitle = context.getString(R.string.terminal_command_apps_summary),
-            action = TerminalBuiltInAction.OPEN_APPS,
-        ),
-        TerminalSuggestion.BuiltIn(
-            command = ":settings",
-            title = context.getString(R.string.terminal_command_settings),
-            subtitle = context.getString(R.string.terminal_command_settings_summary),
-            action = TerminalBuiltInAction.OPEN_SETTINGS,
-        ),
-        TerminalSuggestion.BuiltIn(
-            command = ":classic",
-            title = context.getString(R.string.terminal_command_classic),
-            subtitle = context.getString(R.string.terminal_command_classic_summary),
-            action = TerminalBuiltInAction.SWITCH_TO_CLASSIC,
-        ),
-        TerminalSuggestion.BuiltIn(
-            command = ":history",
-            title = context.getString(R.string.recent_searches),
-            subtitle = context.getString(R.string.settings_local_suggestions_summary),
-            action = TerminalBuiltInAction.SHOW_HISTORY,
-        ),
-        TerminalSuggestion.BuiltIn(
-            command = ":clearhistory",
-            title = context.getString(R.string.settings_clear_local_history),
-            subtitle = context.getString(R.string.settings_clear_local_history_summary),
-            action = TerminalBuiltInAction.CLEAR_HISTORY,
-        ),
-    ).filter { suggestion ->
+    return buildList {
+        add(
+            TerminalSuggestion.BuiltIn(
+                command = ":apps",
+                title = context.getString(R.string.terminal_command_apps),
+                subtitle = context.getString(R.string.terminal_command_apps_summary),
+                action = TerminalBuiltInAction.OPEN_APPS,
+            ),
+        )
+        add(
+            TerminalSuggestion.BuiltIn(
+                command = ":settings",
+                title = context.getString(R.string.terminal_command_settings),
+                subtitle = context.getString(R.string.terminal_command_settings_summary),
+                action = TerminalBuiltInAction.OPEN_SETTINGS,
+            ),
+        )
+        if (allowSwitchToClassic) {
+            add(
+                TerminalSuggestion.BuiltIn(
+                    command = ":classic",
+                    title = context.getString(R.string.terminal_command_classic),
+                    subtitle = context.getString(R.string.terminal_command_classic_summary),
+                    action = TerminalBuiltInAction.SWITCH_TO_CLASSIC,
+                ),
+            )
+        }
+        add(
+            TerminalSuggestion.BuiltIn(
+                command = ":history",
+                title = context.getString(R.string.recent_searches),
+                subtitle = context.getString(R.string.settings_local_suggestions_summary),
+                action = TerminalBuiltInAction.SHOW_HISTORY,
+            ),
+        )
+        add(
+            TerminalSuggestion.BuiltIn(
+                command = ":clearhistory",
+                title = context.getString(R.string.settings_clear_local_history),
+                subtitle = context.getString(R.string.settings_clear_local_history_summary),
+                action = TerminalBuiltInAction.CLEAR_HISTORY,
+            ),
+        )
+    }.filter { suggestion ->
         suggestion.command.startsWith(normalizedQuery) ||
             suggestion.title.normalizedForSearch().startsWith(
                 normalizedQuery.removePrefix(":"),

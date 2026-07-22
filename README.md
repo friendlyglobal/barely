@@ -14,11 +14,11 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Lists launchable activities from every accessible profile with `LauncherApps.getActivityList`.
 - Opens apps with `LauncherApps.startMainActivity`.
 - Keeps the system wallpaper visible on every page, including live wallpapers, through `FLAG_SHOW_WALLPAPER`.
-- Uses a three-page horizontal layout: favorites on the left, an empty wallpaper home page in the center, and all apps on the right.
-- Offers an optional Command Home during onboarding and in settings for people who prefer opening apps deliberately by typing.
-- Keeps Command search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
-- Provides explicit `:apps`, `:settings`, and `:classic` exits so Command mode never traps the user.
-- Lets Command users choose a background tint and opacity from solid color to a completely transparent wallpaper, tune the shared prompt/top-action corner radius from 0–32 dp, and optionally enable Terminal aesthetics; the preferences never leave the device.
+- Uses one shared wallpaper-first Home with a bottom command prompt, local fuzzy ranking, and recent-search history in both Home styles.
+- Offers a minimal Command style with only the shared Home, plus a detailed Classic style with favorites and widgets on the left and all apps on the right.
+- Keeps Home search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
+- Provides explicit `:apps`, `:settings`, and `:classic` exits so Command mode never traps the user; Classic uses its adjacent pages instead of duplicating top actions.
+- Lets users choose the shared Home background tint and opacity from solid color to a completely transparent wallpaper and tune the prompt corner radius from 0–32 dp. Command can additionally enable a top-action backdrop and Terminal aesthetics; the preferences never leave the device.
 - Opens full-screen search with an upward swipe from the center page.
 - Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
@@ -42,12 +42,12 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Preserves vertical and horizontal scrolling published inside an `AppWidgetHostView`, handing the gesture back to the Favorites page only when the widget reaches its own edge.
 - Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
-- Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
+- Returns to the shared Home prompt whenever the Home gesture or button is pressed.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
 - Adapts at runtime to phones, split-screen windows, tablets, and foldables: one column on compact windows, two on medium/foldable windows, and three only on expanded windows.
 - Uses Jetpack WindowManager `FoldingFeature` data to keep controls and list items away from a separating vertical fold or hinge.
 - Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; a translucent gradient automatically takes over when the system disables blur.
-- Keeps the center Home page completely transparent and free of launcher chrome.
+- Keeps wallpaper visible beneath the shared Home and lets its local tint be fully transparent.
 - Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
 - Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
 - Can optionally search contacts in memory after an explicit runtime permission request.

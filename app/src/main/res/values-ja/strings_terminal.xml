@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">モードはBarelyの設定からいつでも変更できます。</string>
     <string name="onboarding_continue">続行</string>
     <string name="home_mode_classic">クラシック</string>
-    <string name="home_mode_classic_summary">壁紙ホームからお気に入りとアプリへ1回のスワイプで移動します。</string>
+    <string name="home_mode_classic_summary">コマンドホームからお気に入り、ウィジェット、アプリへ1回のスワイプで移動します。</string>
     <string name="home_mode_terminal">コマンドモード</string>
     <string name="home_mode_terminal_summary">名前やコマンドを入力し、意図してアプリを開きます。</string>
     <string name="terminal_prompt_hint">アプリまたはコマンドを入力</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Barelyの設定を開く</string>
     <string name="terminal_command_settings_summary">ホーム、ジェスチャー、プライバシー、オプション機能を変更します</string>
     <string name="terminal_command_classic">クラシックホームに切り替える</string>
-    <string name="terminal_command_classic_summary">お気に入りとアプリのある壁紙ホームに戻ります</string>
+    <string name="terminal_command_classic_summary">お気に入り、ウィジェット、アプリのページがある共通プロンプトに戻ります</string>
     <string name="settings_home_mode">ホームのスタイル</string>
-    <string name="settings_home_mode_summary">クラシックページまたは意図的なコマンドモード入力を選びます。</string>
-    <string name="settings_terminal_background">コマンドモードの背景</string>
+    <string name="settings_home_mode_summary">ランチャーページ付きの共通プロンプト、またはプロンプトのみを選びます。</string>
+    <string name="settings_terminal_background">ホームの背景</string>
     <string name="settings_terminal_background_summary">色と壁紙の見え方を選びます。設定はすべてこの端末内に保存されます。</string>
     <string name="settings_terminal_color_option">背景色 %1$d / %2$d</string>
     <string name="settings_terminal_opacity">不透明度</string>

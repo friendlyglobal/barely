@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">Você pode trocar de modo a qualquer momento nas configurações do Barely.</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="home_mode_classic">Clássico</string>
-    <string name="home_mode_classic_summary">Home com wallpaper, Favoritos e Apps a um gesto de distância.</string>
+    <string name="home_mode_classic_summary">Home de comandos com Favoritos, widgets e Apps a um gesto de distância.</string>
     <string name="home_mode_terminal">Comando</string>
     <string name="home_mode_terminal_summary">Abra apps de propósito digitando o nome ou um comando.</string>
     <string name="terminal_prompt_hint">digite um app ou comando</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Abrir configurações do Barely</string>
     <string name="terminal_command_settings_summary">Altere a Home, gestos, privacidade e módulos opcionais</string>
     <string name="terminal_command_classic">Mudar para a Home Clássica</string>
-    <string name="terminal_command_classic_summary">Volte para o wallpaper com as páginas de Favoritos e Apps</string>
+    <string name="terminal_command_classic_summary">Volte ao prompt compartilhado com as páginas de Favoritos, widgets e Apps</string>
     <string name="settings_home_mode">Estilo da Home</string>
-    <string name="settings_home_mode_summary">Escolha entre as páginas Clássicas ou o prompt intencional do Modo Comando.</string>
-    <string name="settings_terminal_background">Fundo do Modo Comando</string>
+    <string name="settings_home_mode_summary">Use o mesmo prompt com páginas do launcher ou apenas o prompt.</string>
+    <string name="settings_terminal_background">Fundo da Home</string>
     <string name="settings_terminal_background_summary">Escolha uma cor e quanto do wallpaper fica visível. Tudo permanece neste aparelho.</string>
     <string name="settings_terminal_color_option">Cor de fundo %1$d de %2$d</string>
     <string name="settings_terminal_opacity">Opacidade</string>
