@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">所有应用</string>
+    <string name="settings_app_layout">布局</string>
+    <string name="settings_app_layout_summary">选择简洁列表或紧凑网格。</string>
+    <string name="settings_app_layout_list">列表</string>
+    <string name="settings_app_layout_grid">网格</string>
+    <string name="settings_show_app_icons">显示应用图标</string>
+    <string name="settings_show_app_icons_summary">在列表和网格中显示每个应用发布的图标。</string>
+    <string name="settings_grid_size">网格大小</string>
+    <string name="settings_grid_size_summary">选择同时可见的列数和行数。</string>
+    <string name="settings_grid_columns">列</string>
+    <string name="settings_grid_rows">行</string>
+</resources>

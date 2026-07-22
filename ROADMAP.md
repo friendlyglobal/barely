@@ -150,6 +150,19 @@ Goal: make Command the minimal experience and Classic the detailed experience wi
 - [x] Preserve Command as the focused one-surface option and Classic as the richer three-surface option.
 - [x] Fix and cover the Material 3 app-action sheet state crash on long press.
 
+## 1.3 — Personal All apps
+
+Goal: let the app collection match the owner's visual density without splitting its behavior into multiple implementations.
+
+- [x] Keep the restrained text-only list as the default and add an optional published-icon switch.
+- [x] Offer list and grid through one shared app collection in Command and Classic.
+- [x] Add bounded, discrete column and visible-row sliders with a balanced 4 × 6 reset.
+- [x] Preserve launch, long press, notification dots, Private Space, search, and responsive list behavior across layouts.
+- [x] Use one bottom-spacing token for the Home command bar and All apps search control.
+- [x] Reuse the icon preference in shared Home app/shortcut results and recent command history.
+- [x] Apply the global radius to ranked command results and the recent-history surface.
+- [x] Animate both Classic side pages continuously back to shared Home on a Home request.
+
 ## Deliberately out of scope
 
 - A built-in online AI client, bundled API keys, or a Barely server.

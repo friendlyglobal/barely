@@ -18,13 +18,16 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Offers a minimal Command style with only the shared Home, plus a detailed Classic style with favorites and widgets on the left and all apps on the right.
 - Keeps Home search local, reuses the same fuzzy app/shortcut/command ranking, shows no more than three suggestions, and supports touch, keyboard, mouse, and DeX.
 - Provides explicit `:apps`, `:settings`, and `:classic` exits so Command mode never traps the user; Classic uses its adjacent pages instead of duplicating top actions.
-- Lets users choose the shared Home background tint and opacity from solid color to a completely transparent wallpaper and tune the prompt corner radius from 0–32 dp. Command can additionally enable a top-action backdrop and Terminal aesthetics; the preferences never leave the device.
+- Lets users choose the shared Home background tint and opacity from solid color to a completely transparent wallpaper and tune the prompt, ranked-result, history-header, and search corner radius from 0–32 dp. Command can additionally enable a top-action backdrop and Terminal aesthetics; the preferences never leave the device.
 - Opens full-screen search with an upward swipe from the center page.
 - Dismisses search by pulling down from its top handle directly to the wallpaper Home page, pressing Back, or tapping the back arrow.
 - Searches both apps and published App Shortcuts, such as “New incognito tab” when Chrome provides it.
 - Combines apps and shortcuts into one relevance-ranked list without flooding app-name searches with unrelated conversations.
 - Tolerates small typos, transposed characters, initials, word prefixes, case, and accents with an on-device fuzzy matcher.
 - Provides a one-handed search entry point at the bottom of the all-apps page.
+- Keeps that All apps search control at the same bottom spacing as the shared Home command bar.
+- Uses Material 3 search geometry and a shape-clipped pressed state in All apps, with the leading icon and placeholder aligned on one centered row.
+- Lets All apps use the original text-only list, a list with published app icons, or a compact icon grid; grid columns and visible rows are adjustable with bounded local sliders. When enabled, the same icon preference also identifies apps and shortcut owners in shared Home results and recent history.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
 - Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
 - Learns recommendations from app launches and successful query-to-app/shortcut choices made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the complete history.
@@ -42,7 +45,7 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Preserves vertical and horizontal scrolling published inside an `AppWidgetHostView`, handing the gesture back to the Favorites page only when the widget reaches its own edge.
 - Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
-- Returns to the shared Home prompt whenever the Home gesture or button is pressed.
+- Returns to the shared Home prompt whenever the Home gesture or button is pressed, animating continuously from either Classic side page instead of jumping to the center.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
 - Adapts at runtime to phones, split-screen windows, tablets, and foldables: one column on compact windows, two on medium/foldable windows, and three only on expanded windows.
 - Uses Jetpack WindowManager `FoldingFeature` data to keep controls and list items away from a separating vertical fold or hinge.
@@ -201,8 +204,8 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 18. Search for `notifications`, read the warning, and enable access only if desired. Verify dots and media controls can each remain independently disabled.
 19. Move between Home, Favorites, Apps, and Search. Confirm Home remains clear and other pages use wallpaper blur or the translucent fallback.
 20. Select **Command** in Barely settings, type an app and a published shortcut, and verify that at most three local results appear. Test `:apps`, `:settings`, and `:classic`.
-21. Change the Command background color, opacity, and search/command radius. Verify that the prompt, All apps search entry, full Search input, and optional top-action capsule update together. Enable Terminal aesthetics and confirm the `>` prompts, arrows, and monospace type return; disable it and confirm the clean style. Test the local resets, then use the section Reset and confirm black, 42%, 12 dp, top contrast off, and Terminal aesthetics off are restored.
-22. Drag up in Command and verify that the history page follows the finger continuously before snapping open or closed. Confirm that successful app/shortcut searches appear as a command-line-style history log, open an entry, and verify that it moves to the most recent position. Use `:clearhistory` to remove it.
+21. Change the Command background color, opacity, and search/command radius. Verify that the prompt, ranked result surfaces, history entries and header, All apps search entry, full Search input, and optional top-action capsule update together. Enable Terminal aesthetics and confirm the `>` prompts, arrows, and monospace type return; disable it and confirm the clean style. Test the local resets, then use the section Reset and confirm black, 42%, 12 dp, top contrast off, and Terminal aesthetics off are restored.
+22. Enable app icons, search for an app and shortcut on shared Home, and confirm the app or shortcut-owner icon appears. Drag up in Command and verify that the history page follows the finger continuously before snapping open or closed, with the same icon preference applied to app and shortcut entries. Open an entry, verify that it moves to the most recent position, then use `:clearhistory` to remove it.
 23. Enter widget edit mode, drag the right and bottom handles, and confirm that the preview follows the gesture, the size persists, and the page does not swipe away.
 24. Resize two compatible widgets to half width, leave edit mode, and confirm that they share one row without overlapping.
 25. Enable TalkBack and verify that top commands, settings choices, widget editing controls, and resize actions receive a clear focus target and label.

@@ -23,6 +23,10 @@ class LauncherSettingsTest {
         assertEquals(AssistantPreference.CHATGPT, settings.preferredAssistant)
         assertEquals(LauncherGestureAction.LOCK_SCREEN, settings.doubleTapAction)
         assertEquals(LauncherGestureAction.NOTIFICATIONS, settings.swipeDownAction)
+        assertEquals(AppDrawerLayout.LIST, settings.appDrawerLayout)
+        assertFalse(settings.showAppIcons)
+        assertEquals(4, settings.appGridColumns)
+        assertEquals(6, settings.appGridRows)
     }
 
     @Test
@@ -66,6 +70,9 @@ class LauncherSettingsTest {
                 doubleTapAction = "DELETE_EVERYTHING",
                 legacyDoubleTapToLock = false,
                 preferredAssistant = "REMOTE_SERVER",
+                appDrawerLayout = "INFINITE_CAROUSEL",
+                appGridColumns = Int.MAX_VALUE,
+                appGridRows = Int.MIN_VALUE,
             ),
         )
 
@@ -75,5 +82,26 @@ class LauncherSettingsTest {
         assertEquals(32, migrated.terminalCornerRadius)
         assertEquals(LauncherGestureAction.NONE, migrated.doubleTapAction)
         assertEquals(AssistantPreference.CHATGPT, migrated.preferredAssistant)
+        assertEquals(AppDrawerLayout.LIST, migrated.appDrawerLayout)
+        assertEquals(MAX_APP_GRID_COLUMNS, migrated.appGridColumns)
+        assertEquals(MIN_APP_GRID_ROWS, migrated.appGridRows)
+    }
+
+    @Test
+    fun preservesAppDrawerLayoutAndDensityChoices() {
+        val migrated = decodeLauncherSettings(
+            StoredLauncherSettings(
+                schemaVersion = CURRENT_SETTINGS_SCHEMA,
+                appDrawerLayout = AppDrawerLayout.GRID.name,
+                showAppIcons = true,
+                appGridColumns = 5,
+                appGridRows = 7,
+            ),
+        )
+
+        assertEquals(AppDrawerLayout.GRID, migrated.appDrawerLayout)
+        assertTrue(migrated.showAppIcons)
+        assertEquals(5, migrated.appGridColumns)
+        assertEquals(7, migrated.appGridRows)
     }
 }

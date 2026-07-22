@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Todas las apps</string>
+    <string name="settings_app_layout">Diseño</string>
+    <string name="settings_app_layout_summary">Elige una lista tranquila o una cuadrícula compacta.</string>
+    <string name="settings_app_layout_list">Lista</string>
+    <string name="settings_app_layout_grid">Cuadrícula</string>
+    <string name="settings_show_app_icons">Mostrar iconos de apps</string>
+    <string name="settings_show_app_icons_summary">Muestra el icono publicado de cada app en la lista y la cuadrícula.</string>
+    <string name="settings_grid_size">Tamaño de cuadrícula</string>
+    <string name="settings_grid_size_summary">Elige cuántas columnas y filas se ven a la vez.</string>
+    <string name="settings_grid_columns">Columnas</string>
+    <string name="settings_grid_rows">Filas</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Tutte le app</string>
+    <string name="settings_app_layout">Layout</string>
+    <string name="settings_app_layout_summary">Scegli un elenco tranquillo o una griglia compatta.</string>
+    <string name="settings_app_layout_list">Elenco</string>
+    <string name="settings_app_layout_grid">Griglia</string>
+    <string name="settings_show_app_icons">Mostra icone app</string>
+    <string name="settings_show_app_icons_summary">Mostra l’icona pubblicata di ogni app nell’elenco e nella griglia.</string>
+    <string name="settings_grid_size">Dimensione griglia</string>
+    <string name="settings_grid_size_summary">Scegli quante colonne e righe restano visibili insieme.</string>
+    <string name="settings_grid_columns">Colonne</string>
+    <string name="settings_grid_rows">Righe</string>
+</resources>

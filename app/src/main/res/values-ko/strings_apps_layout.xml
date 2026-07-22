@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">모든 앱</string>
+    <string name="settings_app_layout">레이아웃</string>
+    <string name="settings_app_layout_summary">차분한 목록 또는 컴팩트한 그리드를 선택하세요.</string>
+    <string name="settings_app_layout_list">목록</string>
+    <string name="settings_app_layout_grid">그리드</string>
+    <string name="settings_show_app_icons">앱 아이콘 표시</string>
+    <string name="settings_show_app_icons_summary">목록과 그리드에 각 앱의 게시 아이콘을 표시합니다.</string>
+    <string name="settings_grid_size">그리드 크기</string>
+    <string name="settings_grid_size_summary">한 번에 표시할 열과 행 수를 선택하세요.</string>
+    <string name="settings_grid_columns">열</string>
+    <string name="settings_grid_rows">행</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Alle Apps</string>
+    <string name="settings_app_layout">Layout</string>
+    <string name="settings_app_layout_summary">Wähle eine ruhige Liste oder ein kompaktes Raster.</string>
+    <string name="settings_app_layout_list">Liste</string>
+    <string name="settings_app_layout_grid">Raster</string>
+    <string name="settings_show_app_icons">App-Symbole anzeigen</string>
+    <string name="settings_show_app_icons_summary">Zeigt das veröffentlichte Symbol jeder App in Liste und Raster.</string>
+    <string name="settings_grid_size">Rastergröße</string>
+    <string name="settings_grid_size_summary">Wähle, wie viele Spalten und Zeilen gleichzeitig sichtbar sind.</string>
+    <string name="settings_grid_columns">Spalten</string>
+    <string name="settings_grid_rows">Zeilen</string>
+</resources>

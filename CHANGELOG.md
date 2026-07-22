@@ -2,6 +2,30 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.3.0 — 2026-07-22
+
+### All apps
+
+- Added one shared All apps renderer with a minimal list or configurable grid in both Command and Classic.
+- Added one optional app-icon switch for All apps, shared Home command results, published shortcuts, and recent command history while preserving the 1.2 text-only presentation as the upgrade-safe default.
+- Added discrete grid sliders for three to six columns and four to eight visible rows, with a one-tap reset to the balanced 4 × 6 default.
+- Kept app launch, long press, notification dots, Private Space, search entry, and foldable list adaptation on the same data and interaction path in every layout.
+- Matched the All apps search control to the shared Home command bar's 20 dp bottom spacing through one visual token.
+- Applied the global search/command radius consistently to command result surfaces, history entries, and the draggable history header.
+- Aligned the All apps search control to Material 3's 56 dp field, 24 dp leading icon, 16 dp inset and icon-to-text spacing, and clipped its pressed state to the configured shape.
+- Unified the app counter with the header foreground instead of giving it an unrelated muted color.
+
+### Motion
+
+- Replaced the instant Classic side-page reset with the pager's restrained spring transition, so Home visibly moves from Favorites/Widgets or Apps back to the shared center surface.
+- Repeated Home requests cancel and replace the active transition instead of queuing movement.
+
+### Settings and release
+
+- Persisted and exported the All apps layout, icon, column, and row choices with bounded migration and corrupt-value recovery coverage.
+- Added localized controls for every supported system language and TalkBack labels for both density sliders.
+- Updated the application to version code 17 and version name 1.3.0.
+
 ## 1.2.0 — 2026-07-22
 
 ### Home

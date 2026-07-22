@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Todos os apps</string>
+    <string name="settings_app_layout">Layout</string>
+    <string name="settings_app_layout_summary">Escolha uma lista tranquila ou uma grade compacta.</string>
+    <string name="settings_app_layout_list">Lista</string>
+    <string name="settings_app_layout_grid">Grade</string>
+    <string name="settings_show_app_icons">Mostrar ícones dos apps</string>
+    <string name="settings_show_app_icons_summary">Mostra o ícone publicado de cada app na lista e na grade.</string>
+    <string name="settings_grid_size">Tamanho da grade</string>
+    <string name="settings_grid_size_summary">Escolha quantas colunas e linhas ficam visíveis de uma vez.</string>
+    <string name="settings_grid_columns">Colunas</string>
+    <string name="settings_grid_rows">Linhas</string>
+</resources>

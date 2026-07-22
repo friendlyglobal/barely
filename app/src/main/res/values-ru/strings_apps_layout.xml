@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Все приложения</string>
+    <string name="settings_app_layout">Макет</string>
+    <string name="settings_app_layout_summary">Выберите спокойный список или компактную сетку.</string>
+    <string name="settings_app_layout_list">Список</string>
+    <string name="settings_app_layout_grid">Сетка</string>
+    <string name="settings_show_app_icons">Показывать значки</string>
+    <string name="settings_show_app_icons_summary">Показывать опубликованный значок каждого приложения в списке и сетке.</string>
+    <string name="settings_grid_size">Размер сетки</string>
+    <string name="settings_grid_size_summary">Выберите количество видимых столбцов и строк.</string>
+    <string name="settings_grid_columns">Столбцы</string>
+    <string name="settings_grid_rows">Строки</string>
+</resources>
