@@ -92,6 +92,8 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.CropSquare
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.DragHandle
@@ -104,6 +106,7 @@ import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.RoundedCorner
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -150,6 +153,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -167,6 +171,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -456,6 +461,8 @@ private fun HomeModeChoice(
 fun LauncherScreen(
     snapshot: LauncherSnapshot,
     favoriteKeys: Set<String>,
+    favoriteOrder: List<String>,
+    favoriteUsageOrder: List<String>,
     isHomeRoleHeld: Boolean,
     isLoading: Boolean,
     showGestureCoach: Boolean,
@@ -485,6 +492,7 @@ fun LauncherScreen(
     onLaunchShortcut: (LauncherShortcut) -> Unit,
     onToggleFavorite: (LauncherApp) -> Unit,
     onToggleShortcutFavorite: (LauncherShortcut) -> Unit,
+    onReorderFavorites: (List<String>) -> Unit,
     onAppInfo: (LauncherApp) -> Unit,
     onUninstall: (LauncherApp) -> Unit,
     onAddWidget: (AppWidgetProviderInfo) -> Unit,
@@ -518,6 +526,7 @@ fun LauncherScreen(
     var widgetPickerVisible by remember { mutableStateOf(false) }
     var terminalAppsVisible by remember { mutableStateOf(false) }
     var editingWidgets by remember { mutableStateOf(false) }
+    var editingFavorites by remember { mutableStateOf(false) }
     var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
     val rootFocusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
@@ -540,11 +549,32 @@ fun LauncherScreen(
             ),
         )
     }
-    val favorites = remember(snapshot.apps, favoriteKeys) {
-        snapshot.apps.filter { it.key in favoriteKeys }
-    }
-    val favoriteShortcuts = remember(snapshot.shortcuts, favoriteKeys) {
-        snapshot.shortcuts.filter { it.searchTargetKey in favoriteKeys }
+    val favoriteEntries = remember(
+        snapshot.apps,
+        snapshot.shortcuts,
+        favoriteKeys,
+        favoriteOrder,
+        favoriteUsageOrder,
+        launcherSettings.favoriteSortMode,
+        launcherSettings.localSuggestions,
+    ) {
+        val available = buildMap<String, FavoriteEntry> {
+            snapshot.apps.filter { it.key in favoriteKeys }.forEach { app ->
+                put(app.key, FavoriteEntry.App(app))
+            }
+            snapshot.shortcuts.filter { it.searchTargetKey in favoriteKeys }.forEach { shortcut ->
+                put(shortcut.searchTargetKey, FavoriteEntry.Shortcut(shortcut))
+            }
+        }
+        val requestedOrder = if (
+            launcherSettings.favoriteSortMode == FavoriteSortMode.MOST_USED &&
+            launcherSettings.localSuggestions
+        ) {
+            favoriteUsageOrder
+        } else {
+            favoriteOrder
+        }
+        reconcileFavoriteOrder(requestedOrder, available.keys).mapNotNull(available::get)
     }
     val recommendedApps = remember(snapshot.apps, recommendedAppKeys, launcherSettings.localSuggestions) {
         if (!launcherSettings.localSuggestions) emptyList() else recommendedAppKeys.mapNotNull { key ->
@@ -691,6 +721,7 @@ fun LauncherScreen(
         }
     }
 
+    CompositionLocalProvider(LocalAppIconShape provides launcherSettings.appIconShape) {
     Box(
         Modifier
             .fillMaxSize()
@@ -754,7 +785,7 @@ fun LauncherScreen(
                 .graphicsLayer { alpha = pagerContentAlpha },
             beyondViewportPageCount = 1,
             flingBehavior = pagerFlingBehavior,
-            userScrollEnabled = !editingWidgets,
+            userScrollEnabled = !editingWidgets && !editingFavorites,
             key = { it },
         ) { page ->
             Box(
@@ -773,8 +804,7 @@ fun LauncherScreen(
             ) {
                 when (page) {
                     FAVORITES_PAGE -> FavoritesPage(
-                        favorites = favorites,
-                        favoriteShortcuts = favoriteShortcuts,
+                        favorites = favoriteEntries,
                         widgets = widgets,
                         widgetHost = widgetHost,
                         widgetManager = widgetManager,
@@ -782,6 +812,7 @@ fun LauncherScreen(
                         isLoading = isLoading,
                         backdropBlurEnabled = backdropBlurEnabled,
                         backdropTint = wallpaperBackdropTint,
+                        fallbackContrast = launcherSettings.frostedFallbackContrast,
                         notificationCounts = notificationCounts,
                         nowPlaying = nowPlaying,
                         onLaunchApp = onLaunchApp,
@@ -795,7 +826,17 @@ fun LauncherScreen(
                         onMoveWidget = onMoveWidget,
                         onMediaAction = onMediaAction,
                         editingWidgets = editingWidgets,
-                        onEditingWidgetsChanged = { editingWidgets = it },
+                        onEditingWidgetsChanged = {
+                            editingWidgets = it
+                            if (it) editingFavorites = false
+                        },
+                        editingFavorites = editingFavorites,
+                        onEditingFavoritesChanged = {
+                            editingFavorites = it
+                            if (it) editingWidgets = false
+                        },
+                        favoriteSortMode = launcherSettings.favoriteSortMode,
+                        onReorderFavorites = onReorderFavorites,
                     )
 
                     HOME_PAGE -> SharedHomePage(
@@ -861,6 +902,7 @@ fun LauncherScreen(
                         isLoading = isLoading,
                         backdropBlurEnabled = backdropBlurEnabled,
                         backdropTint = wallpaperBackdropTint,
+                        fallbackContrast = launcherSettings.frostedFallbackContrast,
                         isHomeRoleHeld = isHomeRoleHeld,
                         hasShortcutPermission = snapshot.hasShortcutPermission,
                         notificationCounts = notificationCounts,
@@ -921,6 +963,7 @@ fun LauncherScreen(
                     foldingFeature = foldingFeature,
                     backdropBlurEnabled = backdropBlurEnabled,
                     backdropTint = wallpaperBackdropTint,
+                    fallbackContrast = launcherSettings.frostedFallbackContrast,
                     searchCornerRadius = launcherSettings.terminalCornerRadius,
                     onClose = { searchVisible = false },
                     onDismissToHome = {
@@ -1058,6 +1101,7 @@ fun LauncherScreen(
                     isLoading = isLoading,
                     backdropBlurEnabled = backdropBlurEnabled,
                     backdropTint = wallpaperBackdropTint,
+                    fallbackContrast = launcherSettings.frostedFallbackContrast,
                     notificationCounts = notificationCounts,
                     foldingFeature = foldingFeature,
                     searchCornerRadius = launcherSettings.terminalCornerRadius,
@@ -1090,9 +1134,7 @@ fun LauncherScreen(
                 selectedApp = null
                 onLaunchShortcut(it)
             },
-            favoriteShortcutKeys = favoriteShortcuts.mapTo(mutableSetOf()) {
-                it.searchTargetKey
-            },
+            favoriteShortcutKeys = favoriteKeys,
             onToggleShortcutFavorite = { shortcut ->
                 onToggleShortcutFavorite(shortcut)
             },
@@ -1149,6 +1191,7 @@ fun LauncherScreen(
                 onAddWidget(provider)
             },
         )
+    }
     }
 }
 
@@ -2170,6 +2213,7 @@ private fun TerminalAppsPage(
     isLoading: Boolean,
     backdropBlurEnabled: Boolean,
     backdropTint: Color,
+    fallbackContrast: Float,
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     searchCornerRadius: Int,
@@ -2189,6 +2233,7 @@ private fun TerminalAppsPage(
         isLoading = isLoading,
         backdropBlurEnabled = backdropBlurEnabled,
         backdropTint = backdropTint,
+        fallbackContrast = fallbackContrast,
     ) {
         Box(Modifier.weight(1f)) {
             AppCollection(
@@ -2224,8 +2269,7 @@ private fun TerminalAppsPage(
 
 @Composable
 private fun FavoritesPage(
-    favorites: List<LauncherApp>,
-    favoriteShortcuts: List<LauncherShortcut>,
+    favorites: List<FavoriteEntry>,
     widgets: List<WidgetPlacement>,
     widgetHost: AppWidgetHost,
     widgetManager: AppWidgetManager,
@@ -2233,6 +2277,7 @@ private fun FavoritesPage(
     isLoading: Boolean,
     backdropBlurEnabled: Boolean,
     backdropTint: Color,
+    fallbackContrast: Float,
     notificationCounts: Map<String, Int>,
     nowPlaying: NowPlaying?,
     onLaunchApp: (LauncherApp) -> Unit,
@@ -2247,17 +2292,39 @@ private fun FavoritesPage(
     onMediaAction: (MediaAction) -> Unit,
     editingWidgets: Boolean,
     onEditingWidgetsChanged: (Boolean) -> Unit,
+    editingFavorites: Boolean,
+    onEditingFavoritesChanged: (Boolean) -> Unit,
+    favoriteSortMode: FavoriteSortMode,
+    onReorderFavorites: (List<String>) -> Unit,
 ) {
     LaunchedEffect(widgets.isEmpty()) {
         if (widgets.isEmpty()) onEditingWidgetsChanged(false)
+    }
+    LaunchedEffect(favoriteSortMode) {
+        if (favoriteSortMode != FavoriteSortMode.MANUAL) {
+            onEditingFavoritesChanged(false)
+        }
     }
     PageSurface(
         isLoading = isLoading,
         backdropBlurEnabled = backdropBlurEnabled,
         backdropTint = backdropTint,
+        fallbackContrast = fallbackContrast,
     ) {
         PageHeader(
             title = stringResource(R.string.favorites),
+            actions = if (favorites.size > 1 && favoriteSortMode == FavoriteSortMode.MANUAL) {
+                {
+                    IconButton(onClick = { onEditingFavoritesChanged(!editingFavorites) }) {
+                        Icon(
+                            if (editingFavorites) Icons.Outlined.Done else Icons.Outlined.DragHandle,
+                            contentDescription = stringResource(
+                                if (editingFavorites) R.string.done else R.string.edit_favorites,
+                            ),
+                        )
+                    }
+                }
+            } else null,
         )
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val verticalFold = foldingFeature?.takeIf {
@@ -2275,11 +2342,12 @@ private fun FavoritesPage(
                     ) {
                         favoriteItems(
                             favorites,
-                            favoriteShortcuts,
                             notificationCounts,
                             onLaunchApp,
                             onLaunchShortcut,
                             onLongPress,
+                            editingFavorites,
+                            onReorderFavorites,
                         )
                     }
                     Spacer(Modifier.width(paneGap))
@@ -2312,11 +2380,12 @@ private fun FavoritesPage(
                 ) {
                     favoriteItems(
                         favorites,
-                        favoriteShortcuts,
                         notificationCounts,
                         onLaunchApp,
                         onLaunchShortcut,
                         onLongPress,
+                        editingFavorites,
+                        onReorderFavorites,
                     )
                     mediaItem(nowPlaying, onMediaAction)
                     widgetItems(
@@ -2341,14 +2410,15 @@ private fun FavoritesPage(
 }
 
 private fun LazyListScope.favoriteItems(
-    favorites: List<LauncherApp>,
-    shortcuts: List<LauncherShortcut>,
+    favorites: List<FavoriteEntry>,
     notificationCounts: Map<String, Int>,
     onLaunchApp: (LauncherApp) -> Unit,
     onLaunchShortcut: (LauncherShortcut) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
+    editing: Boolean,
+    onReorder: (List<String>) -> Unit,
 ) {
-    if (favorites.isEmpty() && shortcuts.isEmpty()) {
+    if (favorites.isEmpty()) {
         item(key = "empty_favorites") {
             Column(
                 modifier = Modifier
@@ -2378,20 +2448,114 @@ private fun LazyListScope.favoriteItems(
             }
         }
     } else {
-        items(favorites, key = { it.key }) { app ->
-            AppListTile(
-                app = app,
-                showIcon = false,
-                notificationCount = notificationCounts[app.packageName] ?: 0,
-                onClick = { onLaunchApp(app) },
-                onLongPress = { onLongPress(app) },
+        items(favorites, key = { it.key }) { entry ->
+            val index = favorites.indexOf(entry)
+            FavoriteEntryTile(
+                entry = entry,
+                notificationCounts = notificationCounts,
+                editing = editing,
+                canMoveUp = index > 0,
+                canMoveDown = index < favorites.lastIndex,
+                onLaunchApp = onLaunchApp,
+                onLaunchShortcut = onLaunchShortcut,
+                onLongPress = onLongPress,
+                onMove = { delta ->
+                    val target = (index + delta).coerceIn(0, favorites.lastIndex)
+                    if (target != index) {
+                        val reordered = favorites.map(FavoriteEntry::key).toMutableList()
+                        val moved = reordered.removeAt(index)
+                        reordered.add(target, moved)
+                        onReorder(reordered)
+                    }
+                },
             )
         }
-        items(shortcuts, key = { it.searchTargetKey }) { shortcut ->
-            FavoriteShortcutTile(
-                shortcut = shortcut,
-                onClick = { onLaunchShortcut(shortcut) },
-                onLongPress = { onLongPress(shortcut.owner) },
+    }
+}
+
+private sealed interface FavoriteEntry {
+    val key: String
+
+    data class App(val app: LauncherApp) : FavoriteEntry {
+        override val key: String = app.key
+    }
+
+    data class Shortcut(val shortcut: LauncherShortcut) : FavoriteEntry {
+        override val key: String = shortcut.searchTargetKey
+    }
+}
+
+@Composable
+private fun FavoriteEntryTile(
+    entry: FavoriteEntry,
+    notificationCounts: Map<String, Int>,
+    editing: Boolean,
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
+    onLaunchApp: (LauncherApp) -> Unit,
+    onLaunchShortcut: (LauncherShortcut) -> Unit,
+    onLongPress: (LauncherApp) -> Unit,
+    onMove: (Int) -> Unit,
+) {
+    val density = LocalDensity.current
+    val moveUpLabel = stringResource(R.string.move_favorite_up)
+    val moveDownLabel = stringResource(R.string.move_favorite_down)
+    var dragDistance by remember(entry.key) { mutableFloatStateOf(0f) }
+    val moveThreshold = with(density) { 44.dp.toPx() }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.weight(1f)) {
+            when (entry) {
+                is FavoriteEntry.App -> AppListTile(
+                    app = entry.app,
+                    showIcon = false,
+                    notificationCount = notificationCounts[entry.app.packageName] ?: 0,
+                    onClick = { if (!editing) onLaunchApp(entry.app) },
+                    onLongPress = { if (!editing) onLongPress(entry.app) },
+                )
+                is FavoriteEntry.Shortcut -> FavoriteShortcutTile(
+                    shortcut = entry.shortcut,
+                    onClick = { if (!editing) onLaunchShortcut(entry.shortcut) },
+                    onLongPress = { if (!editing) onLongPress(entry.shortcut.owner) },
+                )
+            }
+        }
+        AnimatedVisibility(visible = editing) {
+            Icon(
+                Icons.Outlined.DragHandle,
+                contentDescription = stringResource(R.string.reorder_favorite),
+                modifier = Modifier
+                    .size(48.dp)
+                    .semantics {
+                        customActions = buildList {
+                            if (canMoveUp) add(
+                                CustomAccessibilityAction(moveUpLabel) {
+                                    onMove(-1)
+                                    true
+                                },
+                            )
+                            if (canMoveDown) add(
+                                CustomAccessibilityAction(moveDownLabel) {
+                                    onMove(1)
+                                    true
+                                },
+                            )
+                        }
+                    }
+                    .draggable(
+                        orientation = Orientation.Vertical,
+                        state = rememberDraggableState { delta ->
+                            dragDistance += delta
+                            if (dragDistance <= -moveThreshold && canMoveUp) {
+                                onMove(-1)
+                                dragDistance = 0f
+                            } else if (dragDistance >= moveThreshold && canMoveDown) {
+                                onMove(1)
+                                dragDistance = 0f
+                            }
+                        },
+                        onDragStopped = { dragDistance = 0f },
+                    )
+                    .padding(12.dp),
             )
         }
     }
@@ -3340,6 +3504,7 @@ private fun AppsPage(
     isLoading: Boolean,
     backdropBlurEnabled: Boolean,
     backdropTint: Color,
+    fallbackContrast: Float,
     isHomeRoleHeld: Boolean,
     hasShortcutPermission: Boolean,
     notificationCounts: Map<String, Int>,
@@ -3362,6 +3527,7 @@ private fun AppsPage(
         isLoading = isLoading,
         backdropBlurEnabled = backdropBlurEnabled,
         backdropTint = backdropTint,
+        fallbackContrast = fallbackContrast,
     ) {
         Box(Modifier.weight(1f)) {
             AppCollection(
@@ -3414,8 +3580,10 @@ private fun PageSurface(
     isLoading: Boolean,
     backdropBlurEnabled: Boolean,
     backdropTint: Color,
+    fallbackContrast: Float,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val fallbackFactor = 0.65f + fallbackContrast.coerceIn(0f, 1f) * 0.7f
     val backdrop = if (backdropBlurEnabled) {
         Brush.verticalGradient(
             listOf(
@@ -3427,9 +3595,9 @@ private fun PageSurface(
     } else {
         Brush.verticalGradient(
             listOf(
-                backdropTint.copy(alpha = BarelyVisualTokens.pageScrimTopFallback),
-                backdropTint.copy(alpha = BarelyVisualTokens.pageScrimMiddleFallback),
-                backdropTint.copy(alpha = BarelyVisualTokens.pageScrimBottomFallback),
+                backdropTint.copy(alpha = (BarelyVisualTokens.pageScrimTopFallback * fallbackFactor).coerceAtMost(1f)),
+                backdropTint.copy(alpha = (BarelyVisualTokens.pageScrimMiddleFallback * fallbackFactor).coerceAtMost(1f)),
+                backdropTint.copy(alpha = (BarelyVisualTokens.pageScrimBottomFallback * fallbackFactor).coerceAtMost(1f)),
             ),
         )
     }
@@ -3467,6 +3635,7 @@ private fun PageHeader(
     title: String,
     trailing: String? = null,
     onSettings: (() -> Unit)? = null,
+    actions: (@Composable () -> Unit)? = null,
 ) {
     Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -3486,6 +3655,7 @@ private fun PageHeader(
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
+            actions?.invoke()
             onSettings?.let { openSettings ->
                 Spacer(Modifier.width(8.dp))
                 IconButton(
@@ -4033,16 +4203,18 @@ private fun AppGridTile(
 @Composable
 private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
     val icon = app.icon
+    val iconShape = LocalAppIconShape.current.toComposeShape()
+    val shapedModifier = if (iconShape != null) modifier.clip(iconShape) else modifier
     if (icon != null) {
         androidx.compose.foundation.Image(
             bitmap = icon.asImageBitmap(),
             contentDescription = null,
-            modifier = modifier,
+            modifier = shapedModifier,
         )
     } else {
         Box(
-            modifier = modifier
-                .clip(CircleShape)
+            modifier = shapedModifier
+                .clip(iconShape ?: CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
@@ -4053,6 +4225,15 @@ private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+private val LocalAppIconShape = staticCompositionLocalOf { AppIconShape.ORIGINAL }
+
+private fun AppIconShape.toComposeShape(): Shape? = when (this) {
+    AppIconShape.ORIGINAL -> null
+    AppIconShape.CIRCLE -> CircleShape
+    AppIconShape.SQUIRCLE -> RoundedCornerShape(percent = 32)
+    AppIconShape.ROUNDED_SQUARE -> RoundedCornerShape(percent = 18)
 }
 
 private fun buildRankedLauncherResults(
@@ -4156,6 +4337,7 @@ private fun SearchPage(
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     backdropBlurEnabled: Boolean,
+    fallbackContrast: Float,
     backdropTint: Color,
     searchCornerRadius: Int,
     onClose: () -> Unit,
@@ -4270,10 +4452,12 @@ private fun SearchPage(
                             backdropTint.copy(alpha = BarelyVisualTokens.searchScrimBottomWithBlur),
                         )
                     } else {
+                        val fallbackFactor = 0.65f +
+                            fallbackContrast.coerceIn(0f, 1f) * 0.7f
                         listOf(
-                            backdropTint.copy(alpha = BarelyVisualTokens.searchScrimTopFallback),
-                            backdropTint.copy(alpha = BarelyVisualTokens.searchScrimMiddleFallback),
-                            backdropTint.copy(alpha = BarelyVisualTokens.searchScrimBottomFallback),
+                            backdropTint.copy(alpha = (BarelyVisualTokens.searchScrimTopFallback * fallbackFactor).coerceAtMost(1f)),
+                            backdropTint.copy(alpha = (BarelyVisualTokens.searchScrimMiddleFallback * fallbackFactor).coerceAtMost(1f)),
+                            backdropTint.copy(alpha = (BarelyVisualTokens.searchScrimBottomFallback * fallbackFactor).coerceAtMost(1f)),
                         )
                     },
                 ),
@@ -5588,6 +5772,37 @@ private fun LauncherSettingsPage(
                     },
                 )
             }
+            if (settings.frostedWallpaper) {
+                item(key = "frosted_wallpaper_fallback") {
+                    BlurFallbackSettings(
+                        systemBlurAvailable = systemBlurAvailable,
+                        contrast = settings.frostedFallbackContrast,
+                        onContrastChanged = { contrast ->
+                            onSettingsChanged(
+                                settings.copy(frostedFallbackContrast = contrast),
+                            )
+                        },
+                    )
+                }
+            }
+
+            item(key = "settings_favorites_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_favorites))
+            }
+            item(key = "favorite_order") {
+                FavoriteSortSettingsPicker(
+                    selectedMode = settings.favoriteSortMode,
+                    onModeSelected = { mode ->
+                        onSettingsChanged(
+                            settings.copy(
+                                favoriteSortMode = mode,
+                                localSuggestions = settings.localSuggestions ||
+                                    mode == FavoriteSortMode.MOST_USED,
+                            ),
+                        )
+                    },
+                )
+            }
 
             item(key = "settings_all_apps_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_all_apps))
@@ -5609,6 +5824,16 @@ private fun LauncherSettingsPage(
                         onSettingsChanged(settings.copy(showAppIcons = enabled))
                     },
                 )
+            }
+            if (settings.showAppIcons) {
+                item(key = "app_icon_shape") {
+                    AppIconShapeSettings(
+                        selectedShape = settings.appIconShape,
+                        onShapeSelected = { shape ->
+                            onSettingsChanged(settings.copy(appIconShape = shape))
+                        },
+                    )
+                }
             }
             if (settings.appDrawerLayout == AppDrawerLayout.GRID) {
                 if (settings.showAppIcons) {
@@ -5892,6 +6117,103 @@ private fun SettingsChoiceOption(
 }
 
 @Composable
+private fun FavoriteSortSettingsPicker(
+    selectedMode: FavoriteSortMode,
+    onModeSelected: (FavoriteSortMode) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_favorite_order),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_favorite_order_summary),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.DragHandle,
+                title = stringResource(R.string.settings_favorite_order_manual),
+                selected = selectedMode == FavoriteSortMode.MANUAL,
+                onClick = { onModeSelected(FavoriteSortMode.MANUAL) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.History,
+                title = stringResource(R.string.settings_favorite_order_most_used),
+                selected = selectedMode == FavoriteSortMode.MOST_USED,
+                onClick = { onModeSelected(FavoriteSortMode.MOST_USED) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun BlurFallbackSettings(
+    systemBlurAvailable: Boolean,
+    contrast: Float,
+    onContrastChanged: (Float) -> Unit,
+) {
+    var preview by remember(contrast) { mutableFloatStateOf(contrast) }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 4.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.settings_blur_renderer),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                stringResource(
+                    if (systemBlurAvailable) R.string.settings_blur_native
+                    else R.string.settings_blur_fallback,
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        Spacer(Modifier.height(14.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.settings_fallback_contrast),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Text(
+                    stringResource(R.string.settings_fallback_contrast_summary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Text(
+                "${(preview.coerceIn(0f, 1f) * 100).roundToInt()}%",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        Slider(
+            value = preview.coerceIn(0f, 1f),
+            onValueChange = { preview = it },
+            onValueChangeFinished = { onContrastChanged(preview) },
+            valueRange = 0f..1f,
+            steps = 9,
+        )
+    }
+}
+
+@Composable
 private fun AppDrawerLayoutSettings(
     selectedLayout: AppDrawerLayout,
     onLayoutSelected: (AppDrawerLayout) -> Unit,
@@ -5927,6 +6249,64 @@ private fun AppDrawerLayoutSettings(
                 title = stringResource(R.string.settings_app_layout_grid),
                 selected = selectedLayout == AppDrawerLayout.GRID,
                 onClick = { onLayoutSelected(AppDrawerLayout.GRID) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppIconShapeSettings(
+    selectedShape: AppIconShape,
+    onShapeSelected: (AppIconShape) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_app_icon_shape),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_app_icon_shape_summary),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.Apps,
+                title = stringResource(R.string.app_icon_shape_original),
+                selected = selectedShape == AppIconShape.ORIGINAL,
+                onClick = { onShapeSelected(AppIconShape.ORIGINAL) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.Circle,
+                title = stringResource(R.string.app_icon_shape_circle),
+                selected = selectedShape == AppIconShape.CIRCLE,
+                onClick = { onShapeSelected(AppIconShape.CIRCLE) },
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.RoundedCorner,
+                title = stringResource(R.string.app_icon_shape_squircle),
+                selected = selectedShape == AppIconShape.SQUIRCLE,
+                onClick = { onShapeSelected(AppIconShape.SQUIRCLE) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.CropSquare,
+                title = stringResource(R.string.app_icon_shape_rounded_square),
+                selected = selectedShape == AppIconShape.ROUNDED_SQUARE,
+                onClick = { onShapeSelected(AppIconShape.ROUNDED_SQUARE) },
             )
         }
     }

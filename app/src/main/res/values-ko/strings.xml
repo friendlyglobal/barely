@@ -78,4 +78,19 @@
     <string name="media_play">재생</string>
     <string name="media_pause">일시중지</string>
     <string name="media_next">다음</string>
+    <string name="edit_favorites">즐겨찾기 순서 변경</string>
+    <string name="reorder_favorite">드래그하여 순서 변경</string>
+    <string name="move_favorite_up">즐겨찾기를 위로 이동</string>
+    <string name="move_favorite_down">즐겨찾기를 아래로 이동</string>
+    <string name="done">완료</string>
+    <string name="settings_blur_renderer">배경화면 렌더링</string>
+    <string name="settings_blur_native">Android 기본 블러</string>
+    <string name="settings_blur_fallback">반투명 대체 효과</string>
+    <string name="settings_fallback_contrast">대체 효과 대비</string>
+    <string name="settings_fallback_contrast_summary">Android 또는 One UI가 블러를 끌 때 가독성을 조정합니다.</string>
+    <string name="settings_favorites">즐겨찾기</string>
+    <string name="settings_favorite_order">즐겨찾기 순서</string>
+    <string name="settings_favorite_order_summary">직접 정렬하거나 이 기기의 사용 기록으로 정렬합니다.</string>
+    <string name="settings_favorite_order_manual">수동</string>
+    <string name="settings_favorite_order_most_used">자주 사용</string>
 </resources>

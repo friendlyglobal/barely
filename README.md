@@ -28,9 +28,11 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Keeps that All apps search control at the same bottom spacing as the shared Home command bar.
 - Uses Material 3 search geometry and a shape-clipped pressed state in All apps, with the leading icon and placeholder aligned on one centered row.
 - Lets All apps use the original text-only list, a list with published app icons, or a compact icon grid; grid columns and visible rows are adjustable with bounded local sliders. When enabled, the same icon preference also identifies apps and shortcut owners in shared Home results and recent history.
+- Offers one global Original, Circle, Squircle, or Rounded square icon mask so OEM and third-party artwork can share a consistent silhouette across the drawer, Search, history, Favorites, and app actions.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
 - Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
 - Learns recommendations from app launches and successful query-to-app/shortcut choices made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the complete history.
+- Lets Favorites keep a user-defined drag order or rank apps and published shortcuts by launches made through Barely; both modes stay in local `SharedPreferences` and require no Usage Access permission.
 - Uses short, restrained transitions for page changes and search instead of moving the whole screen as one sheet.
 - Launches that bottom, best-ranked result when the phone keyboard's Search action is pressed.
 - Opens shortcuts with `LauncherApps.startShortcut`.
@@ -49,7 +51,7 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
 - Adapts at runtime to phones, split-screen windows, tablets, and foldables: one column on compact windows, two on medium/foldable windows, and three only on expanded windows.
 - Uses Jetpack WindowManager `FoldingFeature` data to keep controls and list items away from a separating vertical fold or hinge.
-- Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; a translucent gradient derived from the active wallpaper automatically takes over when the system or device disables blur.
+- Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; Settings reports whether native blur is currently exposed, and a user-adjustable translucent gradient derived from the active wallpaper takes over when Android or One UI disables it.
 - Keeps wallpaper visible beneath the shared Home and lets its local tint be fully transparent.
 - Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
 - Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
@@ -98,6 +100,8 @@ Version 0.5 adopts the permanent `app.usefriendly.barely` application ID. Androi
 - `CommandPalette.kt` — local calculator, conversions, contacts, quick settings, and explicit AI-app handoff.
 - `LauncherNotificationService.kt` — optional in-memory notification counts and active media-session controls.
 - `LauncherModels.kt` — lightweight app and shortcut models.
+- `FavoriteOrdering.kt` — deterministic reconciliation and local frequency/recency ordering for Favorites.
+- `baselineprofile/` — generated startup journeys and reproducible Macrobenchmarks for Home, Search, and All apps.
 - `LauncherTheme.kt` — the stable neutral Material 3 palette, shape scale, readable widths, and wallpaper scrim tokens.
 - `res/values-*/strings.xml` — system-locale translations.
 
@@ -123,6 +127,21 @@ The APK is generated at:
 ```text
 app/build/outputs/apk/debug/app-debug.apk
 ```
+
+Generate the committed Baseline Profile on a connected API 29+ device or emulator:
+
+```bash
+./gradlew :app:generateReleaseBaselineProfile
+```
+
+Run the repeatable cold start, warm resume, Search-frame, and first-scroll Macrobenchmarks:
+
+```bash
+scripts/benchmark.sh
+```
+
+Reports are written below `baselineprofile/build/outputs/` and never leave the development machine.
+Use a physical device for publishable numbers. `ALLOW_EMULATOR_BENCHMARK=1 scripts/benchmark.sh` exists only to smoke-test the instrumentation; emulator timings are not accepted as performance evidence.
 
 ## Release build and signing
 
@@ -218,6 +237,9 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 32. For a signed candidate, run `scripts/verify-release.sh`, confirm the certificate fingerprint is the expected Barely release key, and compare the generated checksums before uploading the APK/AAB.
 33. From another app, press Home and immediately try to swipe toward Apps or Favorites. Barely must not replay its own center-page animation or show a loading frame; compare gesture navigation with three-button navigation because the system Home handoff is OEM-controlled.
 34. Scroll All apps and confirm the compact title, count, and settings action leave the viewport while the bottom search entry remains reachable.
+35. Add mixed app and shortcut favorites, enter reorder mode from the Favorites header, drag the 48 dp handles, restart Barely, and confirm the order persists. Use the TalkBack move actions, then switch to **Most used** and confirm only launches made through Barely affect ranking.
+36. In Appearance, compare **Native Android blur** with **Translucent fallback** while toggling the device blur setting. Adjust fallback contrast and verify Favorites, Apps, Command Apps, and Search remain wallpaper-first and readable.
+37. Enable app icons, choose each icon shape, and inspect OEM and third-party artwork in All apps, shared Home results, full Search, recent history, Favorites, and an app action sheet. Restart Barely and confirm the chosen shape persists; Original must restore each published silhouette.
 35. Open a short app's actions from Search and confirm the keyboard closes and the sheet wraps its content. Repeat with WhatsApp and confirm the complete shortcut list scrolls inside the capped sheet.
 36. On Android 13 or newer, edge-swipe back from Search, Settings, and Command Apps; the visible surface should follow predictive-back progress and close at commit.
 

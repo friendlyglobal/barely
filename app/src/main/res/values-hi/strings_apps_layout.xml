@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">एक साथ दिखने वाले कॉलम और पंक्तियों की संख्या चुनें।</string>
     <string name="settings_grid_columns">कॉलम</string>
     <string name="settings_grid_rows">पंक्तियाँ</string>
+    <string name="settings_app_icon_shape">आइकन का आकार</string>
+    <string name="settings_app_icon_shape_summary">मूल आकार रखें या हर जगह एक समान मास्क लगाएँ।</string>
+    <string name="app_icon_shape_original">मूल</string>
+    <string name="app_icon_shape_circle">वृत्त</string>
+    <string name="app_icon_shape_squircle">स्क्वर्कल</string>
+    <string name="app_icon_shape_rounded_square">गोल चौकोर</string>
 </resources>

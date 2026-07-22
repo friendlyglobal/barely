@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">一度に表示する列数と行数を選びます。</string>
     <string name="settings_grid_columns">列</string>
     <string name="settings_grid_rows">行</string>
+    <string name="settings_app_icon_shape">アイコンの形</string>
+    <string name="settings_app_icon_shape_summary">アプリ本来の形を使うか、全体に同じマスクを適用します。</string>
+    <string name="app_icon_shape_original">オリジナル</string>
+    <string name="app_icon_shape_circle">円</string>
+    <string name="app_icon_shape_squircle">スクワークル</string>
+    <string name="app_icon_shape_rounded_square">角丸</string>
 </resources>

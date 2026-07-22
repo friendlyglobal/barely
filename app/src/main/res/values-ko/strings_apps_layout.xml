@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">한 번에 표시할 열과 행 수를 선택하세요.</string>
     <string name="settings_grid_columns">열</string>
     <string name="settings_grid_rows">행</string>
+    <string name="settings_app_icon_shape">아이콘 모양</string>
+    <string name="settings_app_icon_shape_summary">앱의 원래 모양을 쓰거나 모든 곳에 같은 마스크를 적용합니다.</string>
+    <string name="app_icon_shape_original">원본</string>
+    <string name="app_icon_shape_circle">원형</string>
+    <string name="app_icon_shape_squircle">스쿼클</string>
+    <string name="app_icon_shape_rounded_square">둥근 사각형</string>
 </resources>

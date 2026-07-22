@@ -191,6 +191,9 @@ class LauncherRepository(
     }
 
     fun launch(shortcut: LauncherShortcut) {
+        if (localSuggestionsEnabled() && !shortcut.owner.isPrivate) {
+            recordTargetLaunch(shortcut.searchTargetKey)
+        }
         launcherApps.startShortcut(shortcut.info, null, null)
     }
 
@@ -202,19 +205,60 @@ class LauncherRepository(
         preferences.getStringSet(FAVORITES_KEY, emptySet()).orEmpty().toSet()
 
     fun toggleFavorite(app: LauncherApp): Set<String> {
+        val order = favoriteOrder()
         val favorites = favoriteKeys().toMutableSet()
-        if (!favorites.add(app.key)) favorites.remove(app.key)
+        val added = favorites.add(app.key)
+        if (!added) favorites.remove(app.key)
         preferences.edit { putStringSet(FAVORITES_KEY, favorites) }
+        updateFavoriteOrder(order, app.key, added)
         return favorites
     }
 
     fun toggleFavorite(shortcut: LauncherShortcut): Set<String> {
+        val order = favoriteOrder()
         val favorites = favoriteKeys().toMutableSet()
-        if (!favorites.add(shortcut.searchTargetKey)) {
+        val added = favorites.add(shortcut.searchTargetKey)
+        if (!added) {
             favorites.remove(shortcut.searchTargetKey)
         }
         preferences.edit { putStringSet(FAVORITES_KEY, favorites) }
+        updateFavoriteOrder(order, shortcut.searchTargetKey, added)
         return favorites
+    }
+
+    fun favoriteOrder(): List<String> = reconcileFavoriteOrder(
+        storedOrder = preferences.getString(FAVORITE_ORDER_KEY, null)
+            ?.split(FAVORITE_ORDER_SEPARATOR)
+            .orEmpty(),
+        favoriteKeys = favoriteKeys(),
+    )
+
+    fun setFavoriteOrder(keys: List<String>): List<String> {
+        val reconciled = reconcileFavoriteOrder(keys, favoriteKeys())
+        preferences.edit {
+            putString(FAVORITE_ORDER_KEY, reconciled.joinToString(FAVORITE_ORDER_SEPARATOR))
+        }
+        return reconciled
+    }
+
+    fun favoriteKeysByUsage(keys: Collection<String>): List<String> {
+        val now = System.currentTimeMillis()
+        return rankFavoriteKeys(
+            keys = keys,
+            usage = keys.associateWith { key ->
+                FavoriteUsage(
+                    count = preferences.getInt(USAGE_COUNT_PREFIX + key, 0),
+                    lastUsedAt = preferences.getLong(USAGE_LAST_PREFIX + key, 0L),
+                )
+            },
+            now = now,
+        )
+    }
+
+    private fun updateFavoriteOrder(baseOrder: List<String>, key: String, added: Boolean) {
+        val order = baseOrder.toMutableList()
+        if (added && key !in order) order += key else if (!added) order -= key
+        setFavoriteOrder(order)
     }
 
     fun isGestureCoachSeen(): Boolean = preferences.getBoolean(GESTURE_COACH_KEY, false)
@@ -261,9 +305,13 @@ class LauncherRepository(
                 legacySwipeDownForNotifications = stored[SWIPE_NOTIFICATIONS_KEY] as? Boolean
                     ?: true,
                 frostedWallpaper = stored[FROSTED_WALLPAPER_KEY] as? Boolean ?: true,
+                frostedFallbackContrast = stored[FROSTED_FALLBACK_CONTRAST_KEY] as? Float
+                    ?: 0.5f,
+                favoriteSortMode = stored[FAVORITE_SORT_MODE_KEY] as? String,
                 appDrawerLayout = stored[APP_DRAWER_LAYOUT_KEY] as? String,
                 showAppIcons = stored[SHOW_APP_ICONS_KEY] as? Boolean
                     ?: BarelyDefaults.SHOW_APP_ICONS,
+                appIconShape = stored[APP_ICON_SHAPE_KEY] as? String,
                 showAppGridLabels = stored[SHOW_APP_GRID_LABELS_KEY] as? Boolean
                     ?: BarelyDefaults.SHOW_APP_GRID_LABELS,
                 appGridColumns = stored[APP_GRID_COLUMNS_KEY] as? Int
@@ -308,8 +356,14 @@ class LauncherRepository(
                 settings.swipeDownAction == LauncherGestureAction.NOTIFICATIONS,
             )
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
+            putFloat(
+                FROSTED_FALLBACK_CONTRAST_KEY,
+                settings.frostedFallbackContrast.coerceIn(0f, 1f),
+            )
+            putString(FAVORITE_SORT_MODE_KEY, settings.favoriteSortMode.name)
             putString(APP_DRAWER_LAYOUT_KEY, settings.appDrawerLayout.name)
             putBoolean(SHOW_APP_ICONS_KEY, settings.showAppIcons)
+            putString(APP_ICON_SHAPE_KEY, settings.appIconShape.name)
             putBoolean(SHOW_APP_GRID_LABELS_KEY, settings.showAppGridLabels)
             putInt(
                 APP_GRID_COLUMNS_KEY,
@@ -343,8 +397,11 @@ class LauncherRepository(
             put("doubleTapAction", settings.doubleTapAction.name)
             put("swipeDownAction", settings.swipeDownAction.name)
             put("frostedWallpaper", settings.frostedWallpaper)
+            put("frostedFallbackContrast", settings.frostedFallbackContrast.toDouble())
+            put("favoriteSortMode", settings.favoriteSortMode.name)
             put("appDrawerLayout", settings.appDrawerLayout.name)
             put("showAppIcons", settings.showAppIcons)
+            put("appIconShape", settings.appIconShape.name)
             put("showAppGridLabels", settings.showAppGridLabels)
             put("appGridColumns", settings.appGridColumns)
             put("appGridRows", settings.appGridRows)
@@ -391,10 +448,21 @@ class LauncherRepository(
                 .let { runCatching { LauncherGestureAction.valueOf(it) }.getOrNull() }
                 ?: current.swipeDownAction,
             frostedWallpaper = json.optBoolean("frostedWallpaper", current.frostedWallpaper),
+            frostedFallbackContrast = json.optDouble(
+                "frostedFallbackContrast",
+                current.frostedFallbackContrast.toDouble(),
+            ).toFloat().takeIf(Float::isFinite)?.coerceIn(0f, 1f)
+                ?: current.frostedFallbackContrast,
+            favoriteSortMode = json.optString("favoriteSortMode")
+                .let { runCatching { FavoriteSortMode.valueOf(it) }.getOrNull() }
+                ?: current.favoriteSortMode,
             appDrawerLayout = json.optString("appDrawerLayout")
                 .let { runCatching { AppDrawerLayout.valueOf(it) }.getOrNull() }
                 ?: current.appDrawerLayout,
             showAppIcons = json.optBoolean("showAppIcons", current.showAppIcons),
+            appIconShape = json.optString("appIconShape")
+                .let { runCatching { AppIconShape.valueOf(it) }.getOrNull() }
+                ?: current.appIconShape,
             showAppGridLabels = json.optBoolean(
                 "showAppGridLabels",
                 current.showAppGridLabels,
@@ -425,6 +493,7 @@ class LauncherRepository(
         return preferences.all.keys
             .asSequence()
             .filter { it.startsWith(USAGE_COUNT_PREFIX) }
+            .filterNot { it.removePrefix(USAGE_COUNT_PREFIX).startsWith("shortcut:") }
             .map { countKey ->
                 val appKey = countKey.removePrefix(USAGE_COUNT_PREFIX)
                 val count = preferences.getInt(countKey, 0)
@@ -549,8 +618,12 @@ class LauncherRepository(
     }
 
     private fun recordAppLaunch(app: LauncherApp) {
-        val countKey = USAGE_COUNT_PREFIX + app.key
-        val lastKey = USAGE_LAST_PREFIX + app.key
+        recordTargetLaunch(app.key)
+    }
+
+    private fun recordTargetLaunch(targetKey: String) {
+        val countKey = USAGE_COUNT_PREFIX + targetKey
+        val lastKey = USAGE_LAST_PREFIX + targetKey
         preferences.edit {
             putInt(countKey, preferences.getInt(countKey, 0) + 1)
             putLong(lastKey, System.currentTimeMillis())
@@ -598,6 +671,8 @@ class LauncherRepository(
 
     private companion object {
         const val FAVORITES_KEY = "favorites"
+        const val FAVORITE_ORDER_KEY = "favorite_order"
+        const val FAVORITE_ORDER_SEPARATOR = "\u001C"
         const val GESTURE_COACH_KEY = "gesture_coach_seen"
         const val ONBOARDING_COMPLETE_KEY = "onboarding_complete"
         const val SETTINGS_SCHEMA_KEY = "settings_schema_version"
@@ -613,8 +688,11 @@ class LauncherRepository(
         const val DOUBLE_TAP_ACTION_KEY = "double_tap_action"
         const val SWIPE_DOWN_ACTION_KEY = "swipe_down_action"
         const val FROSTED_WALLPAPER_KEY = "frosted_wallpaper_enabled"
+        const val FROSTED_FALLBACK_CONTRAST_KEY = "frosted_fallback_contrast"
+        const val FAVORITE_SORT_MODE_KEY = "favorite_sort_mode"
         const val APP_DRAWER_LAYOUT_KEY = "app_drawer_layout"
         const val SHOW_APP_ICONS_KEY = "show_app_icons"
+        const val APP_ICON_SHAPE_KEY = "app_icon_shape"
         const val SHOW_APP_GRID_LABELS_KEY = "show_app_grid_labels"
         const val APP_GRID_COLUMNS_KEY = "app_grid_columns"
         const val APP_GRID_ROWS_KEY = "app_grid_rows"

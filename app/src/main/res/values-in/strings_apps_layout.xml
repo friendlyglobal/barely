@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Pilih jumlah kolom dan baris yang terlihat sekaligus.</string>
     <string name="settings_grid_columns">Kolom</string>
     <string name="settings_grid_rows">Baris</string>
+    <string name="settings_app_icon_shape">Bentuk ikon</string>
+    <string name="settings_app_icon_shape_summary">Gunakan bentuk asli atau terapkan satu mask yang konsisten di semua tempat.</string>
+    <string name="app_icon_shape_original">Asli</string>
+    <string name="app_icon_shape_circle">Lingkaran</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Membulat</string>
 </resources>

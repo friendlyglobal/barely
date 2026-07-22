@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("androidx.baselineprofile")
 }
 
 val releaseStoreFile = providers.environmentVariable("BARELY_KEYSTORE_FILE").orNull
@@ -23,8 +24,8 @@ android {
         applicationId = "app.usefriendly.barely"
         minSdk = 29
         targetSdk = 36
-        versionCode = 19
-        versionName = "1.5.0"
+        versionCode = 20
+        versionName = "1.6.0"
     }
 
     buildFeatures {
@@ -101,6 +102,9 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
+
+    baselineProfile(project(":baselineprofile"))
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">اختر عدد الأعمدة والصفوف الظاهرة في وقت واحد.</string>
     <string name="settings_grid_columns">الأعمدة</string>
     <string name="settings_grid_rows">الصفوف</string>
+    <string name="settings_app_icon_shape">شكل الرموز</string>
+    <string name="settings_app_icon_shape_summary">استخدم الشكل الأصلي أو طبّق قناعًا موحدًا في كل مكان.</string>
+    <string name="app_icon_shape_original">أصلي</string>
+    <string name="app_icon_shape_circle">دائرة</string>
+    <string name="app_icon_shape_squircle">مربع دائري</string>
+    <string name="app_icon_shape_rounded_square">مستدير</string>
 </resources>

@@ -78,4 +78,19 @@
     <string name="media_play">Reproducir</string>
     <string name="media_pause">Pausar</string>
     <string name="media_next">Siguiente</string>
+    <string name="edit_favorites">Reordenar favoritos</string>
+    <string name="reorder_favorite">Arrastra para reordenar el favorito</string>
+    <string name="move_favorite_up">Mover favorito hacia arriba</string>
+    <string name="move_favorite_down">Mover favorito hacia abajo</string>
+    <string name="done">Listo</string>
+    <string name="settings_blur_renderer">Renderizado del fondo</string>
+    <string name="settings_blur_native">Desenfoque nativo de Android</string>
+    <string name="settings_blur_fallback">Alternativa translúcida</string>
+    <string name="settings_fallback_contrast">Contraste alternativo</string>
+    <string name="settings_fallback_contrast_summary">Ajusta la legibilidad cuando Android o One UI desactive el desenfoque.</string>
+    <string name="settings_favorites">Favoritos</string>
+    <string name="settings_favorite_order">Orden de favoritos</string>
+    <string name="settings_favorite_order_summary">Conserva tu orden o clasifica según lo abierto en este dispositivo.</string>
+    <string name="settings_favorite_order_manual">Manual</string>
+    <string name="settings_favorite_order_most_used">Más usados</string>
 </resources>

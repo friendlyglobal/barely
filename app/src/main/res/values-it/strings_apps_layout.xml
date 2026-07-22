@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Scegli quante colonne e righe restano visibili insieme.</string>
     <string name="settings_grid_columns">Colonne</string>
     <string name="settings_grid_rows">Righe</string>
+    <string name="settings_app_icon_shape">Forma icone</string>
+    <string name="settings_app_icon_shape_summary">Usa la sagoma originale o applica una maschera uniforme ovunque.</string>
+    <string name="app_icon_shape_original">Originale</string>
+    <string name="app_icon_shape_circle">Cerchio</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Arrotondata</string>
 </resources>

@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name">Barely</string>
     <string name="favorites">Favorites</string>
+    <string name="edit_favorites">Reorder favorites</string>
+    <string name="reorder_favorite">Drag to reorder favorite</string>
+    <string name="move_favorite_up">Move favorite up</string>
+    <string name="move_favorite_down">Move favorite down</string>
+    <string name="done">Done</string>
     <string name="search">Search</string>
     <string name="apps">Apps</string>
     <string name="no_favorites">No favorites yet</string>
@@ -124,6 +129,16 @@
     <string name="settings_frosted_wallpaper">Frosted wallpaper</string>
     <string name="settings_frosted_wallpaper_summary">Blur the wallpaper behind Favorites, Apps, and Search when Android supports it.</string>
     <string name="settings_frosted_wallpaper_unavailable_summary">System blur is unavailable right now. Barely will use a lighter translucent fallback.</string>
+    <string name="settings_blur_renderer">Wallpaper rendering</string>
+    <string name="settings_blur_native">Native Android blur</string>
+    <string name="settings_blur_fallback">Translucent fallback</string>
+    <string name="settings_fallback_contrast">Fallback contrast</string>
+    <string name="settings_fallback_contrast_summary">Adjust readability when Android or One UI disables wallpaper blur.</string>
+    <string name="settings_favorites">Favorites</string>
+    <string name="settings_favorite_order">Favorite order</string>
+    <string name="settings_favorite_order_summary">Keep your custom order or rank favorites from launches made on this device.</string>
+    <string name="settings_favorite_order_manual">Manual</string>
+    <string name="settings_favorite_order_most_used">Most used</string>
     <string name="settings_optional_modules">Optional modules</string>
     <string name="settings_notification_dots">Notification dots</string>
     <string name="settings_media_controls">Media controls</string>

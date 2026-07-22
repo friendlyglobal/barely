@@ -78,4 +78,19 @@
     <string name="media_play">再生</string>
     <string name="media_pause">一時停止</string>
     <string name="media_next">次へ</string>
+    <string name="edit_favorites">お気に入りを並べ替え</string>
+    <string name="reorder_favorite">ドラッグして並べ替え</string>
+    <string name="move_favorite_up">お気に入りを上へ移動</string>
+    <string name="move_favorite_down">お気に入りを下へ移動</string>
+    <string name="done">完了</string>
+    <string name="settings_blur_renderer">壁紙の描画</string>
+    <string name="settings_blur_native">Android ネイティブぼかし</string>
+    <string name="settings_blur_fallback">半透明の代替表示</string>
+    <string name="settings_fallback_contrast">代替表示のコントラスト</string>
+    <string name="settings_fallback_contrast_summary">Android または One UI がぼかしを無効にした場合の見やすさを調整します。</string>
+    <string name="settings_favorites">お気に入り</string>
+    <string name="settings_favorite_order">お気に入りの順序</string>
+    <string name="settings_favorite_order_summary">手動の順序を保つか、この端末での使用順に並べます。</string>
+    <string name="settings_favorite_order_manual">手動</string>
+    <string name="settings_favorite_order_most_used">使用頻度順</string>
 </resources>

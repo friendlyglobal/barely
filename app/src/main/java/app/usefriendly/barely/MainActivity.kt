@@ -60,6 +60,8 @@ class MainActivity : ComponentActivity() {
 
     private var snapshot by androidx.compose.runtime.mutableStateOf(LauncherSnapshot())
     private var favoriteKeys by androidx.compose.runtime.mutableStateOf(emptySet<String>())
+    private var favoriteOrder by androidx.compose.runtime.mutableStateOf(emptyList<String>())
+    private var favoriteUsageOrder by androidx.compose.runtime.mutableStateOf(emptyList<String>())
     private var isHomeRoleHeld by androidx.compose.runtime.mutableStateOf(false)
     private var isLoading by androidx.compose.runtime.mutableStateOf(true)
     private var showOnboarding by androidx.compose.runtime.mutableStateOf(false)
@@ -167,6 +169,7 @@ class MainActivity : ComponentActivity() {
         repository = LauncherRepository(this) { refresh() }
         widgetController = WidgetHostController(this)
         favoriteKeys = repository.favoriteKeys()
+        refreshFavoriteOrder()
         widgets = widgetController.savedWidgets()
         widgetProviders = widgetController.availableProviders()
         refreshLocalSuggestions()
@@ -207,6 +210,8 @@ class MainActivity : ComponentActivity() {
                 } else LauncherScreen(
                     snapshot = snapshot,
                     favoriteKeys = favoriteKeys,
+                    favoriteOrder = favoriteOrder,
+                    favoriteUsageOrder = favoriteUsageOrder,
                     isHomeRoleHeld = isHomeRoleHeld,
                     isLoading = isLoading,
                     showGestureCoach = showGestureCoach,
@@ -250,16 +255,23 @@ class MainActivity : ComponentActivity() {
                         perform(getString(R.string.error_open_app, app.label)) {
                             repository.launch(app)
                             refreshLocalSuggestions()
+                            refreshFavoriteOrder()
                         }
                     },
                     onLaunchShortcut = { shortcut -> perform(getString(R.string.error_shortcut_unavailable)) {
                         repository.launch(shortcut)
+                        refreshFavoriteOrder()
                     } },
                     onToggleFavorite = { app ->
                         favoriteKeys = repository.toggleFavorite(app)
+                        refreshFavoriteOrder()
                     },
                     onToggleShortcutFavorite = { shortcut ->
                         favoriteKeys = repository.toggleFavorite(shortcut)
+                        refreshFavoriteOrder()
+                    },
+                    onReorderFavorites = { keys ->
+                        favoriteOrder = repository.setFavoriteOrder(keys)
                     },
                     onAppInfo = { app -> perform(getString(R.string.error_open_app_info)) {
                         repository.showAppInfo(app)
@@ -321,6 +333,7 @@ class MainActivity : ComponentActivity() {
                     onClearLocalHistory = {
                         repository.clearLocalHistory()
                         refreshLocalSuggestions()
+                        refreshFavoriteOrder()
                         Toast.makeText(this, R.string.settings_history_cleared, Toast.LENGTH_SHORT).show()
                     },
                     onOpenAccessibilitySettings = ::openAccessibilitySettings,
@@ -599,6 +612,7 @@ class MainActivity : ComponentActivity() {
         repository.setLauncherSettings(settings)
         launcherSettings = settings
         refreshLocalSuggestions()
+        refreshFavoriteOrder()
         applyBackdrop(requestedBackdrop)
     }
 
@@ -606,6 +620,11 @@ class MainActivity : ComponentActivity() {
         recommendedAppKeys = repository.recommendedAppKeys()
         recentAppSearches = repository.recentAppSearches()
         launcherSearchLearning = repository.launcherSearchLearning()
+    }
+
+    private fun refreshFavoriteOrder() {
+        favoriteOrder = repository.favoriteOrder()
+        favoriteUsageOrder = repository.favoriteKeysByUsage(favoriteKeys)
     }
 
     private fun openAccessibilitySettings() {
