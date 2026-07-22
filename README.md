@@ -99,7 +99,7 @@ Version 0.5 adopts the permanent `app.usefriendly.barely` application ID. Androi
 ## Requirements
 
 - JDK 17
-- Android SDK Platform 36.0
+- Android SDK Platform 37.0
 - Android Gradle Plugin 9.1.1
 - Gradle 9.3.1
 - Android 10 or newer (`minSdk 29`)
@@ -144,7 +144,7 @@ If Gradle reports duplicated generated names such as `BuildConfig 2.java` or `..
 
 1. Open the project in Android Studio Panda 3 or newer.
 2. Under **Settings > Build, Execution, Deployment > Build Tools > Gradle**, select JDK 17 or the compatible embedded JDK.
-3. Under **Tools > SDK Manager**, install Android SDK Platform 36.0 and Android SDK Platform-Tools.
+3. Under **Tools > SDK Manager**, enable preview SDKs and install Android SDK Platform 37.0 plus Android SDK Platform-Tools.
 4. On the phone, open **Settings > About phone > Software information** and tap **Build number** seven times.
 5. Return to **Developer options**, enable **USB debugging**, connect the phone, and accept the RSA prompt.
 6. Select the Galaxy S24 Ultra in Android Studio and run the `app` configuration.

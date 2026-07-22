@@ -16,7 +16,8 @@ val hasReleaseSigning = listOf(
 
 android {
     namespace = "app.usefriendly.barely"
-    compileSdk = 36
+    compileSdk = 37
+    compileSdkMinor = 0
 
     defaultConfig {
         applicationId = "app.usefriendly.barely"
