@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">系统模糊效果当前不可用。Barely 将使用更轻的半透明背景。</string>
     <string name="navigate_back">返回</string>
     <string name="choose_widget">选择微件</string>
     <string name="widget_picker_summary">按应用分组，并在可用时显示真实预览</string>

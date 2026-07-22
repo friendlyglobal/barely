@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">システムのぼかしは現在利用できません。Barely は薄い半透明の背景を使用します。</string>
     <string name="navigate_back">戻る</string>
     <string name="choose_widget">ウィジェットを選択</string>
     <string name="widget_picker_summary">アプリ別に整理し、利用可能な場合は実際のプレビューを表示します</string>

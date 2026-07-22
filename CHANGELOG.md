@@ -2,6 +2,28 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.4.0 — 2026-07-22
+
+### Command and favorites
+
+- Added a trailing favorite action to app and published-shortcut results on the shared Home command surface.
+- Kept the result itself dedicated to launch, while long press opens the owning app's complete actions and shortcuts.
+- Preserved a 48 dp favorite target, localized TalkBack labels, and the same local-only favorite storage.
+
+### All apps and visual consistency
+
+- Made the Home command field and All apps search field use one shared 64 dp surface, outline, opacity, radius, and pressed-state clipping.
+- Added an optional icon-only grid while keeping app names available to accessibility services.
+- Adjusted recent-history trailing action spacing to the configured global radius.
+- Removed duplicate app-icon announcements from composed rows and tiles.
+
+### Wallpaper and release
+
+- Applied the window blur flag and radius atomically to avoid transient unblurred frames.
+- Replaced the heavy gray no-blur fallback with a lighter wallpaper-first gradient and now explains when Android has disabled cross-window blur.
+- Localized the new grid-label and blur-status copy for every supported system language.
+- Updated the application to version code 18 and version name 1.4.0.
+
 ## 1.3.0 — 2026-07-22
 
 ### All apps

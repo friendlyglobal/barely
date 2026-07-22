@@ -1,6 +1,6 @@
 package app.usefriendly.barely
 
-internal const val CURRENT_SETTINGS_SCHEMA = 3
+internal const val CURRENT_SETTINGS_SCHEMA = 4
 
 internal data class StoredLauncherSettings(
     val schemaVersion: Int = 1,
@@ -17,6 +17,7 @@ internal data class StoredLauncherSettings(
     val frostedWallpaper: Boolean = true,
     val appDrawerLayout: String? = null,
     val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
+    val showAppGridLabels: Boolean = BarelyDefaults.SHOW_APP_GRID_LABELS,
     val appGridColumns: Int = BarelyDefaults.APP_GRID_COLUMNS,
     val appGridRows: Int = BarelyDefaults.APP_GRID_ROWS,
     val notificationDots: Boolean = false,
@@ -54,6 +55,7 @@ internal fun decodeLauncherSettings(stored: StoredLauncherSettings): LauncherSet
         appDrawerLayout = stored.appDrawerLayout.enumOrNull<AppDrawerLayout>()
             ?: BarelyDefaults.APP_DRAWER_LAYOUT,
         showAppIcons = stored.showAppIcons,
+        showAppGridLabels = stored.showAppGridLabels,
         appGridColumns = stored.appGridColumns.coerceIn(
             MIN_APP_GRID_COLUMNS,
             MAX_APP_GRID_COLUMNS,

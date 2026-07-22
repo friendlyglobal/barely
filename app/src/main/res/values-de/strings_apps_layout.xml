@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_show_app_grid_labels">Namen im Raster anzeigen</string>
+    <string name="settings_show_app_grid_labels_summary">App-Namen unter den Symbolen anzeigen. Für ein reines Symbolraster deaktivieren.</string>
     <string name="settings_all_apps">Alle Apps</string>
     <string name="settings_app_layout">Layout</string>
     <string name="settings_app_layout_summary">Wähle eine ruhige Liste oder ein kompaktes Raster.</string>

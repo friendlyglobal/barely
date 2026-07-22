@@ -7,6 +7,8 @@
     <string name="settings_app_layout_grid">Grid</string>
     <string name="settings_show_app_icons">Show app icons</string>
     <string name="settings_show_app_icons_summary">Show each published app icon in the list and grid.</string>
+    <string name="settings_show_app_grid_labels">Show grid labels</string>
+    <string name="settings_show_app_grid_labels_summary">Keep app names under icons. Turn this off for an icon-only grid.</string>
     <string name="settings_grid_size">Grid size</string>
     <string name="settings_grid_size_summary">Choose how many columns and rows stay visible at once.</string>
     <string name="settings_grid_columns">Columns</string>

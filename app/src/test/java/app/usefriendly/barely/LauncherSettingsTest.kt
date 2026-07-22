@@ -25,6 +25,7 @@ class LauncherSettingsTest {
         assertEquals(LauncherGestureAction.NOTIFICATIONS, settings.swipeDownAction)
         assertEquals(AppDrawerLayout.LIST, settings.appDrawerLayout)
         assertFalse(settings.showAppIcons)
+        assertTrue(settings.showAppGridLabels)
         assertEquals(4, settings.appGridColumns)
         assertEquals(6, settings.appGridRows)
     }
@@ -94,6 +95,7 @@ class LauncherSettingsTest {
                 schemaVersion = CURRENT_SETTINGS_SCHEMA,
                 appDrawerLayout = AppDrawerLayout.GRID.name,
                 showAppIcons = true,
+                showAppGridLabels = false,
                 appGridColumns = 5,
                 appGridRows = 7,
             ),
@@ -101,6 +103,7 @@ class LauncherSettingsTest {
 
         assertEquals(AppDrawerLayout.GRID, migrated.appDrawerLayout)
         assertTrue(migrated.showAppIcons)
+        assertFalse(migrated.showAppGridLabels)
         assertEquals(5, migrated.appGridColumns)
         assertEquals(7, migrated.appGridRows)
     }

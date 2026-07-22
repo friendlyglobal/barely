@@ -264,6 +264,8 @@ class LauncherRepository(
                 appDrawerLayout = stored[APP_DRAWER_LAYOUT_KEY] as? String,
                 showAppIcons = stored[SHOW_APP_ICONS_KEY] as? Boolean
                     ?: BarelyDefaults.SHOW_APP_ICONS,
+                showAppGridLabels = stored[SHOW_APP_GRID_LABELS_KEY] as? Boolean
+                    ?: BarelyDefaults.SHOW_APP_GRID_LABELS,
                 appGridColumns = stored[APP_GRID_COLUMNS_KEY] as? Int
                     ?: BarelyDefaults.APP_GRID_COLUMNS,
                 appGridRows = stored[APP_GRID_ROWS_KEY] as? Int
@@ -308,6 +310,7 @@ class LauncherRepository(
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
             putString(APP_DRAWER_LAYOUT_KEY, settings.appDrawerLayout.name)
             putBoolean(SHOW_APP_ICONS_KEY, settings.showAppIcons)
+            putBoolean(SHOW_APP_GRID_LABELS_KEY, settings.showAppGridLabels)
             putInt(
                 APP_GRID_COLUMNS_KEY,
                 settings.appGridColumns.coerceIn(
@@ -342,6 +345,7 @@ class LauncherRepository(
             put("frostedWallpaper", settings.frostedWallpaper)
             put("appDrawerLayout", settings.appDrawerLayout.name)
             put("showAppIcons", settings.showAppIcons)
+            put("showAppGridLabels", settings.showAppGridLabels)
             put("appGridColumns", settings.appGridColumns)
             put("appGridRows", settings.appGridRows)
             put("notificationDots", settings.notificationDots)
@@ -391,6 +395,10 @@ class LauncherRepository(
                 .let { runCatching { AppDrawerLayout.valueOf(it) }.getOrNull() }
                 ?: current.appDrawerLayout,
             showAppIcons = json.optBoolean("showAppIcons", current.showAppIcons),
+            showAppGridLabels = json.optBoolean(
+                "showAppGridLabels",
+                current.showAppGridLabels,
+            ),
             appGridColumns = json.optInt(
                 "appGridColumns",
                 current.appGridColumns,
@@ -607,6 +615,7 @@ class LauncherRepository(
         const val FROSTED_WALLPAPER_KEY = "frosted_wallpaper_enabled"
         const val APP_DRAWER_LAYOUT_KEY = "app_drawer_layout"
         const val SHOW_APP_ICONS_KEY = "show_app_icons"
+        const val SHOW_APP_GRID_LABELS_KEY = "show_app_grid_labels"
         const val APP_GRID_COLUMNS_KEY = "app_grid_columns"
         const val APP_GRID_ROWS_KEY = "app_grid_rows"
         const val NOTIFICATION_DOTS_KEY = "notification_dots_enabled"

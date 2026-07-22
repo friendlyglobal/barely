@@ -125,6 +125,7 @@
     <string name="settings_appearance">Aparência</string>
     <string name="settings_frosted_wallpaper">Wallpaper fosco</string>
     <string name="settings_frosted_wallpaper_summary">Desfoca o wallpaper em Favoritos, Apps e Busca quando o Android permite.</string>
+    <string name="settings_frosted_wallpaper_unavailable_summary">O desfoque do sistema está indisponível agora. O Barely usará um fundo translúcido mais leve.</string>
     <string name="settings_optional_modules">Módulos opcionais</string>
     <string name="settings_notification_dots">Pontos de notificação</string>
     <string name="settings_media_controls">Controles de mídia</string>

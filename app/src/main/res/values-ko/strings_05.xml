@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">시스템 흐림 효과를 지금 사용할 수 없습니다. Barely가 더 옅은 반투명 배경을 사용합니다.</string>
     <string name="navigate_back">뒤로</string>
     <string name="choose_widget">위젯 선택</string>
     <string name="widget_picker_summary">앱별로 묶고 가능한 경우 실제 미리보기를 표시합니다</string>

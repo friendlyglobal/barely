@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">تمويه النظام غير متاح الآن. سيستخدم Barely خلفية شفافة أخف.</string>
     <string name="navigate_back">رجوع</string>
     <string name="choose_widget">اختيار أداة</string>
     <string name="widget_picker_summary">مجمّعة حسب التطبيق، مع معاينات فعلية عند توفرها</string>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_frosted_wallpaper_unavailable_summary">Blur sistem sedang tidak tersedia. Barely akan memakai latar transparan yang lebih ringan.</string>
     <string name="navigate_back">Kembali</string>
     <string name="choose_widget">Pilih widget</string>
     <string name="widget_picker_summary">Dikelompokkan menurut aplikasi, dengan pratinjau asli jika tersedia</string>

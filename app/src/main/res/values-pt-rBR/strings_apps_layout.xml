@@ -7,6 +7,8 @@
     <string name="settings_app_layout_grid">Grade</string>
     <string name="settings_show_app_icons">Mostrar ícones dos apps</string>
     <string name="settings_show_app_icons_summary">Mostra o ícone publicado de cada app na lista e na grade.</string>
+    <string name="settings_show_app_grid_labels">Mostrar nomes na grade</string>
+    <string name="settings_show_app_grid_labels_summary">Mantém o nome abaixo dos ícones. Desative para uma grade só com ícones.</string>
     <string name="settings_grid_size">Tamanho da grade</string>
     <string name="settings_grid_size_summary">Escolha quantas colunas e linhas ficam visíveis de uma vez.</string>
     <string name="settings_grid_columns">Colunas</string>

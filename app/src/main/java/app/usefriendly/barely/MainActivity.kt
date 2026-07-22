@@ -217,6 +217,7 @@ class MainActivity : ComponentActivity() {
                     foldingFeature = foldingFeature,
                     backdropBlurEnabled = crossWindowBlurEnabled &&
                         launcherSettings.frostedWallpaper,
+                    systemBlurAvailable = crossWindowBlurEnabled,
                     launcherSettings = launcherSettings,
                     availableAssistants = availableAssistants,
                     privateSpaceExpanded = privateSpaceExpanded,
@@ -669,16 +670,17 @@ class MainActivity : ComponentActivity() {
             LauncherBackdrop.FROSTED -> BarelyVisualTokens.frostedBlurRadiusDp
             LauncherBackdrop.SEARCH -> BarelyVisualTokens.searchBlurRadiusDp
         }
-        val attributes = window.attributes
+        val attributes = window.attributes.apply {
+            flags = if (shouldBlur) {
+                flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+            } else {
+                flags and WindowManager.LayoutParams.FLAG_BLUR_BEHIND.inv()
+            }
+        }
         attributes.setBlurBehindRadius(
             (radiusDp * resources.displayMetrics.density).toInt(),
         )
         window.attributes = attributes
-        if (!shouldBlur) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-        } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-        }
     }
 
     private fun refreshContacts() {
