@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Выберите количество видимых столбцов и строк.</string>
     <string name="settings_grid_columns">Столбцы</string>
     <string name="settings_grid_rows">Строки</string>
+    <string name="settings_app_icon_shape">Форма значков</string>
+    <string name="settings_app_icon_shape_summary">Оставьте исходную форму или примените единую маску везде.</string>
+    <string name="app_icon_shape_original">Исходная</string>
+    <string name="app_icon_shape_circle">Круг</string>
+    <string name="app_icon_shape_squircle">Сквиркл</string>
+    <string name="app_icon_shape_rounded_square">Скруглённая</string>
 </resources>

@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Wähle, wie viele Spalten und Zeilen gleichzeitig sichtbar sind.</string>
     <string name="settings_grid_columns">Spalten</string>
     <string name="settings_grid_rows">Zeilen</string>
+    <string name="settings_app_icon_shape">Symbolform</string>
+    <string name="settings_app_icon_shape_summary">Originalform verwenden oder überall eine einheitliche Maske anwenden.</string>
+    <string name="app_icon_shape_original">Original</string>
+    <string name="app_icon_shape_circle">Kreis</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Abgerundet</string>
 </resources>

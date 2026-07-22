@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Escolha quantas colunas e linhas ficam visíveis de uma vez.</string>
     <string name="settings_grid_columns">Colunas</string>
     <string name="settings_grid_rows">Linhas</string>
+    <string name="settings_app_icon_shape">Formato dos ícones</string>
+    <string name="settings_app_icon_shape_summary">Use o formato original de cada app ou aplique uma máscara consistente em todo o launcher.</string>
+    <string name="app_icon_shape_original">Original</string>
+    <string name="app_icon_shape_circle">Círculo</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Arredondado</string>
 </resources>

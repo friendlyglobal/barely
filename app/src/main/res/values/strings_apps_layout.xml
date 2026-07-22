@@ -7,6 +7,12 @@
     <string name="settings_app_layout_grid">Grid</string>
     <string name="settings_show_app_icons">Show app icons</string>
     <string name="settings_show_app_icons_summary">Show each published app icon in the list and grid.</string>
+    <string name="settings_app_icon_shape">Icon shape</string>
+    <string name="settings_app_icon_shape_summary">Use each app’s original silhouette or apply one consistent mask everywhere.</string>
+    <string name="app_icon_shape_original">Original</string>
+    <string name="app_icon_shape_circle">Circle</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Rounded</string>
     <string name="settings_show_app_grid_labels">Show grid labels</string>
     <string name="settings_show_app_grid_labels_summary">Keep app names under icons. Turn this off for an icon-only grid.</string>
     <string name="settings_grid_size">Grid size</string>

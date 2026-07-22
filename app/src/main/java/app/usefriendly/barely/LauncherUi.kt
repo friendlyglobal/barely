@@ -92,6 +92,8 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.CropSquare
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.DragHandle
@@ -104,6 +106,7 @@ import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.RoundedCorner
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -150,6 +153,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -167,6 +171,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -716,6 +721,7 @@ fun LauncherScreen(
         }
     }
 
+    CompositionLocalProvider(LocalAppIconShape provides launcherSettings.appIconShape) {
     Box(
         Modifier
             .fillMaxSize()
@@ -1185,6 +1191,7 @@ fun LauncherScreen(
                 onAddWidget(provider)
             },
         )
+    }
     }
 }
 
@@ -4196,16 +4203,18 @@ private fun AppGridTile(
 @Composable
 private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
     val icon = app.icon
+    val iconShape = LocalAppIconShape.current.toComposeShape()
+    val shapedModifier = if (iconShape != null) modifier.clip(iconShape) else modifier
     if (icon != null) {
         androidx.compose.foundation.Image(
             bitmap = icon.asImageBitmap(),
             contentDescription = null,
-            modifier = modifier,
+            modifier = shapedModifier,
         )
     } else {
         Box(
-            modifier = modifier
-                .clip(CircleShape)
+            modifier = shapedModifier
+                .clip(iconShape ?: CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
@@ -4216,6 +4225,15 @@ private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+private val LocalAppIconShape = staticCompositionLocalOf { AppIconShape.ORIGINAL }
+
+private fun AppIconShape.toComposeShape(): Shape? = when (this) {
+    AppIconShape.ORIGINAL -> null
+    AppIconShape.CIRCLE -> CircleShape
+    AppIconShape.SQUIRCLE -> RoundedCornerShape(percent = 32)
+    AppIconShape.ROUNDED_SQUARE -> RoundedCornerShape(percent = 18)
 }
 
 private fun buildRankedLauncherResults(
@@ -5807,6 +5825,16 @@ private fun LauncherSettingsPage(
                     },
                 )
             }
+            if (settings.showAppIcons) {
+                item(key = "app_icon_shape") {
+                    AppIconShapeSettings(
+                        selectedShape = settings.appIconShape,
+                        onShapeSelected = { shape ->
+                            onSettingsChanged(settings.copy(appIconShape = shape))
+                        },
+                    )
+                }
+            }
             if (settings.appDrawerLayout == AppDrawerLayout.GRID) {
                 if (settings.showAppIcons) {
                     item(key = "show_app_grid_labels") {
@@ -6221,6 +6249,64 @@ private fun AppDrawerLayoutSettings(
                 title = stringResource(R.string.settings_app_layout_grid),
                 selected = selectedLayout == AppDrawerLayout.GRID,
                 onClick = { onLayoutSelected(AppDrawerLayout.GRID) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppIconShapeSettings(
+    selectedShape: AppIconShape,
+    onShapeSelected: (AppIconShape) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_app_icon_shape),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_app_icon_shape_summary),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.Apps,
+                title = stringResource(R.string.app_icon_shape_original),
+                selected = selectedShape == AppIconShape.ORIGINAL,
+                onClick = { onShapeSelected(AppIconShape.ORIGINAL) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.Circle,
+                title = stringResource(R.string.app_icon_shape_circle),
+                selected = selectedShape == AppIconShape.CIRCLE,
+                onClick = { onShapeSelected(AppIconShape.CIRCLE) },
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.RoundedCorner,
+                title = stringResource(R.string.app_icon_shape_squircle),
+                selected = selectedShape == AppIconShape.SQUIRCLE,
+                onClick = { onShapeSelected(AppIconShape.SQUIRCLE) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.CropSquare,
+                title = stringResource(R.string.app_icon_shape_rounded_square),
+                selected = selectedShape == AppIconShape.ROUNDED_SQUARE,
+                onClick = { onShapeSelected(AppIconShape.ROUNDED_SQUARE) },
             )
         }
     }

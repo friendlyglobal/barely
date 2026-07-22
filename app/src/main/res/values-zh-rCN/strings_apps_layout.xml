@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">选择同时可见的列数和行数。</string>
     <string name="settings_grid_columns">列</string>
     <string name="settings_grid_rows">行</string>
+    <string name="settings_app_icon_shape">图标形状</string>
+    <string name="settings_app_icon_shape_summary">保留应用原始轮廓，或在各处应用统一蒙版。</string>
+    <string name="app_icon_shape_original">原始</string>
+    <string name="app_icon_shape_circle">圆形</string>
+    <string name="app_icon_shape_squircle">超椭圆</string>
+    <string name="app_icon_shape_rounded_square">圆角方形</string>
 </resources>

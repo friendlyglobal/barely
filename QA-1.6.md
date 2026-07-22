@@ -17,6 +17,7 @@ This record covers the generated optimization profile, reproducible performance 
 - The `baselineprofile` module measures cold startup, warm Home resume, Search transition frames, and first-scroll frames with Android Macrobenchmark; `scripts/benchmark.sh` reproduces the suite locally.
 - Favorites can be reordered with a drag handle and assistive move actions, or ranked by local launches. Shortcuts use the same ranking and never request Android Usage Access.
 - Settings reports whether Android currently exposes native cross-window blur. When it does not, a local contrast slider tunes the wallpaper-derived fallback on every non-Home surface.
+- App icons can retain their published silhouette or use a consistent Circle, Squircle, or Rounded square mask across every launcher surface; the choice remains local and defaults safely to Original on upgrade or corrupt input.
 
 ## Automated gates
 
@@ -38,6 +39,7 @@ This record covers the generated optimization profile, reproducible performance 
 5. Disable system cross-window blur and verify Settings reports Translucent fallback. Adjust contrast from 0% to 100% and inspect Favorites, All apps, Command Apps, and full Search for continuous wallpaper visibility and readable foregrounds.
 6. Re-enable blur and verify Settings reports Native Android blur; the fallback slider becomes informationally visible but disabled because Android owns the active renderer.
 7. Repeat with 200% font, RTL, 0× animator scale, keyboard/DeX input, and an expanded foldable window. No essential action may clip or depend on motion.
+8. Enable app icons and cycle through Original, Circle, Squircle, and Rounded square. Confirm the same mask appears in All apps, Home and full Search, recent history, Favorites, and app actions, then restart Barely and verify persistence.
 
 ## Galaxy S24 Ultra acceptance
 
@@ -46,3 +48,4 @@ This record covers the generated optimization profile, reproducible performance 
 3. Tune fallback contrast over a bright and a dark wallpaper. Favorites, Apps, Search, and Command Apps must keep the wallpaper visible without returning to a flat gray surface.
 4. Reorder mixed apps and WhatsApp shortcuts with touch and TalkBack, restart the launcher, and confirm persistence. Switch to Most used and verify only Barely launches affect order.
 5. Run `scripts/benchmark.sh` on a development-connected S24 Ultra with a stable thermal state and save the JSON reports as the physical baseline for future releases.
+6. Compare Xiaomi Home and other nonuniform third-party icons under all four masks. Squircle and Rounded square must clip square corners cleanly without changing icon scale, labels, touch targets, or shortcut-owner artwork.

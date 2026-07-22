@@ -20,6 +20,11 @@ All notable changes to Barely are documented in this file.
 - Added an honest renderer status in Settings: Android native blur when currently exposed, or Barely's translucent wallpaper fallback when Android or One UI disables cross-window blur.
 - Added a fallback-contrast slider for devices and runtime states where native blur is unavailable, and applied it consistently to Favorites, All apps, Command Apps, and full Search.
 - Localized the new controls and accessible reorder actions for every supported system language.
+
+### App icons
+
+- Added a global app-icon shape setting with Original, Circle, Squircle, and Rounded square masks.
+- Applied the selected shape consistently to All apps, Home and full Search results, recent history, Favorites, and app action sheets while keeping Original as the upgrade-safe default.
 - Updated the application to version code 20 and version name 1.6.0.
 
 ## 1.5.0 — 2026-07-22

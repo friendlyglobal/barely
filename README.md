@@ -28,6 +28,7 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Keeps that All apps search control at the same bottom spacing as the shared Home command bar.
 - Uses Material 3 search geometry and a shape-clipped pressed state in All apps, with the leading icon and placeholder aligned on one centered row.
 - Lets All apps use the original text-only list, a list with published app icons, or a compact icon grid; grid columns and visible rows are adjustable with bounded local sliders. When enabled, the same icon preference also identifies apps and shortcut owners in shared Home results and recent history.
+- Offers one global Original, Circle, Squircle, or Rounded square icon mask so OEM and third-party artwork can share a consistent silhouette across the drawer, Search, history, Favorites, and app actions.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
 - Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
 - Learns recommendations from app launches and successful query-to-app/shortcut choices made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the complete history.
@@ -238,6 +239,7 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 34. Scroll All apps and confirm the compact title, count, and settings action leave the viewport while the bottom search entry remains reachable.
 35. Add mixed app and shortcut favorites, enter reorder mode from the Favorites header, drag the 48 dp handles, restart Barely, and confirm the order persists. Use the TalkBack move actions, then switch to **Most used** and confirm only launches made through Barely affect ranking.
 36. In Appearance, compare **Native Android blur** with **Translucent fallback** while toggling the device blur setting. Adjust fallback contrast and verify Favorites, Apps, Command Apps, and Search remain wallpaper-first and readable.
+37. Enable app icons, choose each icon shape, and inspect OEM and third-party artwork in All apps, shared Home results, full Search, recent history, Favorites, and an app action sheet. Restart Barely and confirm the chosen shape persists; Original must restore each published silhouette.
 35. Open a short app's actions from Search and confirm the keyboard closes and the sheet wraps its content. Repeat with WhatsApp and confirm the complete shortcut list scrolls inside the capped sheet.
 36. On Android 13 or newer, edge-swipe back from Search, Settings, and Command Apps; the visible surface should follow predictive-back progress and close at commit.
 

@@ -25,6 +25,7 @@ class LauncherSettingsTest {
         assertEquals(LauncherGestureAction.NOTIFICATIONS, settings.swipeDownAction)
         assertEquals(AppDrawerLayout.LIST, settings.appDrawerLayout)
         assertFalse(settings.showAppIcons)
+        assertEquals(AppIconShape.ORIGINAL, settings.appIconShape)
         assertTrue(settings.showAppGridLabels)
         assertEquals(4, settings.appGridColumns)
         assertEquals(6, settings.appGridRows)
@@ -74,6 +75,7 @@ class LauncherSettingsTest {
                 legacyDoubleTapToLock = false,
                 preferredAssistant = "REMOTE_SERVER",
                 appDrawerLayout = "INFINITE_CAROUSEL",
+                appIconShape = "HEXAGON_FROM_CLOUD",
                 appGridColumns = Int.MAX_VALUE,
                 appGridRows = Int.MIN_VALUE,
                 favoriteSortMode = "CLOUD_RANKING",
@@ -88,6 +90,7 @@ class LauncherSettingsTest {
         assertEquals(LauncherGestureAction.NONE, migrated.doubleTapAction)
         assertEquals(AssistantPreference.CHATGPT, migrated.preferredAssistant)
         assertEquals(AppDrawerLayout.LIST, migrated.appDrawerLayout)
+        assertEquals(AppIconShape.ORIGINAL, migrated.appIconShape)
         assertEquals(MAX_APP_GRID_COLUMNS, migrated.appGridColumns)
         assertEquals(MIN_APP_GRID_ROWS, migrated.appGridRows)
         assertEquals(FavoriteSortMode.MANUAL, migrated.favoriteSortMode)
@@ -101,6 +104,7 @@ class LauncherSettingsTest {
                 schemaVersion = CURRENT_SETTINGS_SCHEMA,
                 appDrawerLayout = AppDrawerLayout.GRID.name,
                 showAppIcons = true,
+                appIconShape = AppIconShape.SQUIRCLE.name,
                 showAppGridLabels = false,
                 appGridColumns = 5,
                 appGridRows = 7,
@@ -109,6 +113,7 @@ class LauncherSettingsTest {
 
         assertEquals(AppDrawerLayout.GRID, migrated.appDrawerLayout)
         assertTrue(migrated.showAppIcons)
+        assertEquals(AppIconShape.SQUIRCLE, migrated.appIconShape)
         assertFalse(migrated.showAppGridLabels)
         assertEquals(5, migrated.appGridColumns)
         assertEquals(7, migrated.appGridRows)

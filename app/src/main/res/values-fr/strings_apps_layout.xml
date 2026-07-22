@@ -13,4 +13,10 @@
     <string name="settings_grid_size_summary">Choisissez le nombre de colonnes et de lignes visibles à la fois.</string>
     <string name="settings_grid_columns">Colonnes</string>
     <string name="settings_grid_rows">Lignes</string>
+    <string name="settings_app_icon_shape">Forme des icônes</string>
+    <string name="settings_app_icon_shape_summary">Gardez la silhouette d’origine ou appliquez un masque uniforme partout.</string>
+    <string name="app_icon_shape_original">Originale</string>
+    <string name="app_icon_shape_circle">Cercle</string>
+    <string name="app_icon_shape_squircle">Squircle</string>
+    <string name="app_icon_shape_rounded_square">Arrondie</string>
 </resources>

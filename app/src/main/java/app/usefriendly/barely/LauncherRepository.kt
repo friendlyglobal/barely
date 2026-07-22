@@ -311,6 +311,7 @@ class LauncherRepository(
                 appDrawerLayout = stored[APP_DRAWER_LAYOUT_KEY] as? String,
                 showAppIcons = stored[SHOW_APP_ICONS_KEY] as? Boolean
                     ?: BarelyDefaults.SHOW_APP_ICONS,
+                appIconShape = stored[APP_ICON_SHAPE_KEY] as? String,
                 showAppGridLabels = stored[SHOW_APP_GRID_LABELS_KEY] as? Boolean
                     ?: BarelyDefaults.SHOW_APP_GRID_LABELS,
                 appGridColumns = stored[APP_GRID_COLUMNS_KEY] as? Int
@@ -362,6 +363,7 @@ class LauncherRepository(
             putString(FAVORITE_SORT_MODE_KEY, settings.favoriteSortMode.name)
             putString(APP_DRAWER_LAYOUT_KEY, settings.appDrawerLayout.name)
             putBoolean(SHOW_APP_ICONS_KEY, settings.showAppIcons)
+            putString(APP_ICON_SHAPE_KEY, settings.appIconShape.name)
             putBoolean(SHOW_APP_GRID_LABELS_KEY, settings.showAppGridLabels)
             putInt(
                 APP_GRID_COLUMNS_KEY,
@@ -399,6 +401,7 @@ class LauncherRepository(
             put("favoriteSortMode", settings.favoriteSortMode.name)
             put("appDrawerLayout", settings.appDrawerLayout.name)
             put("showAppIcons", settings.showAppIcons)
+            put("appIconShape", settings.appIconShape.name)
             put("showAppGridLabels", settings.showAppGridLabels)
             put("appGridColumns", settings.appGridColumns)
             put("appGridRows", settings.appGridRows)
@@ -457,6 +460,9 @@ class LauncherRepository(
                 .let { runCatching { AppDrawerLayout.valueOf(it) }.getOrNull() }
                 ?: current.appDrawerLayout,
             showAppIcons = json.optBoolean("showAppIcons", current.showAppIcons),
+            appIconShape = json.optString("appIconShape")
+                .let { runCatching { AppIconShape.valueOf(it) }.getOrNull() }
+                ?: current.appIconShape,
             showAppGridLabels = json.optBoolean(
                 "showAppGridLabels",
                 current.showAppGridLabels,
@@ -686,6 +692,7 @@ class LauncherRepository(
         const val FAVORITE_SORT_MODE_KEY = "favorite_sort_mode"
         const val APP_DRAWER_LAYOUT_KEY = "app_drawer_layout"
         const val SHOW_APP_ICONS_KEY = "show_app_icons"
+        const val APP_ICON_SHAPE_KEY = "app_icon_shape"
         const val SHOW_APP_GRID_LABELS_KEY = "show_app_grid_labels"
         const val APP_GRID_COLUMNS_KEY = "app_grid_columns"
         const val APP_GRID_ROWS_KEY = "app_grid_rows"
