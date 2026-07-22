@@ -9,7 +9,7 @@ This document records the automated and emulated evidence for the 0.9 trust and 
 - Version name: `0.9.0`
 - Minimum Android: 10 (API 29)
 - Target Android: 16 (API 36)
-- Compile Android: API 37
+- Compile Android: API 36
 - Release APK mode: R8 optimized and resource-shrunk
 
 ## Verified on 2026-07-21
