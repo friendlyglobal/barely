@@ -55,6 +55,7 @@
     <string name="private_space_locked">Bloqueado</string>
     <string name="private_space_unlocked">Desbloqueado</string>
     <string name="private_space_locked_message">Desbloqueie o espaço privado para mostrar os apps e atalhos dele.</string>
+    <string name="private_space_empty_message">Nenhum app está disponível no Espaço privado do Android.</string>
     <string name="lock_private_space">Bloquear espaço privado</string>
     <string name="unlock_private_space">Desbloquear espaço privado</string>
     <string name="hide_private_space_apps">Ocultar apps do espaço privado</string>

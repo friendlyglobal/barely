@@ -3908,6 +3908,24 @@ private fun AppCollection(
                                 onLongPress = { onLongPress(app) },
                             )
                         }
+                        if (privateApps.isEmpty()) {
+                            item(
+                                key = "private_space_empty",
+                                span = { GridItemSpan(maxLineSpan) },
+                            ) {
+                                Text(
+                                    stringResource(R.string.private_space_empty_message),
+                                    modifier = Modifier.padding(
+                                        horizontal = BarelyVisualTokens.contentHorizontalPadding,
+                                        vertical = 14.dp,
+                                    ),
+                                    color = Color.White.copy(
+                                        alpha = BarelyVisualTokens.contentMuted,
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -3961,7 +3979,15 @@ private fun PrivateSpaceHeader(
             .clip(BarelyVisualTokens.cardShape)
             .background(Color.Black.copy(alpha = 0.26f))
             .animateContentSize()
-            .combinedClickable(onClick = { onSetExpanded(!expanded) })
+            .combinedClickable(
+                onClick = {
+                    if (profile.isLocked) {
+                        onSetLocked(profile, false)
+                    } else {
+                        onSetExpanded(!expanded)
+                    }
+                },
+            )
             .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -4204,16 +4230,15 @@ private fun AppGridTile(
 private fun AppIcon(app: LauncherApp, modifier: Modifier = Modifier) {
     val icon = app.icon
     val iconShape = LocalAppIconShape.current.toComposeShape()
-    val shapedModifier = if (iconShape != null) modifier.clip(iconShape) else modifier
     if (icon != null) {
         androidx.compose.foundation.Image(
             bitmap = icon.asImageBitmap(),
             contentDescription = null,
-            modifier = shapedModifier,
+            modifier = modifier,
         )
     } else {
         Box(
-            modifier = shapedModifier
+            modifier = modifier
                 .clip(iconShape ?: CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center,

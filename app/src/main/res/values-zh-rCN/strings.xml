@@ -43,6 +43,7 @@
     <string name="private_space_locked">已锁定</string>
     <string name="private_space_unlocked">已解锁</string>
     <string name="private_space_locked_message">解锁私密空间以显示其中的应用和快捷方式。</string>
+    <string name="private_space_empty_message">Android 私密空间中没有可用的应用。</string>
     <string name="lock_private_space">锁定私密空间</string>
     <string name="unlock_private_space">解锁私密空间</string>
     <string name="hide_private_space_apps">隐藏私密空间应用</string>

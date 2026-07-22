@@ -43,6 +43,7 @@
     <string name="private_space_locked">लॉक है</string>
     <string name="private_space_unlocked">अनलॉक है</string>
     <string name="private_space_locked_message">इसके ऐप और शॉर्टकट दिखाने के लिए निजी स्पेस अनलॉक करें।</string>
+    <string name="private_space_empty_message">Android निजी स्पेस में कोई ऐप उपलब्ध नहीं है।</string>
     <string name="lock_private_space">निजी स्पेस लॉक करें</string>
     <string name="unlock_private_space">निजी स्पेस अनलॉक करें</string>
     <string name="hide_private_space_apps">निजी स्पेस के ऐप छिपाएँ</string>

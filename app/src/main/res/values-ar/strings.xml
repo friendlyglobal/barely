@@ -43,6 +43,7 @@
     <string name="private_space_locked">مقفلة</string>
     <string name="private_space_unlocked">غير مقفلة</string>
     <string name="private_space_locked_message">افتح المساحة الخاصة لإظهار تطبيقاتها واختصاراتها.</string>
+    <string name="private_space_empty_message">لا توجد تطبيقات متاحة في المساحة الخاصة في Android.</string>
     <string name="lock_private_space">قفل المساحة الخاصة</string>
     <string name="unlock_private_space">فتح المساحة الخاصة</string>
     <string name="hide_private_space_apps">إخفاء تطبيقات المساحة الخاصة</string>

@@ -43,6 +43,7 @@
     <string name="private_space_locked">Заблокировано</string>
     <string name="private_space_unlocked">Разблокировано</string>
     <string name="private_space_locked_message">Разблокируйте личное пространство, чтобы показать его приложения и ярлыки.</string>
+    <string name="private_space_empty_message">В личном пространстве Android нет доступных приложений.</string>
     <string name="lock_private_space">Заблокировать личное пространство</string>
     <string name="unlock_private_space">Разблокировать личное пространство</string>
     <string name="hide_private_space_apps">Скрыть приложения личного пространства</string>

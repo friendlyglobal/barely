@@ -609,11 +609,13 @@ class MainActivity : ComponentActivity() {
             }
 
     private fun updateLauncherSettings(settings: LauncherSettings) {
+        val iconShapeChanged = settings.appIconShape != launcherSettings.appIconShape
         repository.setLauncherSettings(settings)
         launcherSettings = settings
         refreshLocalSuggestions()
         refreshFavoriteOrder()
         applyBackdrop(requestedBackdrop)
+        if (iconShapeChanged) refresh()
     }
 
     private fun refreshLocalSuggestions() {
@@ -761,7 +763,7 @@ class MainActivity : ComponentActivity() {
             val showLoading = snapshot.apps.isEmpty()
             if (showLoading) isLoading = true
             try {
-                snapshot = repository.load()
+                snapshot = repository.load(launcherSettings.appIconShape)
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {

@@ -2,6 +2,16 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.6.1 — 2026-07-22
+
+### App icon rendering
+
+- Rebuilt adaptive icons from their published foreground and background layers before applying Circle, Squircle, or Rounded square, preventing the selected shape from cropping an icon that Android or One UI had already masked.
+- Replaced manufacturer-specific handling with capability-aware rendering: adaptive icons receive one Barely mask, while legacy bitmap icons receive safe spacing only when their artwork reaches the source corners.
+- Applied work-profile badges after custom icon rendering and refreshed the app collection immediately when the selected shape changes.
+- Made a locked Android Private Space unlock from the complete header target and added a localized empty state, instead of leaving an unlocked empty profile looking unresponsive. Samsung Secure Folder remains a separate Knox surface managed by Samsung.
+- Updated the application to version code 21 and version name 1.6.1.
+
 ## 1.6.0 — 2026-07-22
 
 ### Performance

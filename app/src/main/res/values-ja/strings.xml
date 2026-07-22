@@ -43,6 +43,7 @@
     <string name="private_space_locked">ロック中</string>
     <string name="private_space_unlocked">ロック解除済み</string>
     <string name="private_space_locked_message">アプリとショートカットを表示するには、プライベート スペースのロックを解除してください。</string>
+    <string name="private_space_empty_message">Android のプライベート スペースに利用可能なアプリはありません。</string>
     <string name="lock_private_space">プライベート スペースをロック</string>
     <string name="unlock_private_space">プライベート スペースのロックを解除</string>
     <string name="hide_private_space_apps">プライベート スペースのアプリを隠す</string>

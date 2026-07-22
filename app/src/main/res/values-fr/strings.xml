@@ -43,6 +43,7 @@
     <string name="private_space_locked">Verrouillé</string>
     <string name="private_space_unlocked">Déverrouillé</string>
     <string name="private_space_locked_message">Déverrouillez l’espace privé pour afficher ses applications et raccourcis.</string>
+    <string name="private_space_empty_message">Aucune application n’est disponible dans l’espace privé Android.</string>
     <string name="lock_private_space">Verrouiller l’espace privé</string>
     <string name="unlock_private_space">Déverrouiller l’espace privé</string>
     <string name="hide_private_space_apps">Masquer les apps de l’espace privé</string>
