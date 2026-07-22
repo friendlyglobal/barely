@@ -119,6 +119,23 @@ The APK is generated at:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
+## Release build and signing
+
+The optimized release build enables R8 and resource shrinking and produces both APK and AAB artifacts. It deliberately remains unsigned unless all signing values are supplied through the environment; it never silently uses Android's debug certificate.
+
+```bash
+export BARELY_KEYSTORE_FILE=/secure/path/barely-upload.jks
+export BARELY_KEYSTORE_PASSWORD='...'
+export BARELY_KEY_ALIAS=barely
+export BARELY_KEY_PASSWORD='...'
+export ANDROID_HOME=/path/to/android-sdk
+scripts/verify-release.sh
+```
+
+The verified outputs and their SHA-256 checksums are written to `dist/`. Keep the keystore and recovery material in separate encrypted backups. See [SECURITY.md](SECURITY.md) for the trust boundaries, sensitive permissions, vulnerability-reporting path, and key-recovery guidance.
+
+Pull requests and `main` also run unit tests, lint, the debug build, and unsigned optimized release builds through GitHub Actions. Signing secrets are not needed or exposed during ordinary CI verification.
+
 If Gradle reports duplicated generated names such as `BuildConfig 2.java` or `... 4.class`, the project directory is being synchronized while Gradle writes intermediate files. Move the project outside iCloud, Google Drive, or another live-sync folder, run `./gradlew clean`, and build again.
 
 ## Install on a Galaxy S24 Ultra
@@ -190,6 +207,8 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 28. With ChatGPT, Gemini, or Claude installed, select a preferred assistant. Type a query with no local match and verify exactly the selected assistant action appears; type an app or shortcut match and verify the AI action stays hidden.
 29. Pin a published shortcut from an app action sheet, open it from Favorites, unpin it, and verify unavailable shortcuts disappear after the publisher removes them.
 30. Export settings, change appearance and gesture choices, import the file, and verify the portable preferences return without altering widgets, permissions, favorites, or local search history.
+31. Upgrade from 0.8, verify existing Home style and gestures remain unchanged, then set new gesture actions and restart Barely. Corrupt or removed enum choices must fall back safely instead of preventing Home from loading.
+32. For a signed candidate, run `scripts/verify-release.sh`, confirm the certificate fingerprint is the expected Barely release key, and compare the generated checksums before uploading the APK/AAB.
 
 ## Privacy
 
@@ -205,7 +224,7 @@ Notification and media integration is also off by default and requires approval 
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
 - Cross-window blur requires Android 12 or newer and can be disabled by the device at runtime; the UI retains a contrast-safe fallback.
-- Development builds are debug-signed and intended for testing until the production signing flow is finalized.
+- GitHub test APKs remain debug-signed until the owner selects and backs up the permanent production key. Gradle's optimized release build never falls back to debug signing.
 
 ## Official Android references
 

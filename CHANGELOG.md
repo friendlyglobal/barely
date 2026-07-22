@@ -2,6 +2,20 @@
 
 All notable changes to Barely are documented in this file.
 
+## 0.9.0 — 2026-07-21
+
+### Changed
+
+- Added a versioned settings decoder with tested migration from legacy gesture switches and safe recovery from corrupt enum, opacity, and radius values.
+- Added configuration-aware resource reads and clearer accessibility semantics for page headings, modal panes, and mutually exclusive Home/assistant choices.
+- Replaced the deprecated Material 3 modal-sheet state API.
+- Added an explicit Android data-extraction policy so launcher preferences are excluded from cloud backup and device transfer as well as `allowBackup=false`.
+- Added a deterministic fuzzy-search latency gate over a synthetic 1,000-item launcher index.
+- Added optimized R8/resource-shrunk release APK and AAB builds. Release signing is environment-driven and never falls back to the debug key.
+- Added an end-to-end release verification script that runs tests/lint/builds, verifies the APK certificate, and writes SHA-256 checksums.
+- Added GitHub Actions verification for pull requests and `main`, plus a public security and privacy model.
+- Updated the application to version code 13 and version name 0.9.0.
+
 ## 0.8.0 — 2026-07-21
 
 ### Added

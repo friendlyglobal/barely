@@ -4,8 +4,8 @@ import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
-import android.os.Build
 import android.os.Process
+import androidx.core.content.edit
 
 data class WidgetPlacement(
     val widgetId: Int,
@@ -85,8 +85,8 @@ class WidgetHostController(context: Context) {
         .filter { provider ->
             val supportsHome = provider.widgetCategory == 0 ||
                 provider.widgetCategory.and(AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN) != 0
-            val hidden = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                provider.widgetFeatures.and(AppWidgetProviderInfo.WIDGET_FEATURE_HIDE_FROM_PICKER) != 0
+            val hidden = provider.widgetFeatures
+                .and(AppWidgetProviderInfo.WIDGET_FEATURE_HIDE_FROM_PICKER) != 0
             supportsHome && !hidden
         }
 
@@ -187,9 +187,9 @@ class WidgetHostController(context: Context) {
         .orEmpty()
 
     private fun save(widgets: List<WidgetPlacement>) {
-        preferences.edit()
-            .putString(WIDGET_IDS, widgets.joinToString(",") { it.widgetId.toString() })
-            .putString(
+        preferences.edit {
+            putString(WIDGET_IDS, widgets.joinToString(",") { it.widgetId.toString() })
+            putString(
                 WIDGET_LAYOUTS,
                 widgets.joinToString(";") { widget ->
                     listOf(
@@ -200,7 +200,7 @@ class WidgetHostController(context: Context) {
                     ).joinToString(":")
                 },
             )
-            .apply()
+        }
     }
 
     private companion object {
