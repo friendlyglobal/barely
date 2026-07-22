@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">كل التطبيقات</string>
+    <string name="settings_app_layout">التخطيط</string>
+    <string name="settings_app_layout_summary">اختر قائمة هادئة أو شبكة مدمجة.</string>
+    <string name="settings_app_layout_list">قائمة</string>
+    <string name="settings_app_layout_grid">شبكة</string>
+    <string name="settings_show_app_icons">إظهار رموز التطبيقات</string>
+    <string name="settings_show_app_icons_summary">إظهار الرمز المنشور لكل تطبيق في القائمة والشبكة.</string>
+    <string name="settings_grid_size">حجم الشبكة</string>
+    <string name="settings_grid_size_summary">اختر عدد الأعمدة والصفوف الظاهرة في وقت واحد.</string>
+    <string name="settings_grid_columns">الأعمدة</string>
+    <string name="settings_grid_rows">الصفوف</string>
+</resources>

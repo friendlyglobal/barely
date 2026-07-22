@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">すべてのアプリ</string>
+    <string name="settings_app_layout">レイアウト</string>
+    <string name="settings_app_layout_summary">落ち着いたリストまたはコンパクトなグリッドを選びます。</string>
+    <string name="settings_app_layout_list">リスト</string>
+    <string name="settings_app_layout_grid">グリッド</string>
+    <string name="settings_show_app_icons">アプリアイコンを表示</string>
+    <string name="settings_show_app_icons_summary">リストとグリッドに各アプリの公開アイコンを表示します。</string>
+    <string name="settings_grid_size">グリッドサイズ</string>
+    <string name="settings_grid_size_summary">一度に表示する列数と行数を選びます。</string>
+    <string name="settings_grid_columns">列</string>
+    <string name="settings_grid_rows">行</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">सभी ऐप्स</string>
+    <string name="settings_app_layout">लेआउट</string>
+    <string name="settings_app_layout_summary">सरल सूची या कॉम्पैक्ट ग्रिड चुनें।</string>
+    <string name="settings_app_layout_list">सूची</string>
+    <string name="settings_app_layout_grid">ग्रिड</string>
+    <string name="settings_show_app_icons">ऐप आइकन दिखाएँ</string>
+    <string name="settings_show_app_icons_summary">सूची और ग्रिड में हर ऐप का प्रकाशित आइकन दिखाएँ।</string>
+    <string name="settings_grid_size">ग्रिड का आकार</string>
+    <string name="settings_grid_size_summary">एक साथ दिखने वाले कॉलम और पंक्तियों की संख्या चुनें।</string>
+    <string name="settings_grid_columns">कॉलम</string>
+    <string name="settings_grid_rows">पंक्तियाँ</string>
+</resources>

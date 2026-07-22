@@ -84,6 +84,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Add
@@ -96,6 +97,7 @@ import androidx.compose.material.icons.outlined.DragHandle
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Lock
@@ -600,7 +602,13 @@ fun LauncherScreen(
             widgetPickerVisible = false
             terminalAppsVisible = false
             editingWidgets = false
-            pagerState.scrollToPage(HOME_PAGE)
+            pagerState.animateScrollToPage(
+                page = HOME_PAGE,
+                animationSpec = spring(
+                    dampingRatio = 0.88f,
+                    stiffness = Spring.StiffnessMediumLow,
+                ),
+            )
         }
     }
 
@@ -773,6 +781,7 @@ fun LauncherScreen(
                         topActionBackdrop = false,
                         cornerRadius = launcherSettings.terminalCornerRadius,
                         terminalAesthetic = false,
+                        showAppIcons = launcherSettings.showAppIcons,
                         showTopActions = false,
                         allowSwitchToClassic = false,
                         showGestureCoach = showGestureCoach,
@@ -812,6 +821,10 @@ fun LauncherScreen(
                         notificationCounts = notificationCounts,
                         foldingFeature = foldingFeature,
                         searchCornerRadius = launcherSettings.terminalCornerRadius,
+                        layout = launcherSettings.appDrawerLayout,
+                        showAppIcons = launcherSettings.showAppIcons,
+                        gridColumns = launcherSettings.appGridColumns,
+                        gridRows = launcherSettings.appGridRows,
                         onRequestHomeRole = onRequestHomeRole,
                         onLaunchApp = onLaunchApp,
                         onLongPress = { selectedApp = it },
@@ -928,6 +941,7 @@ fun LauncherScreen(
                     topActionBackdrop = launcherSettings.terminalTopActionBackdrop,
                     cornerRadius = launcherSettings.terminalCornerRadius,
                     terminalAesthetic = launcherSettings.terminalAesthetic,
+                    showAppIcons = launcherSettings.showAppIcons,
                     showTopActions = true,
                     allowSwitchToClassic = true,
                     showGestureCoach = false,
@@ -977,6 +991,10 @@ fun LauncherScreen(
                     notificationCounts = notificationCounts,
                     foldingFeature = foldingFeature,
                     searchCornerRadius = launcherSettings.terminalCornerRadius,
+                    layout = launcherSettings.appDrawerLayout,
+                    showAppIcons = launcherSettings.showAppIcons,
+                    gridColumns = launcherSettings.appGridColumns,
+                    gridRows = launcherSettings.appGridRows,
                     onBack = { terminalAppsVisible = false },
                     onLaunchApp = onLaunchApp,
                     onLongPress = { selectedApp = it },
@@ -1077,6 +1095,7 @@ private fun SharedHomePage(
     topActionBackdrop: Boolean,
     cornerRadius: Int,
     terminalAesthetic: Boolean,
+    showAppIcons: Boolean,
     showTopActions: Boolean,
     allowSwitchToClassic: Boolean,
     showGestureCoach: Boolean,
@@ -1454,8 +1473,10 @@ private fun SharedHomePage(
                     .navigationBarsPadding()
                     .imePadding()
                     .padding(
-                        horizontal = BarelyVisualTokens.paneHorizontalPadding,
-                        vertical = 20.dp,
+                        start = BarelyVisualTokens.paneHorizontalPadding,
+                        top = 20.dp,
+                        end = BarelyVisualTokens.paneHorizontalPadding,
+                        bottom = BarelyVisualTokens.bottomCommandSpacing,
                     ),
             ) {
                 AnimatedVisibility(
@@ -1480,6 +1501,8 @@ private fun SharedHomePage(
                             suggestion = suggestion,
                             selected = index == selectedIndex,
                             terminalAesthetic = terminalAesthetic,
+                            showAppIcon = showAppIcons,
+                            cornerRadius = cornerRadius,
                             onClick = { executeSuggestion(suggestion) },
                             onLongPress = {
                                 val result = (suggestion as? TerminalSuggestion.SearchResult)?.result
@@ -1594,6 +1617,8 @@ private fun SharedHomePage(
                 backgroundOpacity = backgroundOpacity,
                 progress = animatedHistoryProgress,
                 terminalAesthetic = terminalAesthetic,
+                showAppIcons = showAppIcons,
+                cornerRadius = cornerRadius,
                 transitionDistancePx = historyTravelPx,
                 flingThreshold = historyFlingThreshold,
                 onDragStarted = ::beginHistoryDrag,
@@ -1706,9 +1731,12 @@ private fun TerminalSuggestionRow(
     suggestion: TerminalSuggestion,
     selected: Boolean,
     terminalAesthetic: Boolean,
+    showAppIcon: Boolean,
+    cornerRadius: Int,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
 ) {
+    val shape = RoundedCornerShape(cornerRadius.dp)
     val title = when (suggestion) {
         is TerminalSuggestion.BuiltIn -> suggestion.title
         is TerminalSuggestion.SearchResult -> suggestion.result.label
@@ -1721,12 +1749,15 @@ private fun TerminalSuggestionRow(
             is CommandSearchResult -> result.command.subtitle
         }
     }
+    val iconOwner = (suggestion as? TerminalSuggestion.SearchResult)
+        ?.result
+        ?.publishedIconOwner()
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(BarelyVisualTokens.compactRowShape)
+            .clip(shape)
             .combinedClickable(onClick = onClick, onLongClick = onLongPress),
-        shape = BarelyVisualTokens.compactRowShape,
+        shape = shape,
         color = if (selected) {
             Color.Black.copy(alpha = BarelyVisualTokens.surfaceSelected)
         } else {
@@ -1753,6 +1784,10 @@ private fun TerminalSuggestionRow(
                         textDirection = TextDirection.Ltr,
                     ),
                 )
+            }
+            if (showAppIcon && iconOwner != null) {
+                AppIcon(iconOwner, Modifier.size(40.dp))
+                Spacer(Modifier.width(12.dp))
             }
             Column(Modifier.weight(1f)) {
                 Text(
@@ -1788,6 +1823,8 @@ private fun TerminalHistoryDrawer(
     backgroundOpacity: Float,
     progress: Float,
     terminalAesthetic: Boolean,
+    showAppIcons: Boolean,
+    cornerRadius: Int,
     transitionDistancePx: Float,
     flingThreshold: Float,
     onDragStarted: () -> Unit,
@@ -1796,6 +1833,7 @@ private fun TerminalHistoryDrawer(
     onClear: () -> Unit,
     onOpen: (TerminalHistoryEntry) -> Unit,
 ) {
+    val headerShape = RoundedCornerShape(cornerRadius.dp)
     val listState = rememberLazyListState()
     val currentProgress by rememberUpdatedState(progress)
     val currentTransitionDistance by rememberUpdatedState(transitionDistancePx)
@@ -1890,7 +1928,7 @@ private fun TerminalHistoryDrawer(
                         onDragStarted = { currentOnDragStarted() },
                         onDragStopped = { velocity -> currentOnDragStopped(velocity) },
                     ),
-                shape = BarelyVisualTokens.controlShape,
+                shape = headerShape,
                 color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceRaised),
                 contentColor = Color.White,
                 border = BorderStroke(1.dp, Color.White.copy(alpha = 0.16f)),
@@ -1957,7 +1995,7 @@ private fun TerminalHistoryDrawer(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(BarelyVisualTokens.compactRowShape)
+                                .clip(headerShape)
                                 .combinedClickable(onClick = { onOpen(entry) })
                                 .padding(
                                     horizontal = BarelyVisualTokens.controlHorizontalPadding,
@@ -1965,6 +2003,11 @@ private fun TerminalHistoryDrawer(
                                 ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            val iconOwner = entry.result.publishedIconOwner()
+                            if (showAppIcons && iconOwner != null) {
+                                AppIcon(iconOwner, Modifier.size(40.dp))
+                                Spacer(Modifier.width(12.dp))
+                            }
                             Column(Modifier.weight(1f)) {
                                 Text(
                                     if (terminalAesthetic) "> ${entry.query}" else entry.query,
@@ -2015,6 +2058,10 @@ private fun TerminalAppsPage(
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     searchCornerRadius: Int,
+    layout: AppDrawerLayout,
+    showAppIcons: Boolean,
+    gridColumns: Int,
+    gridRows: Int,
     onBack: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
@@ -2042,12 +2089,12 @@ private fun TerminalAppsPage(
             )
             Text(
                 apps.size.toString(),
-                color = Color.White.copy(alpha = 0.56f),
-                style = MaterialTheme.typography.labelLarge,
+                color = Color.White,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
         Box(Modifier.weight(1f)) {
-            AppGrid(
+            AppCollection(
                 apps = apps,
                 privateSpace = privateSpace,
                 privateSpaceExpanded = privateSpaceExpanded,
@@ -2057,6 +2104,10 @@ private fun TerminalAppsPage(
                 onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
                 notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
+                layout = layout,
+                showAppIcons = showAppIcons,
+                gridColumns = gridColumns,
+                gridRows = gridRows,
             )
         }
         SearchLauncherBar(
@@ -2218,8 +2269,9 @@ private fun LazyListScope.favoriteItems(
         }
     } else {
         items(favorites, key = { it.key }) { app ->
-            AppTile(
+            AppListTile(
                 app = app,
+                showIcon = false,
                 notificationCount = notificationCounts[app.packageName] ?: 0,
                 onClick = { onLaunchApp(app) },
                 onLongPress = { onLongPress(app) },
@@ -3169,6 +3221,10 @@ private fun AppsPage(
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
     searchCornerRadius: Int,
+    layout: AppDrawerLayout,
+    showAppIcons: Boolean,
+    gridColumns: Int,
+    gridRows: Int,
     onRequestHomeRole: () -> Unit,
     onLaunchApp: (LauncherApp) -> Unit,
     onLongPress: (LauncherApp) -> Unit,
@@ -3192,7 +3248,7 @@ private fun AppsPage(
         }
 
         Box(Modifier.weight(1f)) {
-            AppGrid(
+            AppCollection(
                 apps = apps,
                 privateSpace = privateSpace,
                 privateSpaceExpanded = privateSpaceExpanded,
@@ -3202,6 +3258,10 @@ private fun AppsPage(
                 onSetPrivateSpaceLocked = onSetPrivateSpaceLocked,
                 notificationCounts = notificationCounts,
                 foldingFeature = foldingFeature,
+                layout = layout,
+                showAppIcons = showAppIcons,
+                gridColumns = gridColumns,
+                gridRows = gridRows,
                 contentPadding = PaddingValues(
                     start = 12.dp,
                     top = 8.dp,
@@ -3289,8 +3349,8 @@ private fun PageHeader(
             trailing?.let {
                 Text(
                     it,
-                    color = Color.White.copy(alpha = BarelyVisualTokens.contentMuted),
-                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
             onSettings?.let { openSettings ->
@@ -3302,7 +3362,7 @@ private fun PageHeader(
                     Icon(
                         Icons.Outlined.Settings,
                         contentDescription = stringResource(R.string.launcher_settings),
-                        modifier = Modifier.size(21.dp),
+                        modifier = Modifier.size(24.dp),
                         tint = Color.White.copy(alpha = BarelyVisualTokens.contentHigh),
                     )
                 }
@@ -3366,7 +3426,7 @@ private fun HomeRoleCard(
 }
 
 @Composable
-private fun AppGrid(
+private fun AppCollection(
     apps: List<LauncherApp>,
     privateSpace: LauncherProfile?,
     privateSpaceExpanded: Boolean,
@@ -3376,6 +3436,10 @@ private fun AppGrid(
     onSetPrivateSpaceLocked: (LauncherProfile, Boolean) -> Unit,
     notificationCounts: Map<String, Int>,
     foldingFeature: FoldingFeature?,
+    layout: AppDrawerLayout,
+    showAppIcons: Boolean,
+    gridColumns: Int,
+    gridRows: Int,
     contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
 ) {
     val regularApps = remember(apps) { apps.filterNot(LauncherApp::isPrivate) }
@@ -3387,23 +3451,50 @@ private fun AppGrid(
         val verticalFold = foldingFeature?.takeIf {
             it.orientation == FoldingFeature.Orientation.VERTICAL && it.isSeparating
         }
-        val columnCount = when {
+        val responsiveListColumns = when {
             maxWidth >= 1080.dp -> 3
             maxWidth >= 600.dp || verticalFold != null -> 2
             else -> 1
         }
-        val columnGap = verticalFold?.let {
-            with(LocalDensity.current) { it.bounds.width().toDp() }.coerceAtLeast(20.dp)
-        } ?: 4.dp
+        val columnCount = if (layout == AppDrawerLayout.GRID) {
+            gridColumns.coerceIn(MIN_APP_GRID_COLUMNS, MAX_APP_GRID_COLUMNS)
+        } else {
+            responsiveListColumns
+        }
+        val columnGap = if (layout == AppDrawerLayout.GRID) {
+            6.dp
+        } else {
+            verticalFold?.let {
+                with(LocalDensity.current) { it.bounds.width().toDp() }.coerceAtLeast(20.dp)
+            } ?: 4.dp
+        }
+        val rowGap = if (layout == AppDrawerLayout.GRID) 6.dp else 0.dp
+        val visibleRows = gridRows.coerceIn(MIN_APP_GRID_ROWS, MAX_APP_GRID_ROWS)
+        val gridCellHeight = if (layout == AppDrawerLayout.GRID) {
+            (
+                maxHeight -
+                    contentPadding.calculateTopPadding() -
+                    contentPadding.calculateBottomPadding() -
+                    rowGap * (visibleRows - 1)
+                )
+                .div(visibleRows)
+                .coerceIn(76.dp, 132.dp)
+        } else {
+            52.dp
+        }
         LazyVerticalGrid(
             columns = GridCells.Fixed(columnCount),
             modifier = Modifier.fillMaxSize(),
             contentPadding = contentPadding,
             horizontalArrangement = Arrangement.spacedBy(columnGap),
+            verticalArrangement = Arrangement.spacedBy(rowGap),
         ) {
             gridItems(regularApps, key = { it.key }) { app ->
-                AppTile(
+                AppCollectionTile(
                     app = app,
+                    layout = layout,
+                    gridCellHeight = gridCellHeight,
+                    showIcon = showAppIcons,
                     notificationCount = notificationCounts[app.packageName] ?: 0,
                     onClick = { onLaunchApp(app) },
                     onLongPress = { onLongPress(app) },
@@ -3439,8 +3530,11 @@ private fun AppGrid(
                         }
                     } else {
                         gridItems(privateApps, key = { "private:${it.key}" }) { app ->
-                            AppTile(
+                            AppCollectionTile(
                                 app = app,
+                                layout = layout,
+                                gridCellHeight = gridCellHeight,
+                                showIcon = showAppIcons,
                                 notificationCount = notificationCounts[app.packageName] ?: 0,
                                 onClick = { onLaunchApp(app) },
                                 onLongPress = { onLongPress(app) },
@@ -3450,6 +3544,36 @@ private fun AppGrid(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AppCollectionTile(
+    app: LauncherApp,
+    layout: AppDrawerLayout,
+    gridCellHeight: androidx.compose.ui.unit.Dp,
+    showIcon: Boolean,
+    notificationCount: Int,
+    onClick: () -> Unit,
+    onLongPress: () -> Unit,
+) {
+    if (layout == AppDrawerLayout.GRID) {
+        AppGridTile(
+            app = app,
+            height = gridCellHeight,
+            showIcon = showIcon,
+            notificationCount = notificationCount,
+            onClick = onClick,
+            onLongPress = onLongPress,
+        )
+    } else {
+        AppListTile(
+            app = app,
+            showIcon = showIcon,
+            notificationCount = notificationCount,
+            onClick = onClick,
+            onLongPress = onLongPress,
+        )
     }
 }
 
@@ -3522,21 +3646,24 @@ private fun SearchLauncherBar(
     cornerRadius: Int,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(cornerRadius.dp)
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
         Surface(
+            onClick = onClick,
             modifier = Modifier
                 .padding(
-                    horizontal = BarelyVisualTokens.controlHorizontalPadding,
-                    vertical = 10.dp,
+                    start = BarelyVisualTokens.controlHorizontalPadding,
+                    top = 10.dp,
+                    end = BarelyVisualTokens.controlHorizontalPadding,
+                    bottom = BarelyVisualTokens.bottomCommandSpacing,
                 )
                 .widthIn(max = BarelyVisualTokens.readableContentMaxWidth)
                 .fillMaxWidth()
-                .height(56.dp)
-                .combinedClickable(onClick = onClick),
-            shape = RoundedCornerShape(cornerRadius.dp),
+                .height(56.dp),
+            shape = shape,
             color = Color.Black.copy(alpha = BarelyVisualTokens.surfaceSelected),
             contentColor = Color.White,
             border = BorderStroke(
@@ -3545,18 +3672,16 @@ private fun SearchLauncherBar(
             ),
         ) {
             Row(
-                modifier = Modifier.padding(
-                    horizontal = BarelyVisualTokens.contentHorizontalPadding,
-                ),
+                modifier = Modifier.padding(start = 16.dp, end = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     Icons.Outlined.Search,
                     contentDescription = null,
-                    modifier = Modifier.size(21.dp),
+                    modifier = Modifier.size(24.dp),
                     tint = Color.White.copy(alpha = BarelyVisualTokens.contentPrimary),
                 )
-                Spacer(Modifier.width(13.dp))
+                Spacer(Modifier.width(16.dp))
                 Text(
                     stringResource(R.string.apps_and_shortcuts),
                     color = Color.White.copy(alpha = 0.72f),
@@ -3568,8 +3693,9 @@ private fun SearchLauncherBar(
 }
 
 @Composable
-private fun AppTile(
+private fun AppListTile(
     app: LauncherApp,
+    showIcon: Boolean,
     notificationCount: Int = 0,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
@@ -3578,7 +3704,7 @@ private fun AppTile(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 52.dp)
+            .heightIn(min = if (showIcon) 60.dp else 52.dp)
             .clip(BarelyVisualTokens.controlShape)
             .secondaryClickable(onLongPress)
             .combinedClickable(
@@ -3586,9 +3712,13 @@ private fun AppTile(
                 onLongClickLabel = appActionsLabel,
                 onLongClick = onLongPress,
             )
-            .padding(horizontal = 12.dp, vertical = 13.dp),
+            .padding(horizontal = 12.dp, vertical = if (showIcon) 8.dp else 13.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (showIcon) {
+            AppIcon(app, Modifier.size(40.dp))
+            Spacer(Modifier.width(14.dp))
+        }
         Text(
             text = app.label,
             maxLines = 1,
@@ -3601,6 +3731,66 @@ private fun AppTile(
             Box(
                 Modifier
                     .padding(start = 10.dp)
+                    .size(7.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.86f)),
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppGridTile(
+    app: LauncherApp,
+    height: androidx.compose.ui.unit.Dp,
+    showIcon: Boolean,
+    notificationCount: Int = 0,
+    onClick: () -> Unit,
+    onLongPress: () -> Unit,
+) {
+    val appActionsLabel = stringResource(R.string.actions_for_app, app.label)
+    val iconSize = when {
+        height >= 116.dp -> 56.dp
+        height >= 94.dp -> 48.dp
+        else -> 40.dp
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clip(BarelyVisualTokens.controlShape)
+            .secondaryClickable(onLongPress)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClickLabel = appActionsLabel,
+                onLongClick = onLongPress,
+            )
+            .padding(horizontal = 5.dp, vertical = 7.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = if (notificationCount > 0) 2.dp else 0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            if (showIcon) {
+                AppIcon(app, Modifier.size(iconSize))
+                Spacer(Modifier.height(7.dp))
+            }
+            Text(
+                text = app.label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelLarge,
+                color = Color.White,
+            )
+        }
+        if (notificationCount > 0) {
+            Box(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(7.dp)
                     .size(7.dp)
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.86f)),
@@ -5071,6 +5261,50 @@ private fun LauncherSettingsPage(
                 )
             }
 
+            item(key = "settings_all_apps_header") {
+                SettingsSectionTitle(stringResource(R.string.settings_all_apps))
+            }
+            item(key = "app_drawer_layout") {
+                AppDrawerLayoutSettings(
+                    selectedLayout = settings.appDrawerLayout,
+                    onLayoutSelected = { layout ->
+                        onSettingsChanged(settings.copy(appDrawerLayout = layout))
+                    },
+                )
+            }
+            item(key = "show_app_icons") {
+                SettingsSwitchItem(
+                    title = stringResource(R.string.settings_show_app_icons),
+                    summary = stringResource(R.string.settings_show_app_icons_summary),
+                    checked = settings.showAppIcons,
+                    onCheckedChange = { enabled ->
+                        onSettingsChanged(settings.copy(showAppIcons = enabled))
+                    },
+                )
+            }
+            if (settings.appDrawerLayout == AppDrawerLayout.GRID) {
+                item(key = "app_grid_density") {
+                    AppGridDensitySettings(
+                        columns = settings.appGridColumns,
+                        rows = settings.appGridRows,
+                        onColumnsChanged = { columns ->
+                            onSettingsChanged(settings.copy(appGridColumns = columns))
+                        },
+                        onRowsChanged = { rows ->
+                            onSettingsChanged(settings.copy(appGridRows = rows))
+                        },
+                        onReset = {
+                            onSettingsChanged(
+                                settings.copy(
+                                    appGridColumns = BarelyDefaults.APP_GRID_COLUMNS,
+                                    appGridRows = BarelyDefaults.APP_GRID_ROWS,
+                                ),
+                            )
+                        },
+                    )
+                }
+            }
+
             item(key = "settings_search_header") {
                 SettingsSectionTitle(stringResource(R.string.settings_search))
             }
@@ -5244,14 +5478,14 @@ private fun HomeModeSettingsPicker(
         )
         Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            HomeModeSettingOption(
+            SettingsChoiceOption(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.StarOutline,
                 title = stringResource(R.string.home_mode_classic),
                 selected = selectedMode == LauncherHomeMode.CLASSIC,
                 onClick = { onModeSelected(LauncherHomeMode.CLASSIC) },
             )
-            HomeModeSettingOption(
+            SettingsChoiceOption(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.Bolt,
                 title = stringResource(R.string.home_mode_terminal),
@@ -5263,7 +5497,7 @@ private fun HomeModeSettingsPicker(
 }
 
 @Composable
-private fun HomeModeSettingOption(
+private fun SettingsChoiceOption(
     modifier: Modifier,
     icon: ImageVector,
     title: String,
@@ -5311,6 +5545,132 @@ private fun HomeModeSettingOption(
             }
         }
     }
+}
+
+@Composable
+private fun AppDrawerLayoutSettings(
+    selectedLayout: AppDrawerLayout,
+    onLayoutSelected: (AppDrawerLayout) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.settings_app_layout),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            stringResource(R.string.settings_app_layout_summary),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.AutoMirrored.Outlined.ViewList,
+                title = stringResource(R.string.settings_app_layout_list),
+                selected = selectedLayout == AppDrawerLayout.LIST,
+                onClick = { onLayoutSelected(AppDrawerLayout.LIST) },
+            )
+            SettingsChoiceOption(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Outlined.GridView,
+                title = stringResource(R.string.settings_app_layout_grid),
+                selected = selectedLayout == AppDrawerLayout.GRID,
+                onClick = { onLayoutSelected(AppDrawerLayout.GRID) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppGridDensitySettings(
+    columns: Int,
+    rows: Int,
+    onColumnsChanged: (Int) -> Unit,
+    onRowsChanged: (Int) -> Unit,
+    onReset: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = BarelyVisualTokens.screenHorizontalPadding,
+                vertical = 10.dp,
+            ),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.settings_grid_size),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            TextButton(
+                onClick = onReset,
+                enabled = columns != BarelyDefaults.APP_GRID_COLUMNS ||
+                    rows != BarelyDefaults.APP_GRID_ROWS,
+            ) {
+                Text(stringResource(R.string.settings_terminal_reset))
+            }
+        }
+        Text(
+            stringResource(R.string.settings_grid_size_summary),
+            modifier = Modifier.padding(top = 3.dp, bottom = 10.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        DiscreteSettingsSlider(
+            title = stringResource(R.string.settings_grid_columns),
+            value = columns,
+            valueRange = MIN_APP_GRID_COLUMNS..MAX_APP_GRID_COLUMNS,
+            onValueChanged = onColumnsChanged,
+        )
+        Spacer(Modifier.height(12.dp))
+        DiscreteSettingsSlider(
+            title = stringResource(R.string.settings_grid_rows),
+            value = rows,
+            valueRange = MIN_APP_GRID_ROWS..MAX_APP_GRID_ROWS,
+            onValueChanged = onRowsChanged,
+        )
+    }
+}
+
+@Composable
+private fun DiscreteSettingsSlider(
+    title: String,
+    value: Int,
+    valueRange: IntRange,
+    onValueChanged: (Int) -> Unit,
+) {
+    var previewValue by remember(value) { mutableFloatStateOf(value.toFloat()) }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            title,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.labelLarge,
+        )
+        Text(
+            previewValue.roundToInt().toString(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+    Slider(
+        modifier = Modifier.semantics { contentDescription = title },
+        value = previewValue.coerceIn(
+            valueRange.first.toFloat(),
+            valueRange.last.toFloat(),
+        ),
+        onValueChange = { previewValue = it },
+        onValueChangeFinished = { onValueChanged(previewValue.roundToInt()) },
+        valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+        steps = (valueRange.count() - 2).coerceAtLeast(0),
+    )
 }
 
 @Composable
@@ -5934,6 +6294,12 @@ private sealed interface LauncherSearchResult {
     val label: String
     val typePriority: Int
     val publisherRank: Int
+}
+
+private fun LauncherSearchResult.publishedIconOwner(): LauncherApp? = when (this) {
+    is AppSearchResult -> app
+    is ShortcutSearchResult -> shortcut.owner
+    is CommandSearchResult -> null
 }
 
 internal fun terminalHistoryProgressAfterDrag(

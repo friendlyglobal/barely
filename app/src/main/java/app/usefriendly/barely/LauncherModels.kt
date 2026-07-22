@@ -16,6 +16,11 @@ enum class LauncherHomeMode {
     TERMINAL,
 }
 
+enum class AppDrawerLayout {
+    LIST,
+    GRID,
+}
+
 enum class LauncherGestureAction {
     NONE,
     LOCK_SCREEN,
@@ -39,6 +44,10 @@ internal object BarelyDefaults {
     const val TERMINAL_TOP_ACTION_BACKDROP: Boolean = false
     const val TERMINAL_CORNER_RADIUS: Int = 12
     const val TERMINAL_AESTHETIC: Boolean = false
+    val APP_DRAWER_LAYOUT: AppDrawerLayout = AppDrawerLayout.LIST
+    const val SHOW_APP_ICONS: Boolean = false
+    const val APP_GRID_COLUMNS: Int = 4
+    const val APP_GRID_ROWS: Int = 6
 }
 
 data class LauncherSettings(
@@ -51,6 +60,10 @@ data class LauncherSettings(
     val doubleTapAction: LauncherGestureAction = LauncherGestureAction.LOCK_SCREEN,
     val swipeDownAction: LauncherGestureAction = LauncherGestureAction.NOTIFICATIONS,
     val frostedWallpaper: Boolean = true,
+    val appDrawerLayout: AppDrawerLayout = BarelyDefaults.APP_DRAWER_LAYOUT,
+    val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
+    val appGridColumns: Int = BarelyDefaults.APP_GRID_COLUMNS,
+    val appGridRows: Int = BarelyDefaults.APP_GRID_ROWS,
     val notificationDots: Boolean = false,
     val mediaControls: Boolean = false,
     val localSuggestions: Boolean = true,

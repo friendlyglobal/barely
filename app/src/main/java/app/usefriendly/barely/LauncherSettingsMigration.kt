@@ -1,6 +1,6 @@
 package app.usefriendly.barely
 
-internal const val CURRENT_SETTINGS_SCHEMA = 2
+internal const val CURRENT_SETTINGS_SCHEMA = 3
 
 internal data class StoredLauncherSettings(
     val schemaVersion: Int = 1,
@@ -15,6 +15,10 @@ internal data class StoredLauncherSettings(
     val legacyDoubleTapToLock: Boolean = true,
     val legacySwipeDownForNotifications: Boolean = true,
     val frostedWallpaper: Boolean = true,
+    val appDrawerLayout: String? = null,
+    val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
+    val appGridColumns: Int = BarelyDefaults.APP_GRID_COLUMNS,
+    val appGridRows: Int = BarelyDefaults.APP_GRID_ROWS,
     val notificationDots: Boolean = false,
     val mediaControls: Boolean = false,
     val localSuggestions: Boolean = true,
@@ -47,6 +51,17 @@ internal fun decodeLauncherSettings(stored: StoredLauncherSettings): LauncherSet
                 LauncherGestureAction.NONE
             },
         frostedWallpaper = stored.frostedWallpaper,
+        appDrawerLayout = stored.appDrawerLayout.enumOrNull<AppDrawerLayout>()
+            ?: BarelyDefaults.APP_DRAWER_LAYOUT,
+        showAppIcons = stored.showAppIcons,
+        appGridColumns = stored.appGridColumns.coerceIn(
+            MIN_APP_GRID_COLUMNS,
+            MAX_APP_GRID_COLUMNS,
+        ),
+        appGridRows = stored.appGridRows.coerceIn(
+            MIN_APP_GRID_ROWS,
+            MAX_APP_GRID_ROWS,
+        ),
         notificationDots = stored.notificationDots,
         mediaControls = stored.mediaControls,
         localSuggestions = stored.localSuggestions,
@@ -57,3 +72,8 @@ internal fun decodeLauncherSettings(stored: StoredLauncherSettings): LauncherSet
 
 private inline fun <reified T : Enum<T>> String?.enumOrNull(): T? =
     this?.let { value -> enumValues<T>().firstOrNull { it.name == value } }
+
+internal const val MIN_APP_GRID_COLUMNS = 3
+internal const val MAX_APP_GRID_COLUMNS = 6
+internal const val MIN_APP_GRID_ROWS = 4
+internal const val MAX_APP_GRID_ROWS = 8

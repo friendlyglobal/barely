@@ -261,6 +261,13 @@ class LauncherRepository(
                 legacySwipeDownForNotifications = stored[SWIPE_NOTIFICATIONS_KEY] as? Boolean
                     ?: true,
                 frostedWallpaper = stored[FROSTED_WALLPAPER_KEY] as? Boolean ?: true,
+                appDrawerLayout = stored[APP_DRAWER_LAYOUT_KEY] as? String,
+                showAppIcons = stored[SHOW_APP_ICONS_KEY] as? Boolean
+                    ?: BarelyDefaults.SHOW_APP_ICONS,
+                appGridColumns = stored[APP_GRID_COLUMNS_KEY] as? Int
+                    ?: BarelyDefaults.APP_GRID_COLUMNS,
+                appGridRows = stored[APP_GRID_ROWS_KEY] as? Int
+                    ?: BarelyDefaults.APP_GRID_ROWS,
                 notificationDots = stored[NOTIFICATION_DOTS_KEY] as? Boolean ?: false,
                 mediaControls = stored[MEDIA_CONTROLS_KEY] as? Boolean ?: false,
                 localSuggestions = stored[LOCAL_SUGGESTIONS_KEY] as? Boolean ?: true,
@@ -299,6 +306,19 @@ class LauncherRepository(
                 settings.swipeDownAction == LauncherGestureAction.NOTIFICATIONS,
             )
             putBoolean(FROSTED_WALLPAPER_KEY, settings.frostedWallpaper)
+            putString(APP_DRAWER_LAYOUT_KEY, settings.appDrawerLayout.name)
+            putBoolean(SHOW_APP_ICONS_KEY, settings.showAppIcons)
+            putInt(
+                APP_GRID_COLUMNS_KEY,
+                settings.appGridColumns.coerceIn(
+                    MIN_APP_GRID_COLUMNS,
+                    MAX_APP_GRID_COLUMNS,
+                ),
+            )
+            putInt(
+                APP_GRID_ROWS_KEY,
+                settings.appGridRows.coerceIn(MIN_APP_GRID_ROWS, MAX_APP_GRID_ROWS),
+            )
             putBoolean(NOTIFICATION_DOTS_KEY, settings.notificationDots)
             putBoolean(MEDIA_CONTROLS_KEY, settings.mediaControls)
             putBoolean(LOCAL_SUGGESTIONS_KEY, settings.localSuggestions)
@@ -320,6 +340,10 @@ class LauncherRepository(
             put("doubleTapAction", settings.doubleTapAction.name)
             put("swipeDownAction", settings.swipeDownAction.name)
             put("frostedWallpaper", settings.frostedWallpaper)
+            put("appDrawerLayout", settings.appDrawerLayout.name)
+            put("showAppIcons", settings.showAppIcons)
+            put("appGridColumns", settings.appGridColumns)
+            put("appGridRows", settings.appGridRows)
             put("notificationDots", settings.notificationDots)
             put("mediaControls", settings.mediaControls)
             put("localSuggestions", settings.localSuggestions)
@@ -363,6 +387,18 @@ class LauncherRepository(
                 .let { runCatching { LauncherGestureAction.valueOf(it) }.getOrNull() }
                 ?: current.swipeDownAction,
             frostedWallpaper = json.optBoolean("frostedWallpaper", current.frostedWallpaper),
+            appDrawerLayout = json.optString("appDrawerLayout")
+                .let { runCatching { AppDrawerLayout.valueOf(it) }.getOrNull() }
+                ?: current.appDrawerLayout,
+            showAppIcons = json.optBoolean("showAppIcons", current.showAppIcons),
+            appGridColumns = json.optInt(
+                "appGridColumns",
+                current.appGridColumns,
+            ).coerceIn(MIN_APP_GRID_COLUMNS, MAX_APP_GRID_COLUMNS),
+            appGridRows = json.optInt(
+                "appGridRows",
+                current.appGridRows,
+            ).coerceIn(MIN_APP_GRID_ROWS, MAX_APP_GRID_ROWS),
             notificationDots = json.optBoolean("notificationDots", current.notificationDots),
             mediaControls = json.optBoolean("mediaControls", current.mediaControls),
             localSuggestions = json.optBoolean("localSuggestions", current.localSuggestions),
@@ -569,6 +605,10 @@ class LauncherRepository(
         const val DOUBLE_TAP_ACTION_KEY = "double_tap_action"
         const val SWIPE_DOWN_ACTION_KEY = "swipe_down_action"
         const val FROSTED_WALLPAPER_KEY = "frosted_wallpaper_enabled"
+        const val APP_DRAWER_LAYOUT_KEY = "app_drawer_layout"
+        const val SHOW_APP_ICONS_KEY = "show_app_icons"
+        const val APP_GRID_COLUMNS_KEY = "app_grid_columns"
+        const val APP_GRID_ROWS_KEY = "app_grid_rows"
         const val NOTIFICATION_DOTS_KEY = "notification_dots_enabled"
         const val MEDIA_CONTROLS_KEY = "media_controls_enabled"
         const val LOCAL_SUGGESTIONS_KEY = "local_suggestions_enabled"

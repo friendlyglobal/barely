@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Semua aplikasi</string>
+    <string name="settings_app_layout">Tata letak</string>
+    <string name="settings_app_layout_summary">Pilih daftar yang tenang atau kisi ringkas.</string>
+    <string name="settings_app_layout_list">Daftar</string>
+    <string name="settings_app_layout_grid">Kisi</string>
+    <string name="settings_show_app_icons">Tampilkan ikon aplikasi</string>
+    <string name="settings_show_app_icons_summary">Tampilkan ikon terbitan setiap aplikasi di daftar dan kisi.</string>
+    <string name="settings_grid_size">Ukuran kisi</string>
+    <string name="settings_grid_size_summary">Pilih jumlah kolom dan baris yang terlihat sekaligus.</string>
+    <string name="settings_grid_columns">Kolom</string>
+    <string name="settings_grid_rows">Baris</string>
+</resources>

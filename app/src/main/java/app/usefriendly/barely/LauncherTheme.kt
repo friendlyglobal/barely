@@ -57,6 +57,7 @@ internal object BarelyVisualTokens {
     val paneHorizontalPadding = 22.dp
     val contentHorizontalPadding = 20.dp
     val controlHorizontalPadding = 18.dp
+    val bottomCommandSpacing = 20.dp
 
     // Shape scale: compact rows -> controls -> cards -> floating panels -> sheets.
     val compactRowShape = RoundedCornerShape(14.dp)

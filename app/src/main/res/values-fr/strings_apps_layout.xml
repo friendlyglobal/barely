@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_all_apps">Toutes les apps</string>
+    <string name="settings_app_layout">Disposition</string>
+    <string name="settings_app_layout_summary">Choisissez une liste calme ou une grille compacte.</string>
+    <string name="settings_app_layout_list">Liste</string>
+    <string name="settings_app_layout_grid">Grille</string>
+    <string name="settings_show_app_icons">Afficher les icônes</string>
+    <string name="settings_show_app_icons_summary">Affiche l’icône publiée de chaque app dans la liste et la grille.</string>
+    <string name="settings_grid_size">Taille de la grille</string>
+    <string name="settings_grid_size_summary">Choisissez le nombre de colonnes et de lignes visibles à la fois.</string>
+    <string name="settings_grid_columns">Colonnes</string>
+    <string name="settings_grid_rows">Lignes</string>
+</resources>
