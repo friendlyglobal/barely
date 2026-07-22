@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">الشاشة الرئيسية. اسحب لأعلى للبحث ولأسفل للإشعارات أو انقر مرتين للقفل.</string>
     <string name="favorites">المفضلة</string>
     <string name="search">بحث</string>
     <string name="apps">التطبيقات</string>
     <string name="no_favorites">لا توجد مفضلات بعد</string>
-    <string name="favorites_empty_message">اضغط مطولًا على تطبيق لإضافته إلى المفضلة.</string>
+    <string name="favorites_empty_message">ضع نجمة على نتيجة بحث أو اضغط مطولًا على تطبيق لإضافته هنا.</string>
     <string name="activating_shortcuts">جارٍ تفعيل الاختصارات…</string>
     <string name="use_as_home">استخدام كشاشة رئيسية</string>
     <string name="android_granting_shortcuts">يمنح Android إذن الوصول إلى الاختصارات.</string>

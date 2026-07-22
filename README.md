@@ -45,11 +45,11 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Preserves vertical and horizontal scrolling published inside an `AppWidgetHostView`, handing the gesture back to the Favorites page only when the widget reaches its own edge.
 - Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
-- Returns to the shared Home prompt whenever the Home gesture or button is pressed, animating continuously from either Classic side page instead of jumping to the center.
+- Returns to the shared Home prompt whenever the Home gesture or button is pressed. Classic side pages move to the center only when needed; returning from another app does not restart the pager or replace existing app data with a loading frame.
 - Locks the screen on a home-page double tap and opens notifications on a downward swipe through an optional, narrowly configured Accessibility service.
 - Adapts at runtime to phones, split-screen windows, tablets, and foldables: one column on compact windows, two on medium/foldable windows, and three only on expanded windows.
 - Uses Jetpack WindowManager `FoldingFeature` data to keep controls and list items away from a separating vertical fold or hinge.
-- Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; a translucent gradient automatically takes over when the system disables blur.
+- Uses Android 12+ cross-window blur on Favorites, Apps, and Search for a native frosted-wallpaper effect; a translucent gradient derived from the active wallpaper automatically takes over when the system or device disables blur.
 - Keeps wallpaper visible beneath the shared Home and lets its local tint be fully transparent.
 - Separates Android 15 Private Space apps, locks or unlocks the profile through Android, and removes locked private content from launcher search.
 - Includes a local command palette for arithmetic, unit conversion, and quick settings without network access.
@@ -216,6 +216,10 @@ The service declares `canRetrieveWindowContent=false` and disables accessibility
 30. Export settings, change appearance and gesture choices, import the file, and verify the portable preferences return without altering widgets, permissions, favorites, or local search history.
 31. Upgrade from 0.8, verify existing Home style and gestures remain unchanged, then set new gesture actions and restart Barely. Corrupt or removed enum choices must fall back safely instead of preventing Home from loading.
 32. For a signed candidate, run `scripts/verify-release.sh`, confirm the certificate fingerprint is the expected Barely release key, and compare the generated checksums before uploading the APK/AAB.
+33. From another app, press Home and immediately try to swipe toward Apps or Favorites. Barely must not replay its own center-page animation or show a loading frame; compare gesture navigation with three-button navigation because the system Home handoff is OEM-controlled.
+34. Scroll All apps and confirm the compact title, count, and settings action leave the viewport while the bottom search entry remains reachable.
+35. Open a short app's actions from Search and confirm the keyboard closes and the sheet wraps its content. Repeat with WhatsApp and confirm the complete shortcut list scrolls inside the capped sheet.
+36. On Android 13 or newer, edge-swipe back from Search, Settings, and Command Apps; the visible surface should follow predictive-back progress and close at commit.
 
 ## Privacy
 
@@ -231,6 +235,7 @@ Notification and media integration is also off by default and requires approval 
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
 - Cross-window blur requires Android 12 or newer and can be disabled by the device at runtime; the UI retains a contrast-safe fallback.
+- Gesture navigation owns the app-to-Home handoff in Android SystemUI. Barely removes its own redundant pager animation and synchronous metadata work, but a remaining OEM-controlled pause can differ between Samsung gesture navigation and three-button navigation.
 - Moving from a debug-signed pre-1.0 GitHub APK to the permanent 1.0 certificate requires one uninstall/reinstall; [RELEASE.md](RELEASE.md) explains how to preserve portable settings and safely switch Home launchers.
 
 ## Official Android references

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">主屏幕。向上滑动搜索，向下滑动查看通知，双击锁屏。</string>
     <string name="favorites">收藏</string>
     <string name="search">搜索</string>
     <string name="apps">应用</string>
     <string name="no_favorites">暂无收藏</string>
-    <string name="favorites_empty_message">长按应用即可将其添加到收藏。</string>
+    <string name="favorites_empty_message">为搜索结果加星标，或长按应用将其添加到这里。</string>
     <string name="activating_shortcuts">正在启用快捷方式…</string>
     <string name="use_as_home">设为主屏幕</string>
     <string name="android_granting_shortcuts">Android 正在授予快捷方式访问权限。</string>

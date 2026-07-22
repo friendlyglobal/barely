@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">Tela inicial. Deslize para cima para pesquisar.</string>
     <string name="favorites">Favoritos</string>
     <string name="search">Buscar</string>
     <string name="apps">Apps</string>
     <string name="no_favorites">Nenhum favorito</string>
-    <string name="favorites_empty_message">Pressione um app e adicione aos favoritos.</string>
+    <string name="favorites_empty_message">Marque um resultado com a estrela ou pressione um app para adicioná-lo aqui.</string>
     <string name="activating_shortcuts">Ativando atalhos…</string>
     <string name="use_as_home">Usar como tela inicial</string>
     <string name="android_granting_shortcuts">O Android está liberando o acesso aos atalhos.</string>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Barely</string>
-    <string name="home_content_description">Écran d’accueil. Balayez vers le haut pour rechercher, vers le bas pour les notifications ou touchez deux fois pour verrouiller.</string>
     <string name="favorites">Favoris</string>
     <string name="search">Rechercher</string>
     <string name="apps">Applications</string>
     <string name="no_favorites">Aucun favori</string>
-    <string name="favorites_empty_message">Appuyez longuement sur une application pour l’ajouter aux favoris.</string>
+    <string name="favorites_empty_message">Ajoutez une étoile à un résultat ou appuyez longuement sur une application pour l’ajouter ici.</string>
     <string name="activating_shortcuts">Activation des raccourcis…</string>
     <string name="use_as_home">Utiliser comme écran d’accueil</string>
     <string name="android_granting_shortcuts">Android accorde l’accès aux raccourcis.</string>

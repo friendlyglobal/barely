@@ -2,6 +2,31 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.5.0 — 2026-07-22
+
+### Responsiveness and navigation
+
+- Removed Barely's redundant Home-page spring when returning from another app, so the center page accepts input as soon as Android hands control back to the launcher.
+- Kept refresh work off the first visible Home frame: installed-app data updates without replacing an existing snapshot with a loading state, while widget-provider and access metadata refresh in the background.
+- Added predictive-back progress to Search, Settings, and the Command app drawer, while preserving immediate state changes when Android animations are disabled.
+- Made short app-action sheets wrap their content and capped long sheets at 82% of the current window so apps with many shortcuts remain internally scrollable.
+- Cleared focus and hid the IME before opening app actions from search results.
+
+### Apps, search, and favorites
+
+- Replaced the oversized fixed All apps title with a compact Material 3 header inside the app collection; the title, count, and settings action now scroll away with the list.
+- Unified the full Search field with the shared 64 dp Command/All apps surface, including its outline, global radius, icon geometry, padding, and wallpaper-aware treatment.
+- Applied the global radius to app, shortcut, command, recommendation, and recent-query results.
+- Added the same trailing favorite action to full Search app and published-shortcut results, including recommended apps, without changing the row's launch or long-press behavior.
+- Added a clear Add widget action to the empty Favorites state and improved its guidance for discovering favorites from search.
+
+### Wallpaper and accessibility
+
+- Derived fallback scrims from the active wallpaper's primary color instead of painting every device with a flat gray overlay; real Android cross-window blur remains preferred when available.
+- Added predictive-back progress handling and a Settings pane announcement for accessibility services.
+- Verified large text, zero animation scale, scroll-away headers, one-handed search, content-height sheets, and widget discovery on an Android emulator.
+- Updated the application to version code 19 and version name 1.5.0.
+
 ## 1.4.0 — 2026-07-22
 
 ### Command and favorites

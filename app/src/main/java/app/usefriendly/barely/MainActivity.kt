@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var exportSettingsDocument: ActivityResultLauncher<String>
     private lateinit var importSettingsDocument: ActivityResultLauncher<Array<String>>
     private var refreshJob: Job? = null
+    private var resumeMetadataJob: Job? = null
     private var windowLayoutJob: Job? = null
 
     private var snapshot by androidx.compose.runtime.mutableStateOf(LauncherSnapshot())
@@ -350,10 +351,21 @@ class MainActivity : ComponentActivity() {
             updateRoleState()
             refresh()
             refreshContacts()
-            hasGestureAccess = isGestureAccessGranted()
-            hasNotificationAccess = isNotificationAccessGranted()
-            availableAssistants = installedAssistantPreferences()
-            widgetProviders = widgetController.availableProviders()
+            resumeMetadataJob?.cancel()
+            resumeMetadataJob = activityScope.launch {
+                val metadata = withContext(Dispatchers.Default) {
+                    ResumeMetadata(
+                        hasGestureAccess = isGestureAccessGranted(),
+                        hasNotificationAccess = isNotificationAccessGranted(),
+                        assistants = installedAssistantPreferences(),
+                        widgetProviders = widgetController.availableProviders(),
+                    )
+                }
+                hasGestureAccess = metadata.hasGestureAccess
+                hasNotificationAccess = metadata.hasNotificationAccess
+                availableAssistants = metadata.assistants
+                widgetProviders = metadata.widgetProviders
+            }
         }
     }
 
@@ -727,7 +739,8 @@ class MainActivity : ComponentActivity() {
     private fun refresh() {
         refreshJob?.cancel()
         refreshJob = activityScope.launch {
-            isLoading = true
+            val showLoading = snapshot.apps.isEmpty()
+            if (showLoading) isLoading = true
             try {
                 snapshot = repository.load()
             } catch (cancelled: CancellationException) {
@@ -739,7 +752,7 @@ class MainActivity : ComponentActivity() {
                     Toast.LENGTH_SHORT,
                 ).show()
             }
-            isLoading = false
+            if (showLoading) isLoading = false
         }
     }
 
@@ -751,6 +764,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         refreshJob?.cancel()
+        resumeMetadataJob?.cancel()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             blurEnabledListener?.let { listener ->
                 getSystemService(WindowManager::class.java)
@@ -772,4 +786,11 @@ class MainActivity : ComponentActivity() {
         const val SETTINGS_SHOW_FRAGMENT_ARGUMENTS = ":settings:show_fragment_args"
         const val PENDING_WIDGET_ID = "pending_widget_id"
     }
+
+    private data class ResumeMetadata(
+        val hasGestureAccess: Boolean,
+        val hasNotificationAccess: Boolean,
+        val assistants: List<AssistantPreference>,
+        val widgetProviders: List<AppWidgetProviderInfo>,
+    )
 }
