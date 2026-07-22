@@ -239,57 +239,40 @@ class LauncherRepository(
         preferences.edit { putBoolean(PRIVATE_SPACE_EXPANDED_KEY, expanded) }
     }
 
-    fun launcherSettings(): LauncherSettings = LauncherSettings(
-        homeMode = preferences.getString(HOME_MODE_KEY, null)
-            ?.let { value -> runCatching { LauncherHomeMode.valueOf(value) }.getOrNull() }
-            ?: LauncherHomeMode.TERMINAL,
-        terminalBackgroundColor = preferences.getInt(
-            TERMINAL_BACKGROUND_COLOR_KEY,
-            BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
-        ),
-        terminalBackgroundOpacity = preferences.getFloat(
-            TERMINAL_BACKGROUND_OPACITY_KEY,
-            BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
-        ).coerceIn(0f, 1f),
-        terminalTopActionBackdrop = preferences.getBoolean(
-            TERMINAL_TOP_ACTION_BACKDROP_KEY,
-            BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
-        ),
-        terminalCornerRadius = preferences.getInt(
-            TERMINAL_CORNER_RADIUS_KEY,
-            BarelyDefaults.TERMINAL_CORNER_RADIUS,
+    fun launcherSettings(): LauncherSettings {
+        val stored = preferences.all
+        return decodeLauncherSettings(
+            StoredLauncherSettings(
+                schemaVersion = stored[SETTINGS_SCHEMA_KEY] as? Int ?: 1,
+                homeMode = stored[HOME_MODE_KEY] as? String,
+                terminalBackgroundColor = stored[TERMINAL_BACKGROUND_COLOR_KEY] as? Int
+                    ?: BarelyDefaults.TERMINAL_BACKGROUND_COLOR,
+                terminalBackgroundOpacity = stored[TERMINAL_BACKGROUND_OPACITY_KEY] as? Float
+                    ?: BarelyDefaults.TERMINAL_BACKGROUND_OPACITY,
+                terminalTopActionBackdrop = stored[TERMINAL_TOP_ACTION_BACKDROP_KEY] as? Boolean
+                    ?: BarelyDefaults.TERMINAL_TOP_ACTION_BACKDROP,
+                terminalCornerRadius = stored[TERMINAL_CORNER_RADIUS_KEY] as? Int
+                    ?: BarelyDefaults.TERMINAL_CORNER_RADIUS,
+                terminalAesthetic = stored[TERMINAL_AESTHETIC_KEY] as? Boolean
+                    ?: BarelyDefaults.TERMINAL_AESTHETIC,
+                doubleTapAction = stored[DOUBLE_TAP_ACTION_KEY] as? String,
+                swipeDownAction = stored[SWIPE_DOWN_ACTION_KEY] as? String,
+                legacyDoubleTapToLock = stored[DOUBLE_TAP_LOCK_KEY] as? Boolean ?: true,
+                legacySwipeDownForNotifications = stored[SWIPE_NOTIFICATIONS_KEY] as? Boolean
+                    ?: true,
+                frostedWallpaper = stored[FROSTED_WALLPAPER_KEY] as? Boolean ?: true,
+                notificationDots = stored[NOTIFICATION_DOTS_KEY] as? Boolean ?: false,
+                mediaControls = stored[MEDIA_CONTROLS_KEY] as? Boolean ?: false,
+                localSuggestions = stored[LOCAL_SUGGESTIONS_KEY] as? Boolean ?: true,
+                showSearchHint = stored[SHOW_SEARCH_HINT_KEY] as? Boolean ?: true,
+                preferredAssistant = stored[PREFERRED_ASSISTANT_KEY] as? String,
+            ),
         )
-            .coerceIn(MIN_TERMINAL_CORNER_RADIUS, MAX_TERMINAL_CORNER_RADIUS),
-        terminalAesthetic = preferences.getBoolean(
-            TERMINAL_AESTHETIC_KEY,
-            BarelyDefaults.TERMINAL_AESTHETIC,
-        ),
-        doubleTapAction = preferences.getString(DOUBLE_TAP_ACTION_KEY, null)
-            ?.let { value -> runCatching { LauncherGestureAction.valueOf(value) }.getOrNull() }
-            ?: if (preferences.getBoolean(DOUBLE_TAP_LOCK_KEY, true)) {
-                LauncherGestureAction.LOCK_SCREEN
-            } else {
-                LauncherGestureAction.NONE
-            },
-        swipeDownAction = preferences.getString(SWIPE_DOWN_ACTION_KEY, null)
-            ?.let { value -> runCatching { LauncherGestureAction.valueOf(value) }.getOrNull() }
-            ?: if (preferences.getBoolean(SWIPE_NOTIFICATIONS_KEY, true)) {
-                LauncherGestureAction.NOTIFICATIONS
-            } else {
-                LauncherGestureAction.NONE
-            },
-        frostedWallpaper = preferences.getBoolean(FROSTED_WALLPAPER_KEY, true),
-        notificationDots = preferences.getBoolean(NOTIFICATION_DOTS_KEY, false),
-        mediaControls = preferences.getBoolean(MEDIA_CONTROLS_KEY, false),
-        localSuggestions = preferences.getBoolean(LOCAL_SUGGESTIONS_KEY, true),
-        showSearchHint = preferences.getBoolean(SHOW_SEARCH_HINT_KEY, true),
-        preferredAssistant = preferences.getString(PREFERRED_ASSISTANT_KEY, null)
-            ?.let { value -> runCatching { AssistantPreference.valueOf(value) }.getOrNull() }
-            ?: AssistantPreference.CHATGPT,
-    )
+    }
 
     fun setLauncherSettings(settings: LauncherSettings) {
         preferences.edit {
+            putInt(SETTINGS_SCHEMA_KEY, CURRENT_SETTINGS_SCHEMA)
             putString(HOME_MODE_KEY, settings.homeMode.name)
             putInt(TERMINAL_BACKGROUND_COLOR_KEY, settings.terminalBackgroundColor)
             putFloat(
@@ -362,7 +345,8 @@ class LauncherRepository(
             terminalBackgroundOpacity = json.optDouble(
                 "terminalBackgroundOpacity",
                 current.terminalBackgroundOpacity.toDouble(),
-            ).toFloat().coerceIn(0f, 1f),
+            ).toFloat().takeIf(Float::isFinite)?.coerceIn(0f, 1f)
+                ?: current.terminalBackgroundOpacity,
             terminalTopActionBackdrop = json.optBoolean(
                 "terminalTopActionBackdrop",
                 current.terminalTopActionBackdrop,
@@ -572,6 +556,7 @@ class LauncherRepository(
         const val FAVORITES_KEY = "favorites"
         const val GESTURE_COACH_KEY = "gesture_coach_seen"
         const val ONBOARDING_COMPLETE_KEY = "onboarding_complete"
+        const val SETTINGS_SCHEMA_KEY = "settings_schema_version"
         const val HOME_MODE_KEY = "home_mode"
         const val TERMINAL_BACKGROUND_COLOR_KEY = "terminal_background_color"
         const val TERMINAL_BACKGROUND_OPACITY_KEY = "terminal_background_opacity"

@@ -125,7 +125,8 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -175,13 +176,18 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -331,7 +337,10 @@ private fun AssistantPreferenceChoice(
             .heightIn(min = 48.dp)
             .clip(BarelyVisualTokens.compactRowShape)
             .combinedClickable(onClick = onClick)
-            .semantics { this.selected = selected },
+            .semantics {
+                this.selected = selected
+                role = Role.RadioButton
+            },
         shape = BarelyVisualTokens.compactRowShape,
         color = if (selected) Color.White.copy(alpha = 0.18f)
         else Color.Black.copy(alpha = BarelyVisualTokens.surfaceIdle),
@@ -378,7 +387,10 @@ private fun HomeModeChoice(
             .fillMaxWidth()
             .clip(shape)
             .combinedClickable(onClick = onClick)
-            .semantics { this.selected = selected },
+            .semantics {
+                this.selected = selected
+                role = Role.RadioButton
+            },
         shape = shape,
         color = if (selected) {
             Color.White.copy(alpha = 0.16f)
@@ -3057,7 +3069,9 @@ private fun PageHeader(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 title,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { heading() },
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Normal,
                 color = Color.White,
@@ -3535,6 +3549,7 @@ private fun SearchPage(
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+    val searchPaneTitle = stringResource(R.string.search)
     val dismissThreshold = with(LocalDensity.current) { 76.dp.toPx() }
     val animatedDismissDrag by animateFloatAsState(
         targetValue = dismissDrag,
@@ -3610,6 +3625,7 @@ private fun SearchPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .semantics { paneTitle = searchPaneTitle }
             .background(
                 Brush.verticalGradient(
                     if (backdropBlurEnabled) {
@@ -4385,27 +4401,30 @@ private fun WidgetPreviewCard(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val density = LocalDensity.current
+    val resourceDensity = resources.displayMetrics.density
+    val densityDpi = resources.displayMetrics.densityDpi
     val packageManager = context.packageManager
     val label = remember(provider.provider) { provider.loadLabel(packageManager) }
-    val cells = remember(provider.provider) {
+    val cells = remember(provider.provider, resourceDensity) {
         val width = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && provider.targetCellWidth > 0) {
             provider.targetCellWidth
         } else {
-            ((provider.minWidth / context.resources.displayMetrics.density) / 70f)
+            ((provider.minWidth / resourceDensity) / 70f)
                 .toInt().coerceAtLeast(1)
         }
         val height = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && provider.targetCellHeight > 0) {
             provider.targetCellHeight
         } else {
-            ((provider.minHeight / context.resources.displayMetrics.density) / 70f)
+            ((provider.minHeight / resourceDensity) / 70f)
                 .toInt().coerceAtLeast(1)
         }
         width.coerceIn(1, 6) to height.coerceIn(1, 6)
     }
-    val previewBitmap = remember(provider.provider) {
+    val previewBitmap = remember(provider.provider, densityDpi) {
         runCatching {
-            provider.loadPreviewImage(context, context.resources.displayMetrics.densityDpi)
+            provider.loadPreviewImage(context, densityDpi)
                 ?.toBitmap()
         }.getOrNull()
     }
@@ -4471,9 +4490,9 @@ private fun WidgetPreviewCard(
                     )
 
                     else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        val icon = remember(provider.provider) {
+                        val icon = remember(provider.provider, densityDpi) {
                             runCatching {
-                                provider.loadIcon(context, context.resources.displayMetrics.densityDpi)
+                                provider.loadIcon(context, densityDpi)
                                     .toBitmap(112, 112)
                             }.getOrNull()
                         }
@@ -4525,7 +4544,7 @@ private fun WidgetBitmapIcon(bitmap: android.graphics.Bitmap?, label: String, si
 
 @Composable
 private fun resourcesQuantityString(id: Int, quantity: Int, vararg formatArgs: Any): String =
-    LocalContext.current.resources.getQuantityString(id, quantity, *formatArgs)
+    LocalResources.current.getQuantityString(id, quantity, *formatArgs)
 
 private enum class GesturePicker {
     DOUBLE_TAP,
@@ -5255,7 +5274,9 @@ private fun TerminalBackgroundSettings(
 private fun SettingsSectionTitle(title: String) {
     Text(
         title,
-        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 6.dp),
+        modifier = Modifier
+            .padding(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 6.dp)
+            .semantics { heading() },
         color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.Bold,
@@ -5327,9 +5348,13 @@ private fun AppActionsSheet(
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(
+        SheetValue.Hidden,
+        setOf(SheetValue.PartiallyExpanded),
+    )
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        modifier = Modifier.semantics { paneTitle = app.label },
         sheetState = sheetState,
         shape = MaterialTheme.shapes.extraLarge,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,

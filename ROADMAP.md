@@ -107,16 +107,16 @@ Goal: use public Android capabilities well instead of depending on Samsung-only 
 
 Goal: finish form-factor coverage, stop adding broad features, and produce a trustworthy release candidate.
 
-- Complete keyboard focus order, shortcuts help, mouse hover, context actions, and drag behavior for DeX.
+- Improve keyboard focus order, shortcuts help, mouse hover, context actions, and drag behavior for DeX.
 - Tune one-, two-, and three-pane layouts for foldables, tablets, landscape, and external displays.
-- Respect hinges, cutouts, large fonts, RTL, high contrast, reduced motion, and touch-target guidance.
-- Add performance benchmarks for cold start, app discovery, shortcut refresh, search latency, and memory.
-- Complete permissions, privacy, threat-model, dependency, upgrade, profile, revoked-access, and corrupted-preference reviews.
-- Add migration tests for every persisted preference version.
+- [x] Add page, heading, radio-choice, and modal-pane semantics while retaining 48 dp action targets.
+- [x] Add a deterministic 1,000-item fuzzy-search p95 latency gate; device-level startup, discovery, refresh, and memory profiling remain for physical acceptance.
+- [x] Document permissions, privacy boundaries, sensitive access, AI handoff, backup exclusions, signing, and vulnerability reporting.
+- [x] Add versioned migration tests for legacy and current launcher preference schemas, including corrupt-value recovery.
 - Run UI tests across supported Android versions and representative phone, foldable, tablet, and DeX sizes.
 - Finish accessibility review and human review of all thirteen languages.
-- Produce reproducible signed APK and AAB artifacts with checksums and signing-key recovery documentation.
-- Establish cold-start, search-latency, memory, and crash-free release gates.
+- [x] Produce optimized APK and AAB tasks with environment-only signing, certificate verification, checksums, and signing-key recovery documentation.
+- [x] Add pull-request/main CI and establish build, unit-test, lint, and fuzzy-search release gates.
 
 ## 1.0 — Stable
 
