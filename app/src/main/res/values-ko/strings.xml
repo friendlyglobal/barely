@@ -43,6 +43,7 @@
     <string name="private_space_locked">잠김</string>
     <string name="private_space_unlocked">잠금 해제됨</string>
     <string name="private_space_locked_message">앱과 바로가기를 표시하려면 비공개 공간의 잠금을 해제하세요.</string>
+    <string name="private_space_empty_message">Android 비공개 공간에 사용 가능한 앱이 없습니다.</string>
     <string name="lock_private_space">비공개 공간 잠그기</string>
     <string name="unlock_private_space">비공개 공간 잠금 해제</string>
     <string name="hide_private_space_apps">비공개 공간 앱 숨기기</string>

@@ -28,7 +28,7 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Keeps that All apps search control at the same bottom spacing as the shared Home command bar.
 - Uses Material 3 search geometry and a shape-clipped pressed state in All apps, with the leading icon and placeholder aligned on one centered row.
 - Lets All apps use the original text-only list, a list with published app icons, or a compact icon grid; grid columns and visible rows are adjustable with bounded local sliders. When enabled, the same icon preference also identifies apps and shortcut owners in shared Home results and recent history.
-- Offers one global Original, Circle, Squircle, or Rounded square icon mask so OEM and third-party artwork can share a consistent silhouette across the drawer, Search, history, Favorites, and app actions.
+- Offers one global Original, Circle, Squircle, or Rounded square icon mask so OEM and third-party artwork can share a consistent silhouette across the drawer, Search, history, Favorites, and app actions. Adaptive icons are rebuilt from their published layers before Barely applies the selected mask; legacy artwork receives safe spacing when needed instead of being clipped a second time.
 - Keeps the search field capsule-shaped and builds its optional recommendations, recent searches, and dismissible command tip upward from the keyboard.
 - Renders Classic Search results from the bottom up so the best match stays directly above the capsule and within one-handed reach.
 - Learns recommendations from app launches and successful query-to-app/shortcut choices made through Barely, with local recency decay, no Usage Access permission, and controls to disable or clear the complete history.

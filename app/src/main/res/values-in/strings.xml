@@ -43,6 +43,7 @@
     <string name="private_space_locked">Terkunci</string>
     <string name="private_space_unlocked">Terbuka</string>
     <string name="private_space_locked_message">Buka ruang pribadi untuk menampilkan aplikasi dan pintasannya.</string>
+    <string name="private_space_empty_message">Tidak ada aplikasi yang tersedia di Ruang Pribadi Android.</string>
     <string name="lock_private_space">Kunci ruang pribadi</string>
     <string name="unlock_private_space">Buka ruang pribadi</string>
     <string name="hide_private_space_apps">Sembunyikan aplikasi ruang pribadi</string>

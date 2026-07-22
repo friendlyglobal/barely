@@ -59,6 +59,7 @@
     <string name="private_space_locked">Locked</string>
     <string name="private_space_unlocked">Unlocked</string>
     <string name="private_space_locked_message">Unlock private space to show its apps and shortcuts.</string>
+    <string name="private_space_empty_message">No apps are available in Android Private Space.</string>
     <string name="lock_private_space">Lock private space</string>
     <string name="unlock_private_space">Unlock private space</string>
     <string name="hide_private_space_apps">Hide private space apps</string>

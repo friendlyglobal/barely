@@ -43,6 +43,7 @@
     <string name="private_space_locked">Gesperrt</string>
     <string name="private_space_unlocked">Entsperrt</string>
     <string name="private_space_locked_message">Entsperre den privaten Bereich, um seine Apps und Verknüpfungen anzuzeigen.</string>
+    <string name="private_space_empty_message">Im privaten Android-Bereich sind keine Apps verfügbar.</string>
     <string name="lock_private_space">Privaten Bereich sperren</string>
     <string name="unlock_private_space">Privaten Bereich entsperren</string>
     <string name="hide_private_space_apps">Apps des privaten Bereichs ausblenden</string>

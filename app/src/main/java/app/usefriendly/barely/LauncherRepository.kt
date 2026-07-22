@@ -8,9 +8,11 @@ import android.content.pm.LauncherApps
 import android.content.pm.LauncherUserInfo
 import android.content.pm.ShortcutInfo
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
 import androidx.core.graphics.drawable.toBitmap
@@ -67,55 +69,75 @@ class LauncherRepository(
         registerProfileReceiver()
     }
 
-    suspend fun load(): LauncherSnapshot = withContext(Dispatchers.Default) {
-        val collator = Collator.getInstance(Locale.getDefault()).apply {
-            strength = Collator.PRIMARY
-        }
-        val profiles = launcherApps.profiles.map(::profileForUser)
-        val apps = profiles.flatMap { profile ->
-            if (profile.type == LauncherProfileType.PRIVATE && profile.isLocked) {
-                return@flatMap emptyList()
+    suspend fun load(iconShape: AppIconShape = AppIconShape.ORIGINAL): LauncherSnapshot =
+        withContext(Dispatchers.Default) {
+            val collator = Collator.getInstance(Locale.getDefault()).apply {
+                strength = Collator.PRIMARY
             }
-            val user = profile.user
-            launcherApps.getActivityList(null, user)
-                .asSequence()
-                .filterNot { it.applicationInfo.packageName == appContext.packageName }
-                .map { activity ->
-                    LauncherApp(
-                        label = activity.label.toString(),
-                        packageName = activity.applicationInfo.packageName,
-                        component = activity.componentName,
-                        user = user,
-                        userSerial = profile.userSerial,
-                        profileType = profile.type,
-                        icon = runCatching {
-                            activity.getBadgedIcon(densityDpi).toBitmap(
-                                width = ICON_SIZE_PX,
-                                height = ICON_SIZE_PX,
-                                config = Bitmap.Config.ARGB_8888,
-                            )
-                        }.getOrNull(),
-                    )
+            val profiles = launcherApps.profiles.map(::profileForUser)
+            val apps = profiles.flatMap { profile ->
+                if (profile.type == LauncherProfileType.PRIVATE && profile.isLocked) {
+                    return@flatMap emptyList()
                 }
-                .toList()
-        }.sortedWith { left, right -> collator.compare(left.label, right.label) }
+                val user = profile.user
+                launcherApps.getActivityList(null, user)
+                    .asSequence()
+                    .filterNot { it.applicationInfo.packageName == appContext.packageName }
+                    .map { activity ->
+                        LauncherApp(
+                            label = activity.label.toString(),
+                            packageName = activity.applicationInfo.packageName,
+                            component = activity.componentName,
+                            user = user,
+                            userSerial = profile.userSerial,
+                            profileType = profile.type,
+                            icon = runCatching {
+                                renderActivityIcon(activity, iconShape)
+                            }.getOrNull(),
+                        )
+                    }
+                    .toList()
+            }.sortedWith { left, right -> collator.compare(left.label, right.label) }
 
-        val canReadShortcuts = launcherApps.hasShortcutHostPermission()
-        val shortcuts = if (canReadShortcuts) {
-            profiles
-                .filterNot { it.type == LauncherProfileType.PRIVATE && it.isLocked }
-                .flatMap { profile -> loadShortcuts(profile.user, apps) }
-                .sortedWith { left, right -> collator.compare(left.label, right.label) }
-        } else {
-            emptyList()
+            val canReadShortcuts = launcherApps.hasShortcutHostPermission()
+            val shortcuts = if (canReadShortcuts) {
+                profiles
+                    .filterNot { it.type == LauncherProfileType.PRIVATE && it.isLocked }
+                    .flatMap { profile -> loadShortcuts(profile.user, apps) }
+                    .sortedWith { left, right -> collator.compare(left.label, right.label) }
+            } else {
+                emptyList()
+            }
+
+            LauncherSnapshot(
+                apps = apps,
+                shortcuts = shortcuts,
+                profiles = profiles,
+                hasShortcutPermission = canReadShortcuts,
+            )
         }
 
-        LauncherSnapshot(
-            apps = apps,
-            shortcuts = shortcuts,
-            profiles = profiles,
-            hasShortcutPermission = canReadShortcuts,
+    private fun renderActivityIcon(
+        activity: android.content.pm.LauncherActivityInfo,
+        iconShape: AppIconShape,
+    ): Bitmap {
+        if (iconShape == AppIconShape.ORIGINAL) {
+            return AppIconRenderer.render(
+                activity.getBadgedIcon(densityDpi),
+                AppIconShape.ORIGINAL,
+                ICON_SIZE_PX,
+            )
+        }
+        val rendered = AppIconRenderer.render(
+            activity.getIcon(densityDpi),
+            iconShape,
+            ICON_SIZE_PX,
         )
+        if (activity.user == Process.myUserHandle()) return rendered
+        return appContext.packageManager.getUserBadgedIcon(
+            BitmapDrawable(appContext.resources, rendered),
+            activity.user,
+        ).toBitmap(ICON_SIZE_PX, ICON_SIZE_PX, Bitmap.Config.ARGB_8888)
     }
 
     private fun profileForUser(user: UserHandle): LauncherProfile {
