@@ -6,7 +6,7 @@ Barely is a minimal, wallpaper-first Android launcher built with Kotlin and Jetp
 
 Download the latest APK from [GitHub Releases](https://github.com/friendlyglobal/barely/releases/latest).
 
-The current release is a debug-signed prototype intended for testing. Android may display an additional warning when installing it outside Google Play.
+Version 1.0 starts Barely's permanent production-signing line. Android may display an additional warning when installing it outside Google Play. Testers coming from the debug-signed 0.9 APK must follow the one-time signing migration in [RELEASE.md](RELEASE.md); later production-signed upgrades install normally.
 
 ## Features
 
@@ -134,7 +134,9 @@ scripts/verify-release.sh
 
 The verified outputs and their SHA-256 checksums are written to `dist/`. Keep the keystore and recovery material in separate encrypted backups. See [SECURITY.md](SECURITY.md) for the trust boundaries, sensitive permissions, vulnerability-reporting path, and key-recovery guidance.
 
-Pull requests and `main` also run unit tests, lint, the debug build, and unsigned optimized release builds through GitHub Actions. Signing secrets are not needed or exposed during ordinary CI verification.
+The permanent Barely production certificate has SHA-256 fingerprint `AF:B1:8D:2A:20:0A:0B:D8:27:30:33:CC:14:74:86:2B:86:84:70:B8:74:A8:96:A1:E7:D3:D4:99:C5:46:DD:48`. Compare this value before installing a stable APK obtained outside the official GitHub release page.
+
+Pull requests and `main` also run unit tests, lint, the debug build, and unsigned optimized release builds through GitHub Actions. The Gradle wrapper distribution and wrapper JAR are checksum-verified, workflow actions are pinned to reviewed commits, and signing secrets are not needed or exposed during ordinary CI verification.
 
 If Gradle reports duplicated generated names such as `BuildConfig 2.java` or `... 4.class`, the project directory is being synchronized while Gradle writes intermediate files. Move the project outside iCloud, Google Drive, or another live-sync folder, run `./gradlew clean`, and build again.
 
@@ -218,13 +220,13 @@ Contact search is off until its runtime permission is granted. Matching contact 
 
 Notification and media integration is also off by default and requires approval on Android's dedicated notification-access screen. That system permission is sensitive because a notification listener can access notification metadata while enabled. Barely derives per-app counts and current media metadata in memory, persists no notification content, and exposes independent switches for dots and media controls. Revoking notification access immediately disables both data sources.
 
-## Prototype limitations
+## Platform limitations
 
 - No folders, cloud backup, or drag-and-drop favorite organization yet; widget ordering currently uses deliberate edit controls.
 - Shortcut names and availability are controlled by the apps that publish them.
 - Device manufacturers and work policies may hide apps or profiles from launcher APIs.
 - Cross-window blur requires Android 12 or newer and can be disabled by the device at runtime; the UI retains a contrast-safe fallback.
-- GitHub test APKs remain debug-signed until the owner selects and backs up the permanent production key. Gradle's optimized release build never falls back to debug signing.
+- Moving from a debug-signed pre-1.0 GitHub APK to the permanent 1.0 certificate requires one uninstall/reinstall; [RELEASE.md](RELEASE.md) explains how to preserve portable settings and safely switch Home launchers.
 
 ## Official Android references
 

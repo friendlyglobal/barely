@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">应用和快捷方式</string>
     <string name="clear_search">清除</string>
     <string name="shortcuts">快捷方式</string>
-    <string name="find_anything">查找任何内容</string>
-    <string name="search_hint">输入应用名称或其发布的操作名称。</string>
     <string name="nothing_found">未找到结果</string>
     <string name="try_another_name">请尝试其他名称。</string>
     <string name="set_default_to_search_shortcuts">将此启动器设为默认启动器以搜索快捷方式。</string>

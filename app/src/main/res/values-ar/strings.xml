@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">التطبيقات والاختصارات</string>
     <string name="clear_search">مسح</string>
     <string name="shortcuts">الاختصارات</string>
-    <string name="find_anything">ابحث عن أي شيء</string>
-    <string name="search_hint">اكتب اسم تطبيق أو إجراء ينشره.</string>
     <string name="nothing_found">لم يتم العثور على نتائج</string>
     <string name="try_another_name">جرّب اسمًا آخر.</string>
     <string name="set_default_to_search_shortcuts">عيّن هذا المشغّل كافتراضي لتضمين الاختصارات.</string>

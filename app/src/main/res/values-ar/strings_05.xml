@@ -11,10 +11,6 @@
     <string name="launcher_settings">إعدادات Barely</string>
     <string name="barely_tagline">بالكاد يظهر. جاهز دائماً.</string>
     <string name="settings_gestures">الإيماءات</string>
-    <string name="settings_double_tap_lock">النقر مرتين للقفل</string>
-    <string name="settings_double_tap_lock_summary">انقر مرتين على الشاشة الرئيسية الفارغة لقفل الشاشة.</string>
-    <string name="settings_swipe_notifications">السحب لفتح الإشعارات</string>
-    <string name="settings_swipe_notifications_summary">اسحب إلى أسفل على الشاشة الرئيسية الفارغة لفتح الإشعارات.</string>
     <string name="settings_appearance">المظهر</string>
     <string name="settings_frosted_wallpaper">خلفية ضبابية</string>
     <string name="settings_frosted_wallpaper_summary">تمويه الخلفية وراء المفضلة والتطبيقات والبحث عندما يدعم Android ذلك.</string>

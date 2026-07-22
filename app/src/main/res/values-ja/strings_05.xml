@@ -11,10 +11,6 @@
     <string name="launcher_settings">Barely の設定</string>
     <string name="barely_tagline">ほとんど見えない。いつでも使える。</string>
     <string name="settings_gestures">ジェスチャー</string>
-    <string name="settings_double_tap_lock">ダブルタップでロック</string>
-    <string name="settings_double_tap_lock_summary">空のホーム画面をダブルタップして画面をロックします。</string>
-    <string name="settings_swipe_notifications">下にスワイプして通知を表示</string>
-    <string name="settings_swipe_notifications_summary">空のホーム画面を下に引いて通知を開きます。</string>
     <string name="settings_appearance">外観</string>
     <string name="settings_frosted_wallpaper">壁紙をぼかす</string>
     <string name="settings_frosted_wallpaper_summary">Android が対応している場合、よく使う項目、アプリ、検索の背景をぼかします。</string>

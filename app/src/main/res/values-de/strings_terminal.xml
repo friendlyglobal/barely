@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Wähle die klassischen Seiten oder die bewusste Eingabe im Befehlsmodus.</string>
     <string name="settings_terminal_background">Hintergrund des Befehlsmodus</string>
     <string name="settings_terminal_background_summary">Wähle eine Farbe und wie stark das Hintergrundbild sichtbar bleibt. Alles bleibt auf diesem Gerät.</string>
-    <string name="settings_terminal_color">Hintergrundfarbe des Befehlsmodus</string>
     <string name="settings_terminal_color_option">Hintergrundfarbe %1$d von %2$d</string>
     <string name="settings_terminal_opacity">Deckkraft</string>
     <string name="settings_terminal_wallpaper">Hintergrundbild</string>

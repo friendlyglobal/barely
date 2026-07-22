@@ -11,10 +11,6 @@
     <string name="launcher_settings">Настройки Barely</string>
     <string name="barely_tagline">Почти незаметен. Всегда готов.</string>
     <string name="settings_gestures">Жесты</string>
-    <string name="settings_double_tap_lock">Двойное касание для блокировки</string>
-    <string name="settings_double_tap_lock_summary">Дважды коснитесь пустого главного экрана, чтобы заблокировать устройство.</string>
-    <string name="settings_swipe_notifications">Смахивание для уведомлений</string>
-    <string name="settings_swipe_notifications_summary">Потяните вниз на пустом главном экране, чтобы открыть уведомления.</string>
     <string name="settings_appearance">Оформление</string>
     <string name="settings_frosted_wallpaper">Размытые обои</string>
     <string name="settings_frosted_wallpaper_summary">Размывает обои за Избранным, Приложениями и Поиском, если Android это поддерживает.</string>

@@ -11,10 +11,6 @@
     <string name="launcher_settings">Impostazioni di Barely</string>
     <string name="barely_tagline">Quasi invisibile. Sempre pronto.</string>
     <string name="settings_gestures">Gesti</string>
-    <string name="settings_double_tap_lock">Doppio tocco per bloccare</string>
-    <string name="settings_double_tap_lock_summary">Tocca due volte la schermata Home vuota per bloccare lo schermo.</string>
-    <string name="settings_swipe_notifications">Scorri per le notifiche</string>
-    <string name="settings_swipe_notifications_summary">Scorri verso il basso sulla Home vuota per aprire le notifiche.</string>
     <string name="settings_appearance">Aspetto</string>
     <string name="settings_frosted_wallpaper">Sfondo satinato</string>
     <string name="settings_frosted_wallpaper_summary">Sfoca lo sfondo dietro Preferiti, App e Ricerca quando Android lo consente.</string>

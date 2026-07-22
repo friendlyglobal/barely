@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">Apps y accesos directos</string>
     <string name="clear_search">Borrar</string>
     <string name="shortcuts">Accesos directos</string>
-    <string name="find_anything">Encuentra lo que quieras</string>
-    <string name="search_hint">Escribe el nombre de una app o de una acción que publique.</string>
     <string name="nothing_found">No se encontró nada</string>
     <string name="try_another_name">Prueba con otro nombre.</string>
     <string name="set_default_to_search_shortcuts">Define este launcher como predeterminado para incluir accesos directos.</string>

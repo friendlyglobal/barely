@@ -11,10 +11,6 @@
     <string name="launcher_settings">Barely 设置</string>
     <string name="barely_tagline">几乎隐形，随时就绪。</string>
     <string name="settings_gestures">手势</string>
-    <string name="settings_double_tap_lock">双击锁屏</string>
-    <string name="settings_double_tap_lock_summary">双击空白主屏幕以锁定屏幕。</string>
-    <string name="settings_swipe_notifications">下滑打开通知</string>
-    <string name="settings_swipe_notifications_summary">在空白主屏幕上下拉以打开通知。</string>
     <string name="settings_appearance">外观</string>
     <string name="settings_frosted_wallpaper">壁纸模糊</string>
     <string name="settings_frosted_wallpaper_summary">Android 支持时，模糊收藏、应用和搜索后方的壁纸。</string>

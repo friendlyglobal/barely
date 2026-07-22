@@ -18,8 +18,6 @@
     <string name="apps_and_shortcuts">Apps e atalhos</string>
     <string name="clear_search">Limpar</string>
     <string name="shortcuts">Atalhos</string>
-    <string name="find_anything">Encontre qualquer coisa</string>
-    <string name="search_hint">Digite o nome de um app ou de uma ação publicada por ele.</string>
     <string name="nothing_found">Nada por aqui</string>
     <string name="try_another_name">Tente outro nome.</string>
     <string name="set_default_to_search_shortcuts">Defina este launcher como padrão para incluir atalhos.</string>
@@ -124,10 +122,6 @@
     <string name="launcher_settings">Configurações do Barely</string>
     <string name="barely_tagline">Quase invisível. Sempre pronto.</string>
     <string name="settings_gestures">Gestos</string>
-    <string name="settings_double_tap_lock">Toque duplo para bloquear</string>
-    <string name="settings_double_tap_lock_summary">Toque duas vezes na tela inicial vazia para bloquear.</string>
-    <string name="settings_swipe_notifications">Deslizar para ver notificações</string>
-    <string name="settings_swipe_notifications_summary">Puxe para baixo na tela inicial vazia para abrir as notificações.</string>
     <string name="settings_appearance">Aparência</string>
     <string name="settings_frosted_wallpaper">Wallpaper fosco</string>
     <string name="settings_frosted_wallpaper_summary">Desfoca o wallpaper em Favoritos, Apps e Busca quando o Android permite.</string>

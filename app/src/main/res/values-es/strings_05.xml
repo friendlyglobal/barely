@@ -11,10 +11,6 @@
     <string name="launcher_settings">Ajustes de Barely</string>
     <string name="barely_tagline">Casi invisible. Siempre listo.</string>
     <string name="settings_gestures">Gestos</string>
-    <string name="settings_double_tap_lock">Doble toque para bloquear</string>
-    <string name="settings_double_tap_lock_summary">Toca dos veces la pantalla de inicio vacía para bloquearla.</string>
-    <string name="settings_swipe_notifications">Deslizar para ver notificaciones</string>
-    <string name="settings_swipe_notifications_summary">Desliza hacia abajo en la pantalla de inicio vacía para abrir las notificaciones.</string>
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_frosted_wallpaper">Fondo desenfocado</string>
     <string name="settings_frosted_wallpaper_summary">Desenfoca el fondo tras Favoritos, Apps y Buscar cuando Android lo permite.</string>

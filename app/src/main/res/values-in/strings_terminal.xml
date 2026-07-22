@@ -21,7 +21,6 @@
     <string name="settings_home_mode_summary">Pilih halaman Klasik atau prompt Mode Perintah yang disengaja.</string>
     <string name="settings_terminal_background">Latar Mode Perintah</string>
     <string name="settings_terminal_background_summary">Pilih warna dan seberapa banyak wallpaper terlihat. Semuanya tetap di perangkat ini.</string>
-    <string name="settings_terminal_color">Warna latar Mode Perintah</string>
     <string name="settings_terminal_color_option">Warna latar %1$d dari %2$d</string>
     <string name="settings_terminal_opacity">Opasitas</string>
     <string name="settings_terminal_wallpaper">Wallpaper</string>

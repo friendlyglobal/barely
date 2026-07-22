@@ -17,8 +17,6 @@
     <string name="apps_and_shortcuts">Applications et raccourcis</string>
     <string name="clear_search">Effacer</string>
     <string name="shortcuts">Raccourcis</string>
-    <string name="find_anything">Trouvez ce que vous cherchez</string>
-    <string name="search_hint">Saisissez le nom d’une application ou d’une action qu’elle propose.</string>
     <string name="nothing_found">Aucun résultat</string>
     <string name="try_another_name">Essayez un autre nom.</string>
     <string name="set_default_to_search_shortcuts">Définissez ce launcher par défaut pour inclure les raccourcis.</string>

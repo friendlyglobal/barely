@@ -18,8 +18,6 @@
     <string name="apps_and_shortcuts">Apps and shortcuts</string>
     <string name="clear_search">Clear</string>
     <string name="shortcuts">Shortcuts</string>
-    <string name="find_anything">Find anything</string>
-    <string name="search_hint">Type the name of an app or an action it publishes.</string>
     <string name="nothing_found">Nothing found</string>
     <string name="try_another_name">Try another name.</string>
     <string name="set_default_to_search_shortcuts">Set this launcher as default to include shortcuts.</string>
@@ -123,10 +121,6 @@
     <string name="launcher_settings">Barely settings</string>
     <string name="barely_tagline">Barely there. Always ready.</string>
     <string name="settings_gestures">Gestures</string>
-    <string name="settings_double_tap_lock">Double-tap to lock</string>
-    <string name="settings_double_tap_lock_summary">Double-tap the empty Home page to lock the screen.</string>
-    <string name="settings_swipe_notifications">Swipe down for notifications</string>
-    <string name="settings_swipe_notifications_summary">Pull down on the empty Home page to open notifications.</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_frosted_wallpaper">Frosted wallpaper</string>
     <string name="settings_frosted_wallpaper_summary">Blur the wallpaper behind Favorites, Apps, and Search when Android supports it.</string>
