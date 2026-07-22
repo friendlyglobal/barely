@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">Vous pourrez changer de mode à tout moment dans les réglages de Barely.</string>
     <string name="onboarding_continue">Continuer</string>
     <string name="home_mode_classic">Classique</string>
-    <string name="home_mode_classic_summary">Accueil avec fond d’écran, Favoris et Apps accessibles d’un geste.</string>
+    <string name="home_mode_classic_summary">Accueil de commandes avec Favoris, widgets et Apps accessibles d’un geste.</string>
     <string name="home_mode_terminal">Mode Commande</string>
     <string name="home_mode_terminal_summary">Ouvrez les apps volontairement en saisissant leur nom ou une commande.</string>
     <string name="terminal_prompt_hint">saisissez une app ou une commande</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Ouvrir les réglages de Barely</string>
     <string name="terminal_command_settings_summary">Modifiez l’accueil, les gestes, la confidentialité et les modules facultatifs</string>
     <string name="terminal_command_classic">Passer à l’accueil classique</string>
-    <string name="terminal_command_classic_summary">Revenez au fond d’écran avec les pages Favoris et Apps</string>
+    <string name="terminal_command_classic_summary">Revenez à l’invite partagée avec les pages Favoris, widgets et Apps</string>
     <string name="settings_home_mode">Style d’accueil</string>
-    <string name="settings_home_mode_summary">Choisissez les pages classiques ou l’invite volontaire du Mode Commande.</string>
-    <string name="settings_terminal_background">Arrière-plan du Mode Commande</string>
+    <string name="settings_home_mode_summary">Choisissez la même invite avec les pages du launcher, ou l’invite seule.</string>
+    <string name="settings_terminal_background">Arrière-plan de l’accueil</string>
     <string name="settings_terminal_background_summary">Choisissez une teinte et la visibilité du fond d’écran. Tout reste sur cet appareil.</string>
     <string name="settings_terminal_color_option">Couleur d’arrière-plan %1$d sur %2$d</string>
     <string name="settings_terminal_opacity">Opacité</string>

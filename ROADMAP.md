@@ -1,6 +1,6 @@
 # Barely roadmap
 
-Barely should become more useful without becoming visually busy. The empty wallpaper Home page, local-first behavior, and three-surface navigation remain product constraints rather than temporary limitations.
+Barely should become more useful without becoming visually busy. The shared wallpaper-first command Home, local-first behavior, and optional Classic side pages remain product constraints rather than temporary limitations.
 
 ## Product rules
 
@@ -139,6 +139,16 @@ Goal: make the existing Favorites/Widgets page feel native and dependable withou
 - [x] Protect focused resize handles from Android edge gestures without claiming the whole screen edge.
 - [x] Retain deterministic four-column packing for compatible widgets side by side.
 - [x] Cover resize commit policy and packing with local tests, then run lint, debug, optimized release, upgrade, and emulator runtime gates.
+
+## 1.2 — One shared Home
+
+Goal: make Command the minimal experience and Classic the detailed experience without maintaining two versions of Home.
+
+- [x] Render the same shared command prompt, local ranking, history, wallpaper tint, opacity, and radius in both Home styles.
+- [x] Hide redundant floating Apps and Settings actions in Classic, where those destinations remain adjacent pager surfaces.
+- [x] Keep Favorites and the single Widgets surface exclusive to Classic without duplicating widget composition or persistence.
+- [x] Preserve Command as the focused one-surface option and Classic as the richer three-surface option.
+- [x] Fix and cover the Material 3 app-action sheet state crash on long press.
 
 ## Deliberately out of scope
 

@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">You can switch modes at any time in Barely settings.</string>
     <string name="onboarding_continue">Continue</string>
     <string name="home_mode_classic">Classic</string>
-    <string name="home_mode_classic_summary">Wallpaper Home with Favorites and Apps one swipe away.</string>
+    <string name="home_mode_classic_summary">Shared command Home with Favorites, widgets, and Apps one swipe away.</string>
     <string name="home_mode_terminal">Command</string>
     <string name="home_mode_terminal_summary">Open apps intentionally by typing their name or a command.</string>
     <string name="terminal_prompt_hint">type an app or command</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Open Barely settings</string>
     <string name="terminal_command_settings_summary">Change Home mode, gestures, privacy, and optional modules</string>
     <string name="terminal_command_classic">Switch to Classic Home</string>
-    <string name="terminal_command_classic_summary">Return to the wallpaper Home with Favorites and Apps pages</string>
+    <string name="terminal_command_classic_summary">Return to the shared prompt with Favorites, widgets, and Apps pages</string>
     <string name="settings_home_mode">Home style</string>
-    <string name="settings_home_mode_summary">Choose the Classic pages or the intentional Command prompt.</string>
-    <string name="settings_terminal_background">Command background</string>
+    <string name="settings_home_mode_summary">Choose the shared prompt with launcher pages, or the prompt alone.</string>
+    <string name="settings_terminal_background">Home background</string>
     <string name="settings_terminal_background_summary">Choose a tint and how much wallpaper shows through. Everything stays on this device.</string>
     <string name="settings_terminal_color_option">Background color %1$d of %2$d</string>
     <string name="settings_terminal_opacity">Opacity</string>

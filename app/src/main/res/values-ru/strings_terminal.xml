@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">Режим можно изменить в настройках Barely в любое время.</string>
     <string name="onboarding_continue">Продолжить</string>
     <string name="home_mode_classic">Классический</string>
-    <string name="home_mode_classic_summary">Главный экран с обоями, Избранным и Приложениями в одном свайпе.</string>
+    <string name="home_mode_classic_summary">Командный главный экран с Избранным, виджетами и Приложениями в одном свайпе.</string>
     <string name="home_mode_terminal">Командный режим</string>
     <string name="home_mode_terminal_summary">Открывайте приложения осознанно, вводя название или команду.</string>
     <string name="terminal_prompt_hint">введите приложение или команду</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Открыть настройки Barely</string>
     <string name="terminal_command_settings_summary">Измените главный экран, жесты, приватность и дополнительные модули</string>
     <string name="terminal_command_classic">Переключиться на классический экран</string>
-    <string name="terminal_command_classic_summary">Вернуться к обоям со страницами Избранного и Приложений</string>
+    <string name="terminal_command_classic_summary">Вернуться к общей строке со страницами Избранного, виджетов и Приложений</string>
     <string name="settings_home_mode">Стиль главного экрана</string>
-    <string name="settings_home_mode_summary">Выберите классические страницы или осознанную строку Командного режима.</string>
-    <string name="settings_terminal_background">Фон Командного режима</string>
+    <string name="settings_home_mode_summary">Выберите общую строку со страницами лаунчера или только строку.</string>
+    <string name="settings_terminal_background">Фон главного экрана</string>
     <string name="settings_terminal_background_summary">Выберите цвет и степень видимости обоев. Все настройки хранятся только на устройстве.</string>
     <string name="settings_terminal_color_option">Цвет фона %1$d из %2$d</string>
     <string name="settings_terminal_opacity">Непрозрачность</string>

@@ -5,7 +5,7 @@
     <string name="onboarding_change_later">Puoi cambiare modalità in qualsiasi momento nelle impostazioni di Barely.</string>
     <string name="onboarding_continue">Continua</string>
     <string name="home_mode_classic">Classica</string>
-    <string name="home_mode_classic_summary">Home con sfondo, Preferiti e App a un solo gesto.</string>
+    <string name="home_mode_classic_summary">Home dei comandi con Preferiti, widget e App a un solo gesto.</string>
     <string name="home_mode_terminal">Modalità Comando</string>
     <string name="home_mode_terminal_summary">Apri le app intenzionalmente digitando il nome o un comando.</string>
     <string name="terminal_prompt_hint">digita un’app o un comando</string>
@@ -16,10 +16,10 @@
     <string name="terminal_command_settings">Apri impostazioni Barely</string>
     <string name="terminal_command_settings_summary">Modifica Home, gesti, privacy e moduli opzionali</string>
     <string name="terminal_command_classic">Passa alla Home classica</string>
-    <string name="terminal_command_classic_summary">Torna allo sfondo con le pagine Preferiti e App</string>
+    <string name="terminal_command_classic_summary">Torna al prompt condiviso con le pagine Preferiti, widget e App</string>
     <string name="settings_home_mode">Stile Home</string>
-    <string name="settings_home_mode_summary">Scegli le pagine classiche o il prompt intenzionale della Modalità Comando.</string>
-    <string name="settings_terminal_background">Sfondo della Modalità Comando</string>
+    <string name="settings_home_mode_summary">Scegli lo stesso prompt con le pagine del launcher oppure solo il prompt.</string>
+    <string name="settings_terminal_background">Sfondo della Home</string>
     <string name="settings_terminal_background_summary">Scegli un colore e quanto lasciare visibile lo sfondo. Tutto resta su questo dispositivo.</string>
     <string name="settings_terminal_color_option">Colore di sfondo %1$d di %2$d</string>
     <string name="settings_terminal_opacity">Opacità</string>

@@ -2,6 +2,24 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.2.0 — 2026-07-22
+
+### Home
+
+- Made Command and Classic render the same shared Home component, including the bottom prompt, local fuzzy ranking, recent-search history, wallpaper tint, opacity, and corner radius.
+- Kept Command as the minimal single-surface style with its floating Apps and Settings actions.
+- Kept Classic as the detailed style with the existing Favorites/Widgets page on the left and All apps page on the right; its shared Home hides redundant top actions.
+- Preserved local ranking and history across both Home styles without adding a second implementation or another widget surface.
+
+### Fixed
+
+- Fixed the app action sheet crash triggered by long-pressing an app or search result. The sheet now enables only the valid hidden and fully expanded states, so long shortcut lists remain scrollable and reachable.
+- Added unit coverage for the app action sheet state contract.
+
+### Release
+
+- Updated the application to version code 16 and version name 1.2.0.
+
 ## 1.1.0 — 2026-07-22
 
 ### Widgets
