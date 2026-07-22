@@ -1,10 +1,16 @@
 package app.usefriendly.barely
 
 import android.appwidget.AppWidgetHost
+import android.appwidget.AppWidgetHostView
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
 import android.os.Process
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import android.view.ViewGroup
 import androidx.core.content.edit
 
 data class WidgetPlacement(
@@ -58,9 +64,25 @@ internal fun packWidgetRows(
     return rows
 }
 
+internal data class WidgetProviderSize(
+    val widthDp: Int,
+    val heightDp: Int,
+)
+
+/**
+ * Keep the provider's RemoteViews at its last committed size while the user drags the frame.
+ * Many third-party widgets reinflate their whole hierarchy whenever options change, which is the
+ * source of the visible flashing that a per-pixel update causes.
+ */
+internal fun resolveWidgetProviderSize(
+    committed: WidgetProviderSize,
+    preview: WidgetProviderSize,
+    resizeActive: Boolean,
+): WidgetProviderSize = if (resizeActive) committed else preview
+
 class WidgetHostController(context: Context) {
     val manager: AppWidgetManager = AppWidgetManager.getInstance(context)
-    val host = AppWidgetHost(context, HOST_ID)
+    val host: AppWidgetHost = BarelyAppWidgetHost(context, HOST_ID)
 
     private val preferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
@@ -209,4 +231,142 @@ class WidgetHostController(context: Context) {
         const val WIDGET_IDS = "widget_ids"
         const val WIDGET_LAYOUTS = "widget_layouts"
     }
+}
+
+/**
+ * App widgets are regular Android views embedded inside Compose. Scrollable RemoteViews must get
+ * first refusal on a gesture; otherwise the surrounding LazyColumn or horizontal Home pager can
+ * steal the stream as soon as touch slop is crossed.
+ *
+ * We protect a gesture only while a descendant can actually scroll in its direction. At an edge
+ * the request is released so the Favorites page can continue scrolling naturally.
+ */
+private class BarelyAppWidgetHost(
+    context: Context,
+    hostId: Int,
+) : AppWidgetHost(context, hostId) {
+    override fun onCreateView(
+        context: Context,
+        appWidgetId: Int,
+        appWidget: AppWidgetProviderInfo,
+    ): AppWidgetHostView = GestureAwareAppWidgetHostView(context)
+}
+
+private class GestureAwareAppWidgetHostView(context: Context) : AppWidgetHostView(context) {
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    private val longPressDetector = GestureDetector(
+        context,
+        object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(event: MotionEvent): Boolean = true
+
+            override fun onLongPress(event: MotionEvent) {
+                suppressTouchUntilUp = performLongClick()
+            }
+        },
+    )
+    private var downX = 0f
+    private var downY = 0f
+    private var protectingGesture = false
+    private var suppressTouchUntilUp = false
+    private var cancelDelivered = false
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            suppressTouchUntilUp = false
+            cancelDelivered = false
+        }
+        longPressDetector.onTouchEvent(event)
+        if (suppressTouchUntilUp) {
+            if (!cancelDelivered) {
+                val cancelEvent = MotionEvent.obtain(event).apply {
+                    action = MotionEvent.ACTION_CANCEL
+                }
+                super.dispatchTouchEvent(cancelEvent)
+                cancelEvent.recycle()
+                cancelDelivered = true
+            }
+            if (
+                event.actionMasked == MotionEvent.ACTION_UP ||
+                event.actionMasked == MotionEvent.ACTION_CANCEL
+            ) {
+                suppressTouchUntilUp = false
+                cancelDelivered = false
+                protectingGesture = false
+                parent?.requestDisallowInterceptTouchEvent(false)
+            }
+            return true
+        }
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = event.x
+                downY = event.y
+                protectingGesture = hasScrollableDescendant(this)
+                parent?.requestDisallowInterceptTouchEvent(protectingGesture)
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                if (protectingGesture) {
+                    val deltaX = event.x - downX
+                    val deltaY = event.y - downY
+                    if (kotlin.math.max(kotlin.math.abs(deltaX), kotlin.math.abs(deltaY)) > touchSlop) {
+                        val vertical = kotlin.math.abs(deltaY) >= kotlin.math.abs(deltaX)
+                        val direction = if ((if (vertical) deltaY else deltaX) < 0f) 1 else -1
+                        protectingGesture = if (vertical) {
+                            canDescendantScrollVertically(this, direction)
+                        } else {
+                            canDescendantScrollHorizontally(this, direction)
+                        }
+                        parent?.requestDisallowInterceptTouchEvent(protectingGesture)
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL,
+            -> {
+                protectingGesture = false
+                parent?.requestDisallowInterceptTouchEvent(false)
+            }
+        }
+        return super.dispatchTouchEvent(event)
+    }
+}
+
+internal fun AppWidgetHostView.setBarelyWidgetLongClickListener(listener: (() -> Unit)?) {
+    if (this !is GestureAwareAppWidgetHostView) return
+    setOnLongClickListener(
+        listener?.let { onLongClick ->
+            View.OnLongClickListener {
+                onLongClick()
+                true
+            }
+        },
+    )
+    isLongClickable = listener != null
+}
+
+private fun hasScrollableDescendant(view: View): Boolean =
+    view.canScrollVertically(-1) ||
+        view.canScrollVertically(1) ||
+        view.canScrollHorizontally(-1) ||
+        view.canScrollHorizontally(1) ||
+        (view as? ViewGroup)?.childrenAny(::hasScrollableDescendant) == true
+
+private fun canDescendantScrollVertically(view: View, direction: Int): Boolean =
+    view.canScrollVertically(direction) ||
+        (view as? ViewGroup)?.childrenAny { child ->
+            canDescendantScrollVertically(child, direction)
+        } == true
+
+private fun canDescendantScrollHorizontally(view: View, direction: Int): Boolean =
+    view.canScrollHorizontally(direction) ||
+        (view as? ViewGroup)?.childrenAny { child ->
+            canDescendantScrollHorizontally(child, direction)
+        } == true
+
+private fun ViewGroup.childrenAny(predicate: (View) -> Boolean): Boolean {
+    for (index in 0 until childCount) {
+        if (predicate(getChildAt(index))) return true
+    }
+    return false
 }

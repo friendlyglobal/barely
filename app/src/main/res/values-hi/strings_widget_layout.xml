@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">विजेट की चौड़ाई घटाएँ</string>
     <string name="increase_widget_height">विजेट की ऊँचाई बढ़ाएँ</string>
     <string name="decrease_widget_height">विजेट की ऊँचाई घटाएँ</string>
+    <string name="resize_and_arrange_widget">आकार बदलें और व्यवस्थित करें</string>
+    <string name="widget_settings">विजेट सेटिंग</string>
+    <string name="error_configure_widget">विजेट सेटिंग नहीं खुल सकीं</string>
 </resources>

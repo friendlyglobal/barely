@@ -21,7 +21,7 @@ This document is the operator checklist for stable Barely builds. User-facing in
 
 ## Upgrade behavior
 
-Barely keeps settings in private `SharedPreferences` and widgets in Android's `AppWidgetHost`. Version 1.0 reads the legacy boolean gestures, the 0.8 action enums, and settings schema 2. Unknown or corrupt values fall back to bounded local defaults instead of blocking Home.
+Barely keeps settings in private `SharedPreferences` and widgets in Android's `AppWidgetHost`. Version 1.x reads the legacy boolean gestures, the 0.8 action enums, and settings schema 2. Unknown or corrupt values fall back to bounded local defaults instead of blocking Home.
 
 An ordinary upgrade preserves the default Home role, favorites, widgets, appearance, optional-module switches, and local ranking history. Android permissions and profile visibility remain controlled by Android and device policy.
 

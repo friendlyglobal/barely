@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">Уменьшить ширину виджета</string>
     <string name="increase_widget_height">Увеличить высоту виджета</string>
     <string name="decrease_widget_height">Уменьшить высоту виджета</string>
+    <string name="resize_and_arrange_widget">Изменить размер и порядок</string>
+    <string name="widget_settings">Настройки виджета</string>
+    <string name="error_configure_widget">Не удалось открыть настройки виджета</string>
 </resources>

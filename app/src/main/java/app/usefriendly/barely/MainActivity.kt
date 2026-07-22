@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var roleRequest: ActivityResultLauncher<Intent>
     private lateinit var widgetPicker: ActivityResultLauncher<Intent>
     private lateinit var widgetConfigurator: ActivityResultLauncher<Intent>
+    private lateinit var widgetReconfigurator: ActivityResultLauncher<Intent>
     private lateinit var contactsPermissionRequest: ActivityResultLauncher<String>
     private lateinit var exportSettingsDocument: ActivityResultLauncher<String>
     private lateinit var importSettingsDocument: ActivityResultLauncher<Array<String>>
@@ -157,6 +158,11 @@ class MainActivity : ComponentActivity() {
             }
             pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
         }
+        widgetReconfigurator = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) {
+            widgets = widgetController.savedWidgets()
+        }
         repository = LauncherRepository(this) { refresh() }
         widgetController = WidgetHostController(this)
         favoriteKeys = repository.favoriteKeys()
@@ -258,6 +264,8 @@ class MainActivity : ComponentActivity() {
                     } },
                     onUninstall = ::requestUninstall,
                     onAddWidget = ::pickWidget,
+                    onConfigureWidget = ::reconfigureWidget,
+                    onWidgetAppInfo = ::openWidgetAppInfo,
                     onRemoveWidget = { widgetId ->
                         widgets = widgetController.removeWidget(widgetId)
                     },
@@ -463,6 +471,36 @@ class MainActivity : ComponentActivity() {
             widgetController.discardWidgetId(widgetId)
             pendingWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
             Toast.makeText(this, R.string.error_add_widget, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reconfigureWidget(widgetId: Int) {
+        val info = widgetController.manager.getAppWidgetInfo(widgetId) ?: return
+        val canReconfigure = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            info.configure != null &&
+            info.widgetFeatures.and(AppWidgetProviderInfo.WIDGET_FEATURE_RECONFIGURABLE) != 0
+        if (!canReconfigure) return
+        runCatching {
+            widgetReconfigurator.launch(
+                Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).apply {
+                    component = info.configure
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                },
+            )
+        }.onFailure {
+            Toast.makeText(this, R.string.error_configure_widget, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openWidgetAppInfo(packageName: String) {
+        if (packageName.isBlank()) return
+        perform(getString(R.string.error_open_app_info)) {
+            startActivity(
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    "package:$packageName".toUri(),
+                ),
+            )
         }
     }
 

@@ -35,9 +35,11 @@ Version 1.0 starts Barely's permanent production-signing line. Android may displ
 - Shows published shortcuts, favorite actions, app info, and uninstall from a long press.
 - Refreshes apps and shortcuts through `LauncherApps.Callback`, including `onShortcutsChanged`.
 - Persists favorites with `SharedPreferences`; no database is used.
-- Hosts user-selected Android widgets in a vertical glanceable stack below favorites.
+- Hosts every user-selected Android widget below favorites on one dedicated page to the left of Home; Barely does not create an open-ended widget-page carousel.
 - Provides a searchable widget catalog grouped by app with published previews, grid dimensions, and icon fallbacks, then uses each provider's standard binding and configuration flow; Barely persists only widget IDs and simple layout metadata, never widget contents.
-- Lets users resize hosted widgets live by dragging their right or bottom edge, then align and reorder them from a separate edit toolbar. TalkBack exposes localized increase/decrease width and height actions, and all edit controls retain 48 dp touch targets; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
+- Opens a compact widget menu on press-and-hold, with Resize and arrange, provider Settings when supported, App info, and Remove. The long press consumes the touch stream so lifting a finger never launches the widget accidentally.
+- Lets users resize hosted widgets live by dragging their right or bottom edge, then align and reorder them from a separate edit toolbar. The frame follows the finger without repeatedly reinflating provider content, the handles avoid Android's edge-back gesture, and size is committed once on release. TalkBack exposes localized increase/decrease width and height actions, and all edit controls retain 48 dp touch targets; layout metadata stays in local `SharedPreferences` alongside the widget IDs.
+- Preserves vertical and horizontal scrolling published inside an `AppWidgetHostView`, handing the gesture back to the Favorites page only when the widget reaches its own edge.
 - Places compatible half-width widgets side by side in a simple four-column grid after edit mode closes.
 - Supports work profiles and hidden profiles when Android exposes them to the launcher.
 - Returns to the clean wallpaper page whenever the Home gesture or button is pressed.
@@ -79,7 +81,7 @@ Android selects the matching resource automatically. On Android 13 and newer, Ba
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for the intentionally scoped plan from 0.5 through 1.0. The roadmap keeps Home wallpaper-first, makes sensitive modules optional, and rejects features that require a Barely backend or private OEM APIs.
+See [ROADMAP.md](ROADMAP.md) for the intentionally scoped product plan and post-1.0 maintenance work. The roadmap keeps Home wallpaper-first, makes sensitive modules optional, and rejects features that require a Barely backend or private OEM APIs.
 
 Version 0.5 adopts the permanent `app.usefriendly.barely` application ID. Android treats it as a different app from the Launchly 0.4 prototype, so testers must select Barely as Home again and re-add widgets after installing it.
 

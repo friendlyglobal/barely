@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">Widget schmaler machen</string>
     <string name="increase_widget_height">Widget höher machen</string>
     <string name="decrease_widget_height">Widget niedriger machen</string>
+    <string name="resize_and_arrange_widget">Größe und Anordnung ändern</string>
+    <string name="widget_settings">Widget-Einstellungen</string>
+    <string name="error_configure_widget">Widget-Einstellungen konnten nicht geöffnet werden</string>
 </resources>

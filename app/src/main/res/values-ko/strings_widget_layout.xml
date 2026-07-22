@@ -12,4 +12,7 @@
     <string name="decrease_widget_width">위젯 너비 줄이기</string>
     <string name="increase_widget_height">위젯 높이 늘리기</string>
     <string name="decrease_widget_height">위젯 높이 줄이기</string>
+    <string name="resize_and_arrange_widget">크기 조절 및 정렬</string>
+    <string name="widget_settings">위젯 설정</string>
+    <string name="error_configure_widget">위젯 설정을 열 수 없습니다</string>
 </resources>

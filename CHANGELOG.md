@@ -2,6 +2,22 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.1.0 — 2026-07-22
+
+### Widgets
+
+- Kept favorites and every hosted widget in one deliberate page to the left of Home; no extra widget pages or carousel were added.
+- Removed competing size animation and stopped notifying widget providers on every drag frame. The frame now follows the finger continuously while the provider receives one committed size at gesture end, preventing `RemoteViews` reinflation flicker.
+- Added an Android-view gesture bridge so scrollable content inside a widget gets first refusal while it can scroll, then hands the gesture back to the surrounding Favorites page at its edge.
+- Added a native-feeling long-press menu for every hosted widget with Resize and arrange, provider Settings when Android exposes reconfiguration, App info, and Remove. Releasing after the long press no longer triggers the widget underneath.
+- Expanded the right and bottom resize targets to accessible sizes and excluded only those focused handles from Android system gestures, preventing edge-back conflicts during editing.
+- Preserved the four-column packing model, including compatible widgets side by side and the existing two-pane adaptation on foldables.
+- Added unit coverage for committed-versus-preview provider sizing and retained row-packing coverage.
+
+### Release
+
+- Updated the application to version code 15 and version name 1.1.0.
+
 ## 1.0.0 — 2026-07-22
 
 ### Stable
