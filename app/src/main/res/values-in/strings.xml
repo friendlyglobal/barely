@@ -78,4 +78,19 @@
     <string name="media_play">Putar</string>
     <string name="media_pause">Jeda</string>
     <string name="media_next">Berikutnya</string>
+    <string name="edit_favorites">Atur ulang favorit</string>
+    <string name="reorder_favorite">Seret untuk mengatur ulang</string>
+    <string name="move_favorite_up">Pindahkan favorit ke atas</string>
+    <string name="move_favorite_down">Pindahkan favorit ke bawah</string>
+    <string name="done">Selesai</string>
+    <string name="settings_blur_renderer">Tampilan wallpaper</string>
+    <string name="settings_blur_native">Blur bawaan Android</string>
+    <string name="settings_blur_fallback">Alternatif transparan</string>
+    <string name="settings_fallback_contrast">Kontras alternatif</string>
+    <string name="settings_fallback_contrast_summary">Atur keterbacaan saat Android atau One UI menonaktifkan blur.</string>
+    <string name="settings_favorites">Favorit</string>
+    <string name="settings_favorite_order">Urutan favorit</string>
+    <string name="settings_favorite_order_summary">Pertahankan urutanmu atau urutkan berdasarkan penggunaan di perangkat.</string>
+    <string name="settings_favorite_order_manual">Manual</string>
+    <string name="settings_favorite_order_most_used">Paling sering</string>
 </resources>

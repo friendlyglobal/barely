@@ -1,6 +1,6 @@
 package app.usefriendly.barely
 
-internal const val CURRENT_SETTINGS_SCHEMA = 4
+internal const val CURRENT_SETTINGS_SCHEMA = 5
 
 internal data class StoredLauncherSettings(
     val schemaVersion: Int = 1,
@@ -15,6 +15,8 @@ internal data class StoredLauncherSettings(
     val legacyDoubleTapToLock: Boolean = true,
     val legacySwipeDownForNotifications: Boolean = true,
     val frostedWallpaper: Boolean = true,
+    val frostedFallbackContrast: Float = 0.5f,
+    val favoriteSortMode: String? = null,
     val appDrawerLayout: String? = null,
     val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
     val showAppGridLabels: Boolean = BarelyDefaults.SHOW_APP_GRID_LABELS,
@@ -52,6 +54,12 @@ internal fun decodeLauncherSettings(stored: StoredLauncherSettings): LauncherSet
                 LauncherGestureAction.NONE
             },
         frostedWallpaper = stored.frostedWallpaper,
+        frostedFallbackContrast = stored.frostedFallbackContrast
+            .takeIf(Float::isFinite)
+            ?.coerceIn(0f, 1f)
+            ?: 0.5f,
+        favoriteSortMode = stored.favoriteSortMode.enumOrNull<FavoriteSortMode>()
+            ?: FavoriteSortMode.MANUAL,
         appDrawerLayout = stored.appDrawerLayout.enumOrNull<AppDrawerLayout>()
             ?: BarelyDefaults.APP_DRAWER_LAYOUT,
         showAppIcons = stored.showAppIcons,

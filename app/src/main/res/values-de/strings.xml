@@ -78,4 +78,19 @@
     <string name="media_play">Wiedergabe</string>
     <string name="media_pause">Pause</string>
     <string name="media_next">Weiter</string>
+    <string name="edit_favorites">Favoriten sortieren</string>
+    <string name="reorder_favorite">Zum Sortieren ziehen</string>
+    <string name="move_favorite_up">Favorit nach oben verschieben</string>
+    <string name="move_favorite_down">Favorit nach unten verschieben</string>
+    <string name="done">Fertig</string>
+    <string name="settings_blur_renderer">Hintergrunddarstellung</string>
+    <string name="settings_blur_native">Nativer Android-Weichzeichner</string>
+    <string name="settings_blur_fallback">Transparente Alternative</string>
+    <string name="settings_fallback_contrast">Alternativkontrast</string>
+    <string name="settings_fallback_contrast_summary">Lesbarkeit anpassen, wenn Android oder One UI den Weichzeichner deaktiviert.</string>
+    <string name="settings_favorites">Favoriten</string>
+    <string name="settings_favorite_order">Favoritenreihenfolge</string>
+    <string name="settings_favorite_order_summary">Eigene Reihenfolge behalten oder nach lokaler Nutzung sortieren.</string>
+    <string name="settings_favorite_order_manual">Manuell</string>
+    <string name="settings_favorite_order_most_used">Meistgenutzt</string>
 </resources>

@@ -78,4 +78,19 @@
     <string name="media_play">播放</string>
     <string name="media_pause">暂停</string>
     <string name="media_next">下一个</string>
+    <string name="edit_favorites">重新排列收藏</string>
+    <string name="reorder_favorite">拖动以重新排列</string>
+    <string name="move_favorite_up">向上移动收藏</string>
+    <string name="move_favorite_down">向下移动收藏</string>
+    <string name="done">完成</string>
+    <string name="settings_blur_renderer">壁纸渲染</string>
+    <string name="settings_blur_native">Android 原生模糊</string>
+    <string name="settings_blur_fallback">半透明替代效果</string>
+    <string name="settings_fallback_contrast">替代效果对比度</string>
+    <string name="settings_fallback_contrast_summary">当 Android 或 One UI 禁用模糊时调整可读性。</string>
+    <string name="settings_favorites">收藏</string>
+    <string name="settings_favorite_order">收藏顺序</string>
+    <string name="settings_favorite_order_summary">保留手动顺序，或按本机使用情况排序。</string>
+    <string name="settings_favorite_order_manual">手动</string>
+    <string name="settings_favorite_order_most_used">最常用</string>
 </resources>

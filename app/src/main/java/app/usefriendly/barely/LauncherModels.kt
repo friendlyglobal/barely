@@ -21,6 +21,11 @@ enum class AppDrawerLayout {
     GRID,
 }
 
+enum class FavoriteSortMode {
+    MANUAL,
+    MOST_USED,
+}
+
 enum class LauncherGestureAction {
     NONE,
     LOCK_SCREEN,
@@ -61,6 +66,8 @@ data class LauncherSettings(
     val doubleTapAction: LauncherGestureAction = LauncherGestureAction.LOCK_SCREEN,
     val swipeDownAction: LauncherGestureAction = LauncherGestureAction.NOTIFICATIONS,
     val frostedWallpaper: Boolean = true,
+    val frostedFallbackContrast: Float = 0.5f,
+    val favoriteSortMode: FavoriteSortMode = FavoriteSortMode.MANUAL,
     val appDrawerLayout: AppDrawerLayout = BarelyDefaults.APP_DRAWER_LAYOUT,
     val showAppIcons: Boolean = BarelyDefaults.SHOW_APP_ICONS,
     val showAppGridLabels: Boolean = BarelyDefaults.SHOW_APP_GRID_LABELS,

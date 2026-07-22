@@ -78,4 +78,19 @@
     <string name="media_play">चलाएँ</string>
     <string name="media_pause">रोकें</string>
     <string name="media_next">अगला</string>
+    <string name="edit_favorites">पसंदीदा क्रम बदलें</string>
+    <string name="reorder_favorite">क्रम बदलने के लिए खींचें</string>
+    <string name="move_favorite_up">पसंदीदा ऊपर ले जाएँ</string>
+    <string name="move_favorite_down">पसंदीदा नीचे ले जाएँ</string>
+    <string name="done">पूर्ण</string>
+    <string name="settings_blur_renderer">वॉलपेपर रेंडरिंग</string>
+    <string name="settings_blur_native">Android का मूल ब्लर</string>
+    <string name="settings_blur_fallback">पारदर्शी विकल्प</string>
+    <string name="settings_fallback_contrast">वैकल्पिक कंट्रास्ट</string>
+    <string name="settings_fallback_contrast_summary">Android या One UI द्वारा ब्लर बंद करने पर पठनीयता समायोजित करें।</string>
+    <string name="settings_favorites">पसंदीदा</string>
+    <string name="settings_favorite_order">पसंदीदा क्रम</string>
+    <string name="settings_favorite_order_summary">अपना क्रम रखें या इस डिवाइस के उपयोग के अनुसार क्रम लगाएँ।</string>
+    <string name="settings_favorite_order_manual">मैन्युअल</string>
+    <string name="settings_favorite_order_most_used">सबसे अधिक उपयोग</string>
 </resources>

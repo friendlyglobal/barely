@@ -150,4 +150,19 @@
     <string name="recommended_apps">Recomendados</string>
     <string name="recent_searches">Buscas recentes</string>
     <string name="dismiss_search_hint">Ocultar dica de busca</string>
+    <string name="edit_favorites">Reordenar favoritos</string>
+    <string name="reorder_favorite">Arraste para reordenar o favorito</string>
+    <string name="move_favorite_up">Mover favorito para cima</string>
+    <string name="move_favorite_down">Mover favorito para baixo</string>
+    <string name="done">Concluído</string>
+    <string name="settings_blur_renderer">Renderização do wallpaper</string>
+    <string name="settings_blur_native">Desfoque nativo do Android</string>
+    <string name="settings_blur_fallback">Alternativa translúcida</string>
+    <string name="settings_fallback_contrast">Contraste alternativo</string>
+    <string name="settings_fallback_contrast_summary">Ajuste a legibilidade quando o Android ou a One UI desativar o desfoque.</string>
+    <string name="settings_favorites">Favoritos</string>
+    <string name="settings_favorite_order">Ordem dos favoritos</string>
+    <string name="settings_favorite_order_summary">Mantenha sua ordem ou classifique pelos apps abertos neste aparelho.</string>
+    <string name="settings_favorite_order_manual">Manual</string>
+    <string name="settings_favorite_order_most_used">Mais usados</string>
 </resources>

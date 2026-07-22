@@ -78,4 +78,19 @@
     <string name="media_play">تشغيل</string>
     <string name="media_pause">إيقاف مؤقت</string>
     <string name="media_next">التالي</string>
+    <string name="edit_favorites">إعادة ترتيب المفضلة</string>
+    <string name="reorder_favorite">اسحب لإعادة الترتيب</string>
+    <string name="move_favorite_up">نقل المفضلة لأعلى</string>
+    <string name="move_favorite_down">نقل المفضلة لأسفل</string>
+    <string name="done">تم</string>
+    <string name="settings_blur_renderer">عرض الخلفية</string>
+    <string name="settings_blur_native">تمويه Android الأصلي</string>
+    <string name="settings_blur_fallback">بديل شفاف</string>
+    <string name="settings_fallback_contrast">تباين البديل</string>
+    <string name="settings_fallback_contrast_summary">اضبط الوضوح عندما يعطل Android أو One UI التمويه.</string>
+    <string name="settings_favorites">المفضلة</string>
+    <string name="settings_favorite_order">ترتيب المفضلة</string>
+    <string name="settings_favorite_order_summary">احتفظ بترتيبك أو رتب حسب الاستخدام على هذا الجهاز.</string>
+    <string name="settings_favorite_order_manual">يدوي</string>
+    <string name="settings_favorite_order_most_used">الأكثر استخدامًا</string>
 </resources>

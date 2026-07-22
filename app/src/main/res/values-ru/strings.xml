@@ -78,4 +78,19 @@
     <string name="media_play">Воспроизвести</string>
     <string name="media_pause">Пауза</string>
     <string name="media_next">Далее</string>
+    <string name="edit_favorites">Изменить порядок избранного</string>
+    <string name="reorder_favorite">Перетащите для изменения порядка</string>
+    <string name="move_favorite_up">Переместить избранное вверх</string>
+    <string name="move_favorite_down">Переместить избранное вниз</string>
+    <string name="done">Готово</string>
+    <string name="settings_blur_renderer">Отображение обоев</string>
+    <string name="settings_blur_native">Системное размытие Android</string>
+    <string name="settings_blur_fallback">Полупрозрачная замена</string>
+    <string name="settings_fallback_contrast">Контраст замены</string>
+    <string name="settings_fallback_contrast_summary">Настройте читаемость, когда Android или One UI отключает размытие.</string>
+    <string name="settings_favorites">Избранное</string>
+    <string name="settings_favorite_order">Порядок избранного</string>
+    <string name="settings_favorite_order_summary">Сохраните свой порядок или сортируйте по использованию на устройстве.</string>
+    <string name="settings_favorite_order_manual">Вручную</string>
+    <string name="settings_favorite_order_most_used">Часто используемые</string>
 </resources>

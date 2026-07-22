@@ -2,6 +2,26 @@
 
 All notable changes to Barely are documented in this file.
 
+## 1.6.0 — 2026-07-22
+
+### Performance
+
+- Added a generated Baseline Profile for cold Home startup, opening Search, opening All apps, and the first app-list scroll, plus a smaller startup profile for initial Home composition.
+- Added reproducible Macrobenchmark journeys for cold start, warm Home resume, Search transition frames, and first-scroll frames. Reports remain local and require no analytics or Internet permission.
+
+### Favorites
+
+- Added a manual Favorites editor with a dedicated drag handle, immediate reordering, persistent local order, and TalkBack move-up/move-down actions.
+- Added an optional Most used order based only on launches performed through Barely. App Shortcuts now participate in the same local frequency-and-recency ranking as apps.
+- Kept the existing database-free storage and excluded favorite order and usage history from portable exports.
+
+### Galaxy and wallpaper fallback
+
+- Added an honest renderer status in Settings: Android native blur when currently exposed, or Barely's translucent wallpaper fallback when Android or One UI disables cross-window blur.
+- Added a fallback-contrast slider for devices and runtime states where native blur is unavailable, and applied it consistently to Favorites, All apps, Command Apps, and full Search.
+- Localized the new controls and accessible reorder actions for every supported system language.
+- Updated the application to version code 20 and version name 1.6.0.
+
 ## 1.5.0 — 2026-07-22
 
 ### Responsiveness and navigation

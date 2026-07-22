@@ -78,4 +78,19 @@
     <string name="media_play">Riproduci</string>
     <string name="media_pause">Pausa</string>
     <string name="media_next">Successivo</string>
+    <string name="edit_favorites">Riordina preferiti</string>
+    <string name="reorder_favorite">Trascina per riordinare</string>
+    <string name="move_favorite_up">Sposta preferito in alto</string>
+    <string name="move_favorite_down">Sposta preferito in basso</string>
+    <string name="done">Fine</string>
+    <string name="settings_blur_renderer">Rendering dello sfondo</string>
+    <string name="settings_blur_native">Sfocatura nativa Android</string>
+    <string name="settings_blur_fallback">Alternativa traslucida</string>
+    <string name="settings_fallback_contrast">Contrasto alternativo</string>
+    <string name="settings_fallback_contrast_summary">Regola la leggibilità quando Android o One UI disattiva la sfocatura.</string>
+    <string name="settings_favorites">Preferiti</string>
+    <string name="settings_favorite_order">Ordine preferiti</string>
+    <string name="settings_favorite_order_summary">Mantieni il tuo ordine o usa la frequenza locale.</string>
+    <string name="settings_favorite_order_manual">Manuale</string>
+    <string name="settings_favorite_order_most_used">Più usati</string>
 </resources>

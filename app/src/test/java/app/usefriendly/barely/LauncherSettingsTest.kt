@@ -28,6 +28,8 @@ class LauncherSettingsTest {
         assertTrue(settings.showAppGridLabels)
         assertEquals(4, settings.appGridColumns)
         assertEquals(6, settings.appGridRows)
+        assertEquals(FavoriteSortMode.MANUAL, settings.favoriteSortMode)
+        assertEquals(0.5f, settings.frostedFallbackContrast, 0f)
     }
 
     @Test
@@ -74,6 +76,8 @@ class LauncherSettingsTest {
                 appDrawerLayout = "INFINITE_CAROUSEL",
                 appGridColumns = Int.MAX_VALUE,
                 appGridRows = Int.MIN_VALUE,
+                favoriteSortMode = "CLOUD_RANKING",
+                frostedFallbackContrast = Float.POSITIVE_INFINITY,
             ),
         )
 
@@ -86,6 +90,8 @@ class LauncherSettingsTest {
         assertEquals(AppDrawerLayout.LIST, migrated.appDrawerLayout)
         assertEquals(MAX_APP_GRID_COLUMNS, migrated.appGridColumns)
         assertEquals(MIN_APP_GRID_ROWS, migrated.appGridRows)
+        assertEquals(FavoriteSortMode.MANUAL, migrated.favoriteSortMode)
+        assertEquals(0.5f, migrated.frostedFallbackContrast, 0f)
     }
 
     @Test
@@ -106,5 +112,19 @@ class LauncherSettingsTest {
         assertFalse(migrated.showAppGridLabels)
         assertEquals(5, migrated.appGridColumns)
         assertEquals(7, migrated.appGridRows)
+    }
+
+    @Test
+    fun preservesFavoriteOrderingAndBoundsFallbackContrast() {
+        val migrated = decodeLauncherSettings(
+            StoredLauncherSettings(
+                schemaVersion = CURRENT_SETTINGS_SCHEMA,
+                favoriteSortMode = FavoriteSortMode.MOST_USED.name,
+                frostedFallbackContrast = 4f,
+            ),
+        )
+
+        assertEquals(FavoriteSortMode.MOST_USED, migrated.favoriteSortMode)
+        assertEquals(1f, migrated.frostedFallbackContrast, 0f)
     }
 }
